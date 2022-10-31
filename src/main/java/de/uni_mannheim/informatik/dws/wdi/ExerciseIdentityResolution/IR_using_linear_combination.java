@@ -48,6 +48,7 @@ public class IR_using_linear_combination
 		// loading data
 		logger.info("*\tLoading datasets\t*");
 		HashedDataSet<Movie, Attribute> dataAcademyAwards = new HashedDataSet<>();
+
 		new MovieXMLReader().loadFromXML(new File("data/input/academy_awards.xml"), "/movies/movie", dataAcademyAwards);
 		HashedDataSet<Movie, Attribute> dataActors = new HashedDataSet<>();
 		new MovieXMLReader().loadFromXML(new File("data/input/actors.xml"), "/movies/movie", dataActors);
@@ -116,6 +117,8 @@ public class IR_using_linear_combination
 
 /*
  * Identify duplicates in each input dataset (name, url)
+ * 
+ * Remove duplicates from each dataset
  * 
  * Gold Standard (manual creation, based on a simple matching rule. improve iteratively)
  * Data Model, Reader and Writer
