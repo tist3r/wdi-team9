@@ -37,16 +37,24 @@ public class Company implements Matchable{
     private String url;
     private List<String> industries;
     private Integer yearFounded;
+    private String sizeRange;
+    private String locality;
+    private String country;
+    private String linkedinUrl;
     private Integer currEmpEst;
     private Integer totalEmpEst;
     private Integer salesAmount;
     private String salesCurrency;
     private Integer profitAmount;
     private String profitCurrency;
-    private Integer asset_Aount;
+    private Integer assetAmount;
     private String assetCurrency;
     private Integer mvAmount;
     private String mvCurrency;
+    private String sector;
+    private String globalRank;
+    private double latitude;
+    private double longitude;
     private List<String> ceos;
 
 
@@ -69,6 +77,18 @@ public class Company implements Matchable{
 	public String getProvenance() {
 		return provenance;
 	}
+
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    public void setProvenance(String provenance) {
+        this.provenance = provenance;
+    }
 
     public String getName() {
         return this.name;
@@ -100,6 +120,38 @@ public class Company implements Matchable{
 
     public void setYearFounded(Integer yearFounded) {
         this.yearFounded = yearFounded;
+    }
+
+    public String getSizeRange() {
+        return this.sizeRange;
+    }
+
+    public void setSizeRange(String sizeRange) {
+        this.sizeRange = sizeRange;
+    }
+
+    public String getLocality() {
+        return this.locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
+    public String getCountry() {
+        return this.country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getLinkedinUrl() {
+        return this.linkedinUrl;
+    }
+
+    public void setLinkedinUrl(String linkedinUrl) {
+        this.linkedinUrl = linkedinUrl;
     }
 
     public Integer getCurrEmpEst() {
@@ -150,12 +202,12 @@ public class Company implements Matchable{
         this.profitCurrency = profitCurrency;
     }
 
-    public Integer getAsset_Aount() {
-        return this.asset_Aount;
+    public Integer getAssetAmount() {
+        return this.assetAmount;
     }
 
-    public void setAsset_Aount(Integer asset_Aount) {
-        this.asset_Aount = asset_Aount;
+    public void setAssetAmount(Integer asset_Aount) {
+        this.assetAmount = asset_Aount;
     }
 
     public String getAssetCurrency() {
@@ -182,6 +234,38 @@ public class Company implements Matchable{
         this.mvCurrency = mvCurrency;
     }
 
+    public String getSector() {
+        return this.sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
+
+    public String getGlobalRank() {
+        return this.globalRank;
+    }
+
+    public void setGlobalRank(String globalRank) {
+        this.globalRank = globalRank;
+    }
+
+    public double getLatitude() {
+        return this.latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return this.longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     public List<String> getCeos() {
         return this.ceos;
     }
@@ -189,6 +273,7 @@ public class Company implements Matchable{
     public void setCeos(List<String> ceos) {
         this.ceos = ceos;
     }
+    
 
 
 
