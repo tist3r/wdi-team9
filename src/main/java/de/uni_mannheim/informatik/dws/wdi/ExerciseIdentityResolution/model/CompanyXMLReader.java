@@ -52,18 +52,18 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
         company.setGlobalRank(getValueFromChildElement(node, "Global_rank"));
 
 
-        try{
+        if (getValueFromChildElement(node, "Latitude") != null){
             company.setLatitude(Double.parseDouble(getValueFromChildElement(node, "Latitude")));
-        } catch (NumberFormatException e){
+        } else{
             company.setLatitude(Double.NaN);
         }
 
-        try{
+        if (getValueFromChildElement(node, "Longitude") != null){
             company.setLongitude(Double.parseDouble(getValueFromChildElement(node, "Longitude")));
-        } catch (NumberFormatException e){
+        } else{
             company.setLongitude(Double.NaN);
         }
-
+        
         
         company.setCeos(getListFromChildElement(node, "CEOs"));
 
