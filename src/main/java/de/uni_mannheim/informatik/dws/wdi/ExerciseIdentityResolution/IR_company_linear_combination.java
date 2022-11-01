@@ -21,9 +21,5 @@ public class IR_company_linear_combination {
 
 		new CompanyXMLReader().loadFromXML(new File("data/input/dbpedia.xml"), "/Companies/Company", dbPediaCompanies);
         
-    }
-
-
-
-    
+    }   
 }
