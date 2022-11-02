@@ -32,10 +32,6 @@ public class CompanyNameUrlComparator implements Comparator<Company,Attribute>{
         String url1 = normalizeURL ? StringPreprocessing.normalizeURL(record1.getUrl()) : record1.getUrl();
         String url2 = normalizeURL ? StringPreprocessing.normalizeURL(record2.getUrl()) : record2.getUrl();
 
-        //TODO include year founded into duplicate detection or make url a list field
-        Integer yearFounded1 = record1.getYearFounded();
-        Integer yearFounded2 = record1.getYearFounded();
-
         Double simName = sim.calculate(name1, name2);
 
         if (url1 == null || url2 == null){
