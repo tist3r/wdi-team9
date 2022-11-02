@@ -1,5 +1,6 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.StringPreprocessing;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.Comparator;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
@@ -23,8 +24,11 @@ public class CompanyNameComparatorJaccardNgram implements Comparator<Company,Att
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
-        // TODO Auto-generated method stub
-        return 0;
+        // Preprocessing
+        String name1 = StringPreprocessing.tokenBasicNormalization(record1.getName(), "", false);
+        String name2 = StringPreprocessing.tokenBasicNormalization(record2.getName(), "", false);
+
+        return sim.calculate(name1,name2);
     }
     
 }

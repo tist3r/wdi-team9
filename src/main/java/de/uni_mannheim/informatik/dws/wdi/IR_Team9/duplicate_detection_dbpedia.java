@@ -5,6 +5,7 @@ import java.io.File;
 import org.slf4j.Logger;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyByNameGenerator;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameUrlComparator;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
@@ -12,6 +13,7 @@ import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.NoBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.LinearCombinationMatchingRule;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
@@ -38,7 +40,8 @@ public class duplicate_detection_dbpedia {
         LinearCombinationMatchingRule<Company, Attribute> matchingRule = new LinearCombinationMatchingRule<>(0.85);
 
         //add comparators (name and url)
-        matchingRule.addComparator(new CompanyNameUrlComparator(0.95, 0.05, true, true), 1);
+        matchingRule.addComparator(new CompanyNameUrlComparator(0.95, 0.05, true, true), 0.7);
+        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3), 0.3);
 
         // create a blocker (blocking strategy)
         //NoBlocker<Company, Attribute> blocker = new NoBlocker<>();
@@ -47,11 +50,12 @@ public class duplicate_detection_dbpedia {
         // Initialize Matching Engine
 		MatchingEngine<Company, Attribute> engine = new MatchingEngine<>();
 
-		// Execute the matching
+        
+        // Execute the matching
 		logger.info("*\tRunning identity resolution\t*");
 		Processable<Correspondence<Company, Attribute>> correspondences = engine.runDuplicateDetection(dbPediaCompanies, matchingRule, blocker);
 
         // write the correspondences to the output file
-		new CSVCorrespondenceFormatter().writeCSV(new File("data/output/company_duplicates_dbpedia.csv"), correspondences);
-    }   
+		new CSVCorrespondenceFormatter().writeCSV(new File("data/output/company_duplicates_dbpedia_withngram.csv"), correspondences);
+    }
 }

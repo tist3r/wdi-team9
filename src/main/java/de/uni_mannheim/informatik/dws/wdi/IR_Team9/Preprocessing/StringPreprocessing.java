@@ -28,6 +28,7 @@ public class StringPreprocessing {
 
     public static String removePunctuationWhitespaces(String token, String exclude){
         String removeRegex = "[\\s\\p{Punct}]";
+
         if (!exclude.matches("")){
             //TODO improve performance
             removeRegex = "[\\s\\p{Punct}&&[^"+exclude+"]]";

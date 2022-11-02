@@ -17,8 +17,8 @@ public class CompanyNameComparatorJaccardToken implements Comparator<Company,Att
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
-        // TODO Auto-generated method stub
-        return 0;
+        // Preprocessing is done by the TokenizingJAccardSImilarity Class
+        return sim.calculate(record1.getName(), record2.getName());
     }
     
 }
