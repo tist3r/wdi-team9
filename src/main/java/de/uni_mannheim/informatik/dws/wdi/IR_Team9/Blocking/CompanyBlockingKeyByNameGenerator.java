@@ -12,8 +12,6 @@ import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerator<Company, Attribute>{
     
     private static final long serialVersionUID = 1L;
-
-
 	/*
      * Blocking based on first letter of company name.     * 
      */

@@ -56,6 +56,7 @@ public class MovieDirectorComparatorJaccard implements Comparator<Movie, Attribu
 		postSimilarity *= similarity;
 		
 		if(this.comparisonLog != null){
+			System.out.println("Setting comparison log value");
 			this.comparisonLog.setComparatorName(getClass().getName());
 		
 			this.comparisonLog.setRecord1Value(s1);

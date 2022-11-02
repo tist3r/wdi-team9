@@ -48,6 +48,8 @@ public class StringPreprocessing {
 
     //Url methods
     public static String normalizeURL(String url){
+        if (url == null){return "";} //cater for empty urls
+
         url = url.replaceAll("((http|https)://)?(www.)?", "");
         return url.replaceAll("(\\.[a-z]*/?)", "").toLowerCase();
     }

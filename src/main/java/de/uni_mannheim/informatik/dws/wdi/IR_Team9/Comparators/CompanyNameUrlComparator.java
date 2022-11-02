@@ -2,6 +2,7 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.Comparator;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.ComparatorLogger;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
@@ -16,6 +17,7 @@ public class CompanyNameUrlComparator implements Comparator<Company,Attribute>{
     private double urlWeight;
     private boolean normalizeName;
     private boolean normalizeURL;
+    private ComparatorLogger comparisonLog;
 
     public CompanyNameUrlComparator(double nameWeight, double urlWeight, boolean normalizeName, boolean normalizeURL){
         this.nameWeight = nameWeight;
@@ -33,16 +35,38 @@ public class CompanyNameUrlComparator implements Comparator<Company,Attribute>{
         String url2 = normalizeURL ? StringPreprocessing.normalizeURL(record2.getUrl()) : record2.getUrl();
 
         Double simName = sim.calculate(name1, name2);
+        Double similarity;
 
         if (url1 == null || url2 == null){
-            return simName;
+            similarity = simName;
+        }else{
+
+            Double simURL = sim.calculate(url1, url2);
+
+            similarity = nameWeight * simName + urlWeight * simURL;
         }
 
+        if(this.comparisonLog != null){
+            this.comparisonLog.setComparatorName(getClass().getName());
         
-
-        Double simURL = sim.calculate(url1, url2);
-
-        return nameWeight * simName + urlWeight * simURL;
+            this.comparisonLog.setRecord1Value(record1.getName().toString());
+            this.comparisonLog.setRecord2Value(record2.getName().toString());
+        
+            this.comparisonLog.setSimilarity(Double.toString(similarity));
+        }
+        
+        return similarity;
     }
     
+    @Override
+	public ComparatorLogger getComparisonLog() {
+		return this.comparisonLog;
+	}
+
+	@Override
+	public void setComparisonLog(ComparatorLogger comparatorLog) {
+		this.comparisonLog = comparatorLog;
+	}
+
+
 }
