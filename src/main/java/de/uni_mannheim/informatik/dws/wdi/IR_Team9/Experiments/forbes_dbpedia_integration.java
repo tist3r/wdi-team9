@@ -50,7 +50,6 @@ public class forbes_dbpedia_integration {
         matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3), 0.3);
 
         
-
         // create a blocker (blocking strategy)
         //NoBlocker<Company, Attribute> blocker = new NoBlocker<>();
         StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
