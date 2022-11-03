@@ -43,6 +43,5 @@ public class CompanyNameComparatorLevenshtein implements Comparator<Company,Attr
 	public void setComparisonLog(ComparatorLogger comparatorLog) {
 		this.comparisonLog = comparatorLog;
 	}
-
     
 }

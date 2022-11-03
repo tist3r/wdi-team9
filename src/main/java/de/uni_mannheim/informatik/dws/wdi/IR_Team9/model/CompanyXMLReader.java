@@ -18,7 +18,8 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
 		Company company = new Company(id, provenanceInfo);
 
         // fill the attributes
-		company.setName(getValueFromChildElement(node, "Name"));
+        String name = getValueFromChildElement(node, "Name");
+		company.setName(name);
 		company.setUrl(getValueFromChildElement(node, "Domain"));
         company.setIndustries(getListFromChildElement(node, "Industries"));
 

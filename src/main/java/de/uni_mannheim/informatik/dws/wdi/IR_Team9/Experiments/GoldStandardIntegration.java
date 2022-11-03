@@ -27,7 +27,7 @@ public class GoldStandardIntegration{
     static String dbpediaPath = "data/input/dbpedia.xml";
     static String forbesPath = "data/input/Forbes_results.xml";
     static String dataworldPath = "data/input/dataworld_ts.xml";
-    static String kagglePath = "companies_shorted_results.xml";
+    static String kagglePath = "data/input/companies_shorted_results.xml";
 
     public void standardIntegration(String pathToDataSet1, String pathToDataSet2, MatchingRule<Company,Attribute> rule, Blocker<Company, Attribute, Company, Attribute> blocker, String outputPath) throws Exception{
         // loading data
@@ -55,9 +55,9 @@ public class GoldStandardIntegration{
 
 
     public static void main(String[] args) throws Exception{
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.75);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.75);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.75);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.7);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.7);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.7);
 
         matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3), 1);
         matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(), 1);
@@ -68,7 +68,6 @@ public class GoldStandardIntegration{
 
         GoldStandardIntegration gsi = new GoldStandardIntegration();
 
-        gsi.standardIntegration(dbpediaPath, forbesPath, matchingRule1, blocker, "data/output/gs/gs_dbpedia_forbes_jac.csv");
+        gsi.standardIntegration(forbesPath, kagglePath, matchingRule1, blocker, "data/output/gs/gs_forbes_kaggle_1.csv");
     }
-    
 }
