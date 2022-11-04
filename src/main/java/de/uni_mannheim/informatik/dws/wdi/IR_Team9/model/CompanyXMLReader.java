@@ -12,6 +12,8 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
 
     @Override
     public Company createModelFromElement(Node node, String provenanceInfo) {
+
+        
         String id = getValueFromChildElement(node, "ID");
 
         // create the object with id and provenance information

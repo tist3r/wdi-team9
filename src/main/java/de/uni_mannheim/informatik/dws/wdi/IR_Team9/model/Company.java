@@ -91,6 +91,8 @@ public class Company implements Matchable{
     }
 
     public String getName() {
+        //System.out.println(this.getId());
+        //if(this.name == null){System.out.println(this.getId());}
         return this.name;
     }
 

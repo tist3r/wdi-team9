@@ -8,6 +8,7 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyBy
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorLevenshtein;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
@@ -51,6 +52,7 @@ public class GoldStandardIntegration{
 
         // write the correspondences to the output file
 		new CSVCorrespondenceFormatter().writeCSV(new File(outputPath), correspondences);
+        new CompanyCSVCorrespondenceFormatter().writeCSV(new File("data/output/test.csv"), correspondences);
     }
 
 
@@ -68,6 +70,25 @@ public class GoldStandardIntegration{
 
         GoldStandardIntegration gsi = new GoldStandardIntegration();
 
-        gsi.standardIntegration(forbesPath, kagglePath, matchingRule1, blocker, "data/output/gs/gs_forbes_kaggle_1.csv");
+        String inPath;
+
+        // for (int i = 1; i <= 10; i++){
+        //     inPath = "data/input/test/kaggle_"+Integer.toString(i)+".xml";
+        //     gsi.standardIntegration(forbesPath, inPath, matchingRule3, blocker, "data/output/gs/gs_forbes_kaggle"+Integer.toString(i)+"_3.csv");
+        // }
+
+        gsi.standardIntegration(forbesPath, dbpediaPath, matchingRule3, blocker, "data/output/gs/gs_dbpedia_forbes_3.csv");
+
+        /*
+         * IDs without name:
+         * -Kaggle_192622 (1)
+         * -Kaggle_512292 (1)
+         * -Kaggle_2599908 (4)
+         */
+
+        
+
+
+
     }
 }

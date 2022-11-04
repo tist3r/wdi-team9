@@ -10,8 +10,14 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.processing.DataIterator;
 import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 
-public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerator<Company, Attribute>{
-    
+public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, Attribute>{
+
+    private Integer n;
+
+    public CompanyQgramBlocking(Integer n){
+        this.n = n;
+    }
+
     private static final long serialVersionUID = 1L;
 	/*
      * Blocking based on first letter of company name.     * 
@@ -19,10 +25,15 @@ public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerato
 	@Override
 	public void generateBlockingKeys(Company record, Processable<Correspondence<Attribute, Matchable>> correspondences, DataIterator<Pair<String, Company>> resultCollector) {
 		try{
-			String preprocessedName = StringPreprocessing.tokenBasicNormalization(record.getName(), "", false);
-			resultCollector.next(new Pair<>(preprocessedName.substring(0, 1), record));
+            String preprocessedName = StringPreprocessing.tokenBasicNormalization(record.getName(), "", false);
+
+            //TODO generate ngram
+
+			resultCollector.next(new Pair<>(record.getName().substring(0, 1), record));
 		}catch(NullPointerException e){
 			System.out.println("[Missing Name for ]"+record.getId());
 		}
+		
 	}
+    
 }
