@@ -16,4 +16,10 @@ public class CorrespondenceFile {
             case 3: this.sim3 = sim; break;
         }
     }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return id1 + id2;
+    }
 }

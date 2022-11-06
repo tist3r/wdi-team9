@@ -3,6 +3,9 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 
@@ -37,6 +40,7 @@ public class GoldStandardIntegration{
     static String forbesPath = "data/input/Forbes_results.xml";
     static String dataworldPath = "data/input/dataworld_ts.xml";
     static String kagglePath = "data/input/companies_shorted_results.xml";
+    private static HashMap<String, CorrespondenceFile> allSimilarities;
 
     public static void standardIntegration(String pathToDataSet1, String pathToDataSet2, MatchingRule<Company,Attribute> rule, Blocker<Company, Attribute, Company, Attribute> blocker, String outputName) throws Exception{
         // loading data
@@ -67,10 +71,11 @@ public class GoldStandardIntegration{
     /*
      * Method to read a single correspondence file and put the contents into a collection
      */
-    private static HashMap<String, CorrespondenceFile> readCorrespondenceFile(HashMap<String, CorrespondenceFile> correspondences, String path, Integer simId) throws Exception{
-               
+    private static void readCorrespondenceFile(Map<String, CorrespondenceFile> c, String path, Integer simId) {
+        System.out.println("[INFO ] reading correspondence file: " + path);
         try(CSVReader reader = new CSVReader(new FileReader(path))){
             for(String[] tokens : reader.readAll()){
+
                 CorrespondenceFile cf = new CorrespondenceFile();
                 cf.id1 = tokens[0];
                 cf.id2 = tokens[1];
@@ -80,15 +85,18 @@ public class GoldStandardIntegration{
 
                 String key = cf.id1 + cf.id2;
 
-                if (correspondences.containsKey(key)){
-                    correspondences.get(key).setSimAtID(simId, Double.parseDouble(tokens[3]));
+                //System.out.println(cf);
+
+                if (c.containsKey(key)){
+                    c.get(key).setSimAtID(simId, Double.parseDouble(tokens[2]));
+                } else{
+                    c.put(key, cf);
                 }
-
-                correspondences.put(key, cf);
             }
+        }catch (IOException e){
+            e.printStackTrace();
         }
-
-        return correspondences;
+        
     }
 
     /*
@@ -101,13 +109,14 @@ public class GoldStandardIntegration{
         String path2 = "data/output/namedgs/gs_"+source1+"_"+source2+"_2.csv";
         String path3 = "data/output/namedgs/gs_"+source1+"_"+source2+"_3.csv";
 
-        HashMap<String, CorrespondenceFile> correspondences = new HashMap<>();
+        Map<String, CorrespondenceFile> correspondences = new TreeMap<>();
 
-        correspondences = readCorrespondenceFile(correspondences, path1, 1);
-        correspondences = readCorrespondenceFile(correspondences, path2, 1);
-        correspondences = readCorrespondenceFile(correspondences, path3, 3);
+        readCorrespondenceFile(correspondences, path1, 1);
+        readCorrespondenceFile(correspondences, path2, 2);
+        readCorrespondenceFile(correspondences, path3, 3);
 
-        System.out.println(correspondences.size());
+        //System.out.println(correspondences.size());
+
 
         //write that out to a file again
         writeCombinedCSV(toPath, correspondences);
@@ -118,7 +127,7 @@ public class GoldStandardIntegration{
      * Writes a CSV containing all basic similarity scores.
      * 
      */
-    private static void writeCombinedCSV(String path, HashMap<String, CorrespondenceFile> correspondences) throws Exception{
+    private static void writeCombinedCSV(String path, Map<String, CorrespondenceFile> correspondences) throws Exception{
         try(CSVWriter writer = new CSVWriter(new FileWriter(path))){
 
             for (CorrespondenceFile cf: correspondences.values()) {
@@ -138,9 +147,9 @@ public class GoldStandardIntegration{
 
 
     public static void main(String[] args) throws Exception{
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.7);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.7);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.7);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.6);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.6);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.6);
 
         matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3), 1);
         matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(), 1);
@@ -154,11 +163,8 @@ public class GoldStandardIntegration{
         //     gsi.standardIntegration(forbesPath, inPath, matchingRule3, blocker, "data/output/gs/gs_forbes_kaggle"+Integer.toString(i)+"_3.csv");
         // }
 
-        //calculateAllSimilarities("dbpedia", "forbes", dbpediaPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-        makeCombinedCorrespondenceFile("dbpedia", "forbes", "data/output/combinedFiles/dbpedia_forbes.csv");
-
-
-
+        calculateAllSimilarities("dw", "forbes", dbpediaPath, dataworldPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+        makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes.csv");
 
         /*
          * IDs without name:
@@ -166,9 +172,6 @@ public class GoldStandardIntegration{
          * -Kaggle_512292 (1)
          * -Kaggle_2599908 (4)
          */
-
-        
-
 
 
     }
