@@ -65,7 +65,7 @@ public class SplitLargeXML {
         try (BufferedReader br = new BufferedReader(new FileReader(FILENAME, StandardCharsets.UTF_8))){
             String firstLine = br.readLine();
             String secondLine = br.readLine();
-            Integer lineLimit = 6000000;
+            Integer lineLimit = 2000000;
 
             createNewFile(br, "data/input/test/kaggle", 1, lineLimit, firstLine, secondLine, "");
 

@@ -140,9 +140,9 @@ public class GoldStandardIntegration{
 
 
     private static void calculateAllSimilarities(String source1, String source2, String path1, String path2, Blocker<Company, Attribute, Company, Attribute> blocker, MatchingRule<Company, Attribute> m1, MatchingRule<Company, Attribute> m2, MatchingRule<Company, Attribute> m3) throws Exception{
-        standardIntegration(forbesPath, dbpediaPath, m1, blocker, "gs_"+source1+"_"+source2+"_1");
-        standardIntegration(forbesPath, dbpediaPath, m2, blocker, "gs_"+source1+"_"+source2+"_2");
-        standardIntegration(forbesPath, dbpediaPath, m3, blocker, "gs_"+source1+"_"+source2+"_3");
+        standardIntegration(path1, path2, m1, blocker, "gs_"+source1+"_"+source2+"_1");
+        standardIntegration(path1, path2, m2, blocker, "gs_"+source1+"_"+source2+"_2");
+        standardIntegration(path1, path2, m3, blocker, "gs_"+source1+"_"+source2+"_3");
     }
 
 
@@ -158,13 +158,20 @@ public class GoldStandardIntegration{
 
         StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
 
-        // for (int i = 1; i <= 10; i++){
-        //     inPath = "data/input/test/kaggle_"+Integer.toString(i)+".xml";
-        //     gsi.standardIntegration(forbesPath, inPath, matchingRule3, blocker, "data/output/gs/gs_forbes_kaggle"+Integer.toString(i)+"_3.csv");
-        // }
+        String inPath;
+        String kaggleSource;
+        for (int i = 1; i <= 25; i++){
 
-        calculateAllSimilarities("dw", "forbes", dbpediaPath, dataworldPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-        makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes.csv");
+            kaggleSource = "kaggle_"+Integer.toString(i);
+            inPath = "data/input/test/"+kaggleSource+".xml";
+
+            calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+            makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
+        }
+
+        //for everything without kaggle
+        // calculateAllSimilarities("dbpedia", "dw", dbpediaPath, dataworldPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+        // makeCombinedCorrespondenceFile("dbpedia", "dw", "data/output/combinedFiles/dbpedia_dw.csv");
 
         /*
          * IDs without name:
