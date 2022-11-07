@@ -17,18 +17,32 @@ public class CompanyNameComparatorJaccardNgram implements Comparator<Company,Att
 
     private JaccardOnNGramsSimilarity sim;
     private ComparatorLogger comparisonLog;
+    private boolean rmFrequentTokens;
 
     public CompanyNameComparatorJaccardNgram(int n){
             //define Similarity measure
             this.sim = new JaccardOnNGramsSimilarity(n);
+            this.rmFrequentTokens = false;
+    }
+
+    public CompanyNameComparatorJaccardNgram(int n, boolean rmFrequentTokens){
+        this.sim = new JaccardOnNGramsSimilarity(n);
+        this.rmFrequentTokens = rmFrequentTokens;
     }
     
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
-        // Preprocessing
-        String name1 = StringPreprocessing.tokenBasicNormalization(record1.getName(), "", false);
-        String name2 = StringPreprocessing.tokenBasicNormalization(record2.getName(), "", false);
+        String name1 = record1.getName();
+        String name2 = record2.getName();
+        //preprocessing
+        if(this.rmFrequentTokens){
+            name1 = StringPreprocessing.removeFrequentToken(name1);
+            name2 = StringPreprocessing.removeFrequentToken(name2);
+        }
+
+        name1 = StringPreprocessing.tokenBasicNormalization(record1.getName(), "", false);
+        name2 = StringPreprocessing.tokenBasicNormalization(record2.getName(), "", false);
 
 
         Double similarity =  sim.calculate(name1,name2);
