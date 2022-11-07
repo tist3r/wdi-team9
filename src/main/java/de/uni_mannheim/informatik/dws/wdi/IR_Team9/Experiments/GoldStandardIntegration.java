@@ -9,11 +9,10 @@ import java.util.TreeMap;
 
 import org.slf4j.Logger;
 
-import com.github.andrewoma.dexx.collection.HashMap;
-
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyByNameGenerator;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorLevenshtein;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
@@ -30,9 +29,7 @@ import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.model.io.CSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.winter.processing.Processable;
-import de.uni_mannheim.informatik.dws.winter.processing.SysOutDatasetIterator;
 import de.uni_mannheim.informatik.dws.winter.utils.WinterLogManager;
-import weka.core.pmml.jaxbbindings.True;
 
 public class GoldStandardIntegration{
 
@@ -103,11 +100,11 @@ public class GoldStandardIntegration{
      * Read all correspondance files and write them to a combined one.
      */
     
-    public static void makeCombinedCorrespondenceFile(String source1, String source2, String toPath) throws Exception{
+    public static void makeCombinedCorrespondenceFile(String source1, String source2, String toPath, String blockerIndication) throws Exception{
         //read files
-        String path1 = "data/output/namedgs/gs_"+source1+"_"+source2+"_1.csv";
-        String path2 = "data/output/namedgs/gs_"+source1+"_"+source2+"_2.csv";
-        String path3 = "data/output/namedgs/gs_"+source1+"_"+source2+"_3.csv";
+        String path1 = "data/output/namedgs/gs_"+source1+"_"+source2+"_"+blockerIndication+"_1.csv";
+        String path2 = "data/output/namedgs/gs_"+source1+"_"+source2+"_"+blockerIndication+"_2.csv";
+        String path3 = "data/output/namedgs/gs_"+source1+"_"+source2+"_"+blockerIndication+"_3.csv";
 
         Map<String, CorrespondenceFile> correspondences = new TreeMap<>();
 
@@ -139,10 +136,19 @@ public class GoldStandardIntegration{
     }
 
 
-    private static void calculateAllSimilarities(String source1, String source2, String path1, String path2, Blocker<Company, Attribute, Company, Attribute> blocker, MatchingRule<Company, Attribute> m1, MatchingRule<Company, Attribute> m2, MatchingRule<Company, Attribute> m3) throws Exception{
-        standardIntegration(path1, path2, m1, blocker, "gs_"+source1+"_"+source2+"_1");
-        standardIntegration(path1, path2, m2, blocker, "gs_"+source1+"_"+source2+"_2");
-        standardIntegration(path1, path2, m3, blocker, "gs_"+source1+"_"+source2+"_3");
+    private static void calculateAllSimilarities(String source1, 
+                                                String source2,
+                                                String path1,
+                                                String path2,
+                                                Blocker<Company, Attribute, Company, Attribute> blocker,
+                                                MatchingRule<Company, Attribute> m1,
+                                                MatchingRule<Company, Attribute> m2,
+                                                MatchingRule<Company, Attribute> m3,
+                                                String blockerIndication)
+                                        throws Exception{
+        standardIntegration(path1, path2, m1, blocker, "gs_"+source1+"_"+source2+"_"+blockerIndication+"_1");
+        standardIntegration(path1, path2, m2, blocker, "gs_"+source1+"_"+source2+"_"+blockerIndication+"_2");
+        standardIntegration(path1, path2, m3, blocker, "gs_"+source1+"_"+source2+"_"+blockerIndication+"_3");
     }
 
 
@@ -158,24 +164,25 @@ public class GoldStandardIntegration{
         matchingRule3.addComparator(new CompanyNameComparatorLevenshtein(true), 0.5);
         matchingRule3.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.5);
 
-        StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
+        //StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
+
+        StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyQgramBlocking(3));
 
 
+        // String inPath;
+        // String kaggleSource;
+        // for (int i = 1; i <= 25; i++){
 
-        String inPath;
-        String kaggleSource;
-        for (int i = 1; i <= 25; i++){
+        //     kaggleSource = "kaggle_"+Integer.toString(i);
+        //     inPath = "data/input/test/"+kaggleSource+".xml";
 
-            kaggleSource = "kaggle_"+Integer.toString(i);
-            inPath = "data/input/test/"+kaggleSource+".xml";
-
-            calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-            makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
-        }
+        //     calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+        //     makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
+        // }
 
         //for everything without kaggle
-        // calculateAllSimilarities("dw", "forbes", dataworldPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-        // makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes.csv");
+        calculateAllSimilarities("dw", "forbes", dataworldPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3, "q");
+        makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes_q.csv", "q");
 
         /*
          * IDs without name:

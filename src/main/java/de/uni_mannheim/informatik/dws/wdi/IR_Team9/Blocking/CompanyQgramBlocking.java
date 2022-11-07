@@ -27,14 +27,21 @@ public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, At
 	@Override
 	public void generateBlockingKeys(Company record, Processable<Correspondence<Attribute, Matchable>> correspondences, DataIterator<Pair<String, Company>> resultCollector) {
 		try{
-            String preprocessedName = StringPreprocessing.removeFrequentToken(record.getName(), true)
+            String preprocessedName = StringPreprocessing.removeFrequentToken(record.getName(), true);
             preprocessedName = StringPreprocessing.tokenBasicNormalization(preprocessedName, "", false);
 
-            List<String> ngrams = StringPreprocessing.ngrams(3, preprocessedName);
+            List<String> ngrams = StringPreprocessing.ngrams(this.n, preprocessedName);
 
+            //add ngrams
             for(String ngram : ngrams){
                 resultCollector.next(new Pair<>(ngram, record));
             }
+
+            //add also starting character
+            if(!preprocessedName.equals("")){
+                resultCollector.next(new Pair<>(preprocessedName.substring(0,1), record));
+            }
+            
 			
 		}catch(NullPointerException e){
 			System.out.println("[Missing Name for ]"+record.getId());
