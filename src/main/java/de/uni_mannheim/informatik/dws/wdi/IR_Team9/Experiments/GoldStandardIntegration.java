@@ -32,6 +32,7 @@ import de.uni_mannheim.informatik.dws.winter.model.io.CSVCorrespondenceFormatter
 import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 import de.uni_mannheim.informatik.dws.winter.processing.SysOutDatasetIterator;
 import de.uni_mannheim.informatik.dws.winter.utils.WinterLogManager;
+import weka.core.pmml.jaxbbindings.True;
 
 public class GoldStandardIntegration{
 
@@ -150,27 +151,31 @@ public class GoldStandardIntegration{
         LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.5);
         LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.5);
 
-        matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3), 1);
-        matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(), 1);
-        matchingRule3.addComparator(new CompanyNameComparatorLevenshtein(), 0.5);
-        matchingRule3.addComparator(new CompanyNameComparatorJaccardNgram(3), 0.5);
+        matchingRule1.activateDebugReport("data/output/IR_forbes_dbpedia_debug.csv", 3000);
+
+        matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1);
+        matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(true), 1);
+        matchingRule3.addComparator(new CompanyNameComparatorLevenshtein(true), 0.5);
+        matchingRule3.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.5);
 
         StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
 
-        // String inPath;
-        // String kaggleSource;
-        // for (int i = 1; i <= 25; i++){
 
-        //     kaggleSource = "kaggle_"+Integer.toString(i);
-        //     inPath = "data/input/test/"+kaggleSource+".xml";
 
-        //     calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-        //     makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
-        // }
+        String inPath;
+        String kaggleSource;
+        for (int i = 1; i <= 25; i++){
+
+            kaggleSource = "kaggle_"+Integer.toString(i);
+            inPath = "data/input/test/"+kaggleSource+".xml";
+
+            calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+            makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
+        }
 
         //for everything without kaggle
-        calculateAllSimilarities("dbpedia", "dw", dbpediaPath, dataworldPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-        makeCombinedCorrespondenceFile("dbpedia", "dw", "data/output/combinedFiles/dbpedia_dw.csv");
+        // calculateAllSimilarities("dw", "forbes", dataworldPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+        // makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes.csv");
 
         /*
          * IDs without name:
