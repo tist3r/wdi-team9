@@ -1,5 +1,7 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class StringPreprocessing {
@@ -97,6 +99,20 @@ public class StringPreprocessing {
 
     public static String tokenBasicNormalization(String token, String exclude, boolean upper){
         return normalizeCase(removePunctuationWhitespaces(token, exclude), upper);
+    }
+
+    /*
+     * Taken from: https://www.educative.io/answers/how-to-generate-an-n-gram-in-java
+     */
+    public static List<String> ngrams(int n, String str) {
+        List<String> ngrams = new ArrayList<String>();
+        for (int i = 0; i < str.length() - n + 1; i++)
+            // Add the substring or size n
+            ngrams.add(str.substring(i, i + n));
+            // In each iteration, the window moves one step forward
+            // Hence, each n-gram is added to the list
+    
+        return ngrams;
     }
 
 
