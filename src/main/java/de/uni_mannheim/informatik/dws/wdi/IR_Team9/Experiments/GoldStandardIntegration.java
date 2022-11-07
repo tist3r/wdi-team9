@@ -40,7 +40,6 @@ public class GoldStandardIntegration{
     static String forbesPath = "data/input/Forbes_results.xml";
     static String dataworldPath = "data/input/dataworld_ts.xml";
     static String kagglePath = "data/input/companies_shorted_results.xml";
-    private static HashMap<String, CorrespondenceFile> allSimilarities;
 
     public static void standardIntegration(String pathToDataSet1, String pathToDataSet2, MatchingRule<Company,Attribute> rule, Blocker<Company, Attribute, Company, Attribute> blocker, String outputName) throws Exception{
         // loading data
@@ -147,9 +146,9 @@ public class GoldStandardIntegration{
 
 
     public static void main(String[] args) throws Exception{
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.6);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.6);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.6);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.5);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.5);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.5);
 
         matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3), 1);
         matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(), 1);
@@ -158,20 +157,20 @@ public class GoldStandardIntegration{
 
         StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
 
-        String inPath;
-        String kaggleSource;
-        for (int i = 1; i <= 25; i++){
+        // String inPath;
+        // String kaggleSource;
+        // for (int i = 1; i <= 25; i++){
 
-            kaggleSource = "kaggle_"+Integer.toString(i);
-            inPath = "data/input/test/"+kaggleSource+".xml";
+        //     kaggleSource = "kaggle_"+Integer.toString(i);
+        //     inPath = "data/input/test/"+kaggleSource+".xml";
 
-            calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-            makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
-        }
+        //     calculateAllSimilarities("dbpedia", kaggleSource, dbpediaPath, inPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+        //     makeCombinedCorrespondenceFile("dbpedia", kaggleSource, "data/output/combinedFiles/dbpedia_"+kaggleSource+".csv");
+        // }
 
         //for everything without kaggle
-        // calculateAllSimilarities("dbpedia", "dw", dbpediaPath, dataworldPath, blocker, matchingRule1, matchingRule2, matchingRule3);
-        // makeCombinedCorrespondenceFile("dbpedia", "dw", "data/output/combinedFiles/dbpedia_dw.csv");
+        calculateAllSimilarities("dbpedia", "dw", dbpediaPath, dataworldPath, blocker, matchingRule1, matchingRule2, matchingRule3);
+        makeCombinedCorrespondenceFile("dbpedia", "dw", "data/output/combinedFiles/dbpedia_dw.csv");
 
         /*
          * IDs without name:
