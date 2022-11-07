@@ -28,6 +28,7 @@ public class CompanyNameComparatorJaccardNgram implements Comparator<Company,Att
     public CompanyNameComparatorJaccardNgram(int n, boolean rmFrequentTokens){
         this.sim = new JaccardOnNGramsSimilarity(n);
         this.rmFrequentTokens = rmFrequentTokens;
+        System.out.println("[INFO ] Removing frequent tokens from JaccardNgramComparator");
     }
     
 
@@ -37,12 +38,14 @@ public class CompanyNameComparatorJaccardNgram implements Comparator<Company,Att
         String name2 = record2.getName();
         //preprocessing
         if(this.rmFrequentTokens){
-            name1 = StringPreprocessing.removeFrequentToken(name1);
-            name2 = StringPreprocessing.removeFrequentToken(name2);
+            name1 = StringPreprocessing.removeFrequentToken(name1, true);
+            name2 = StringPreprocessing.removeFrequentToken(name2, true);
         }
 
-        name1 = StringPreprocessing.tokenBasicNormalization(record1.getName(), "", false);
-        name2 = StringPreprocessing.tokenBasicNormalization(record2.getName(), "", false);
+        name1 = StringPreprocessing.tokenBasicNormalization(name1, "", false);
+        name2 = StringPreprocessing.tokenBasicNormalization(name2, "", false);
+
+        //System.out.println(name1 + " " + name2);
 
 
         Double similarity =  sim.calculate(name1,name2);
@@ -52,8 +55,11 @@ public class CompanyNameComparatorJaccardNgram implements Comparator<Company,Att
         if(this.comparisonLog != null){
 			this.comparisonLog.setComparatorName(getClass().getName());
 		
-			this.comparisonLog.setRecord1Value(record1.getName().toString());
-			this.comparisonLog.setRecord2Value(record2.getName().toString());
+			this.comparisonLog.setRecord1Value(record1.getName());
+			this.comparisonLog.setRecord2Value(record2.getName());
+
+            this.comparisonLog.setRecord1PreprocessedValue(name1);
+            this.comparisonLog.setRecord2PreprocessedValue(name2);
     	
 			this.comparisonLog.setSimilarity(Double.toString(similarity));
 		}

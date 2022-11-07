@@ -10,8 +10,9 @@ public class StringPreprocessing {
         "holding", "energy", "financial",
         "international", "industries", "inc", "incorporated",
         "corporation", "corp", "communications", "technologies",
-        "holding", "chemical", "motors", "the", "co",
-        "pharmaceutical", "ltd", "limited"
+        "holdings", "chemical", "motor", "motors", "the", "co",
+        "pharmaceutical", "pharmaceuticals", "ltd", "limited", 
+        "sa", "ag"
     };
 
     /** 
@@ -39,6 +40,15 @@ public class StringPreprocessing {
         return token.replaceAll(removeRegex, "");
     }
 
+    public static String removeFrequentToken(String s, boolean removePunctuation){
+        if(removePunctuation){
+            s = removePunctuation(s, "");
+        }
+
+        return removeFrequentToken(s);
+    }
+
+    
     public static String removeFrequentToken(String s){
         StringTokenizer tokenizer = new StringTokenizer(s);
         String token;
@@ -61,9 +71,6 @@ public class StringPreprocessing {
                 sb.append(" ");
             }
         }
-
-
-
         return sb.toString().trim();
 
     }
