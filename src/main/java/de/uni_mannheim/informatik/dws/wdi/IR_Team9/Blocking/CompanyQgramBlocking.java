@@ -1,5 +1,7 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking;
 
+import java.util.List;
+
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.StringPreprocessing;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.generators.RecordBlockingKeyGenerator;
@@ -25,11 +27,15 @@ public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, At
 	@Override
 	public void generateBlockingKeys(Company record, Processable<Correspondence<Attribute, Matchable>> correspondences, DataIterator<Pair<String, Company>> resultCollector) {
 		try{
-            String preprocessedName = StringPreprocessing.tokenBasicNormalization(record.getName(), "", false);
+            String preprocessedName = StringPreprocessing.removeFrequentToken(record.getName(), true)
+            preprocessedName = StringPreprocessing.tokenBasicNormalization(preprocessedName, "", false);
 
-            //TODO generate ngram
+            List<String> ngrams = StringPreprocessing.ngrams(3, preprocessedName);
 
-			resultCollector.next(new Pair<>(record.getName().substring(0, 1), record));
+            for(String ngram : ngrams){
+                resultCollector.next(new Pair<>(ngram, record));
+            }
+			
 		}catch(NullPointerException e){
 			System.out.println("[Missing Name for ]"+record.getId());
 		}
