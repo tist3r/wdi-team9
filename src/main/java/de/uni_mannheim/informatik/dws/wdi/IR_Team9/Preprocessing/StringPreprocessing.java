@@ -1,6 +1,18 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing;
 
+import java.util.StringTokenizer;
+
 public class StringPreprocessing {
+
+
+    static String[] FREQUENT_TOKENS = {
+        "bank", "group", "of", "and",
+        "holding", "energy", "financial",
+        "international", "industries", "inc", "incorporated",
+        "corporation", "corp", "communications", "technologies",
+        "holding", "chemical", "motors", "the", "co",
+        "pharmaceutical", "ltd", "limited"
+    };
 
     /** 
      * @param token the token that is to be nomralized
@@ -17,8 +29,43 @@ public class StringPreprocessing {
     }
 
     public static String removePunctuation(String token, String exclude){
-        String removeRegex = "[\\p{Punct}&&[^"+exclude+"]]";
+        String removeRegex = "[\\p{Punct}]";
+
+        if (!exclude.matches("")){
+            //TODO improve performance
+            removeRegex = "[\\p{Punct}&&[^"+exclude+"]]";
+        }
+
         return token.replaceAll(removeRegex, "");
+    }
+
+    public static String removeFrequentToken(String s){
+        StringTokenizer tokenizer = new StringTokenizer(s);
+        String token;
+        StringBuffer sb = new StringBuffer();
+        boolean isFrequentToken;
+        
+        while(tokenizer.hasMoreTokens()){
+            isFrequentToken = false;
+            token = tokenizer.nextToken();
+
+            for(String ft : FREQUENT_TOKENS){
+                if(ft.equalsIgnoreCase(token)){
+                    isFrequentToken = true;
+                    break;
+                }
+            }
+
+            if(!isFrequentToken){
+                sb.append(token);
+                sb.append(" ");
+            }
+        }
+
+
+
+        return sb.toString().trim();
+
     }
 
     public static String removeWhitespaces(String token){
