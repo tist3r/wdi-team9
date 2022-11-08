@@ -58,6 +58,7 @@ public class IR_using_machine_learning {
 		
 		// load the training set
 		LabeledMatchingGoldStandard gsTraining = new LabeledMatchingGoldStandard();
+		System.out.println("[INFO ] Loading Train Data");
 		gsTraining.loadFromCSVFile(new File(Constants.getTrainData("dbpedia", "forbes")));
 
 		// create a matching rule
@@ -100,7 +101,8 @@ public class IR_using_machine_learning {
 
 		// load the gold standard (test set)
 		logger.info("*\tLoading gold standard\t*");
-		MatchingGoldStandard gsTest = new MatchingGoldStandard();
+		LabeledMatchingGoldStandard gsTest = new LabeledMatchingGoldStandard();
+		System.out.println("[INFO ] Loading Test Data");
 		gsTest.loadFromCSVFile(new File(Constants.getTestData("dbpedia", "forbes")));
 		
 		// evaluate your result
@@ -109,7 +111,7 @@ public class IR_using_machine_learning {
 		Performance perfTest = evaluator.evaluateMatching(correspondences, gsTest);
 		
 		// print the evaluation result
-		logger.info("Academy Awards <-> Actors");
+		logger.info("Company Test set evaluation");
 		logger.info(String.format(
 				"Precision: %.4f",perfTest.getPrecision()));
 		logger.info(String.format(
