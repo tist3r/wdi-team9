@@ -1,8 +1,7 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.StringPreprocessing;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
-import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.Comparator;
-import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.ComparatorLogger;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
@@ -11,38 +10,38 @@ import de.uni_mannheim.informatik.dws.winter.similarity.string.TokenizingJaccard
 /*
  *For additional information on Similarity Measures in Winter refer to: https://github.com/olehmberg/winter/wiki/SimilarityMeasures 
  */
-public class CompanyNameComparatorJaccardToken implements Comparator<Company,Attribute>{
+public class CompanyNameComparatorJaccardToken extends AbstractT9Comparator{
 
     //define Similarity measure
     private TokenizingJaccardSimilarity sim = new TokenizingJaccardSimilarity();
-    private ComparatorLogger comparisonLog;
+
+	public CompanyNameComparatorJaccardToken(float postProcessingThresh, boolean rmFrequentTokens) {
+		this.postProcessingThresh = postProcessingThresh;
+		this.rmFrequentTokens = rmFrequentTokens;
+	}
+
+	public CompanyNameComparatorJaccardToken() {
+	}
+	
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
-        // Preprocessing is done by the TokenizingJAccardSImilarity Class
-        Double similarity = sim.calculate(record1.getName(), record2.getName());
+		String name1 = record1.getName();
+        String name2 = record2.getName();
+        
+		//preprocessing
+        if(this.rmFrequentTokens){
+            name1 = StringPreprocessing.removeFrequentToken(name1, true);
+            name2 = StringPreprocessing.removeFrequentToken(name2, true);
+        }
 
-        if(this.comparisonLog != null){
-			this.comparisonLog.setComparatorName(getClass().getName());
-		
-			this.comparisonLog.setRecord1Value(record1.getName().toString());
-			this.comparisonLog.setRecord2Value(record2.getName().toString());
-    	
-			this.comparisonLog.setSimilarity(Double.toString(similarity));
-		}
+        // Further preprocessing is done by the TokenizingJAccardSImilarity Class
+        Double similarity = sim.calculate(name1, name2);
 
-        return similarity;
-    }
+		Double postProcessedSimilarity = this.getPostProcessedSim(similarity);
 
-    @Override
-	public ComparatorLogger getComparisonLog() {
-		return this.comparisonLog;
-	}
+		this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
-	@Override
-	public void setComparisonLog(ComparatorLogger comparatorLog) {
-		this.comparisonLog = comparatorLog;
-	}
-
-    
+        return postProcessedSimilarity;
+    }   
 }
