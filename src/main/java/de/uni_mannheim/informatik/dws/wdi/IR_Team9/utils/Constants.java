@@ -12,7 +12,7 @@ import org.apache.jena.tdb.base.file.FileException;
 
 public class Constants {
 
-    public static final String recordPath = "/Companies/Company";
+    public static final String RECORD_PATH = "/Companies/Company";
 
     private static String kaggleBasePath = "data/input/test/";
     private static Integer maxKaggleId = getMaxKaggleID();
@@ -36,7 +36,7 @@ public class Constants {
         return kaggleBasePath + "kaggle_" +Integer.toString(id) + ".xml";
     }
 
-    private static Integer getMaxKaggleID(){
+    public static Integer getMaxKaggleID(){
         //thanks to: https://www.baeldung.com/java-list-directory-files
         
         Integer maxID = Stream.of(new File(kaggleBasePath).listFiles())

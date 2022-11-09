@@ -7,6 +7,25 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ClosedDirectoryStreamException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+
+import au.com.bytecode.opencsv.CSVReader;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
+import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
+import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.LinearCombinationMatchingRule;
+import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
+import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
+import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
+import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 
 public class SplitLargeXML {
 
@@ -55,124 +74,171 @@ public class SplitLargeXML {
                 bw.write("</Companies>");
             }  
         }
+    }
 
+    public static void splitXML(String inFile, String outPath, String filenameRoot, Integer lineLimit) throws Exception{
+        try (BufferedReader br = new BufferedReader(new FileReader(inFile, StandardCharsets.UTF_8))){
+            String firstLine = br.readLine();
+            String secondLine = br.readLine();
+
+            createNewFile(br, outPath+filenameRoot, 1, lineLimit, firstLine, secondLine, "");
+        }
+    }
+
+    public static Set<String> getDeduplicatedMathchesFromSource(String path, int idCol) throws Exception{
+        HashSet<String> dedupIDs = new HashSet<>();
+        try(CSVReader reader = new CSVReader(new FileReader(path))){
+            String id;
+
+            for(String[] line : reader.readAll()){
+                id = line[idCol];
+                dedupIDs.add(id);
+            }
+        }
+
+        return dedupIDs;
+    }
+
+    public static void removeNonMatchesFromInputFile(String sourcePath, String corrPath, int sourceIDcol, String toPath) throws Exception{
+        //if exists source path, take correspondences from there otherwise run IR
+        System.out.println("[INFO ] Removing probable non-matches ...");
+        if (Files.exists(Paths.get(corrPath))){
+            Set<String> dedupIDs = getDeduplicatedMathchesFromSource(corrPath, sourceIDcol);
+
+            System.out.println(String.format("[INFO ] got deduplicated set of size %d", dedupIDs.size()));
+
+            //go through source and only keep elements with ID in this set
+            try(BufferedReader br = new BufferedReader(new FileReader(sourcePath, StandardCharsets.UTF_8))){
+                try(BufferedWriter bw = new BufferedWriter(new FileWriter(toPath, StandardCharsets.UTF_8))){
+                    bw.write(br.readLine()); //first line
+                    bw.newLine();
+                    bw.write(br.readLine()); //root element
+                    bw.newLine();
+
+                    String openingTag = "<Company>";
+
+                    String line;
+                    String id;
+                    boolean writeTillClosingTag = false;
+                    while((line = br.readLine()) != null){
+
+                        if(writeTillClosingTag){
+                            bw.write(line);
+                            bw.newLine();
+                            writeTillClosingTag = !line.trim().matches("</Company>");
+                        }      
+                        else if (line.trim().matches("<ID>.*</ID>")){
+                            id = line.substring(line.indexOf(">")+1, line.lastIndexOf("<"));
+                            if(dedupIDs.contains(id)){
+                                writeTillClosingTag = true;
+                                bw.write(openingTag);
+                                bw.newLine();
+                                bw.write(line);
+                                bw.newLine();
+                            }
+                        }
+                    }
+
+                    bw.write("</Companies>");
+                }
+            }
+
+        }
 
 
     }
 
+    /**
+     * 
+     * @param ds1 combined dataset of dw, forbes, dbpedia
+     * @param ds2 kaggle partitioned dataset
+     * @param fileID kaggle partition id
+     * @param corrPathRoot path root for reduction correspondence files
+     * @param toPath path to write the reduced XML to
+     * @throws Exception
+     */
+    public static void reduceKaggleXML(HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2,
+        Integer fileID, String corrPathRoot, 
+        String toPath) throws Exception{
+
+            String corrPath = String.format("%s%d.csv", corrPathRoot, fileID); //e.g. "data/output/reducedKaggleSet/1.csv"
+
+            if (Files.exists(Paths.get(corrPath))){ //IR has already been run
+                removeNonMatchesFromInputFile(Constants.getKagglePath(fileID), corrPath, 1, toPath);
+            }
+            
+            else{// run IR
+                runBasicIR(ds1, ds2, corrPath);
+                removeNonMatchesFromInputFile(Constants.getKagglePath(fileID), corrPath, 1, toPath);
+            }
+    }
+
+    /**
+     * Runs basic IR with low threshhold to identify propably non-matching pairs that can be reduced from the input
+     * 
+     * @param ds1
+     * @param ds2
+     * @param toPath
+     * @throws Exception
+     */
+    public static void runBasicIR(HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, String toPath) throws Exception{
+        System.out.println("[INFO ] Running basic IR ...");
+        
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule = new LinearCombinationMatchingRule<>(0.3);
+
+        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1);
+
+        StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyQgramBlocking(4));
+
+        //--------
+        //Identity Resolution
+        //--------
+        
+        // Initialize Matching Engine
+        MatchingEngine<Company, Attribute> engine = new MatchingEngine<>();
+
+        //Execute the matching
+		Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(ds1, ds2, null, matchingRule, blocker);
+
+        // write the correspondences to the output file
+        new CompanyCSVCorrespondenceFormatter().writeCSV(new File(toPath), correspondences);
+    }
+
+
+
     public static void main(String[] args) throws Exception{
 
-        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME, StandardCharsets.UTF_8))){
-            String firstLine = br.readLine();
-            String secondLine = br.readLine();
-            Integer lineLimit = 2000000;
+        // Integer lineLimit = 1000000;
 
-            createNewFile(br, "data/input/test/kaggle", 1, lineLimit, firstLine, secondLine, "");
+        // splitXML(FILENAME, "data/input/test/", "kaggle", lineLimit);
 
+        //Load all but Kaggle Datasets
+        HashedDataSet<Company, Attribute> allCompanies = new HashedDataSet<>();
+		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.RECORD_PATH, allCompanies);
+		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.RECORD_PATH, allCompanies);
+        new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dw")), Constants.RECORD_PATH, allCompanies);
+
+
+        //Run a basic similarity function and only keep Kaggle entries that have at least 40% match
+        HashedDataSet<Company, Attribute> kaggle;
+        CompanyXMLReader cr = new CompanyXMLReader();
+		
+
+        
+        //removeNonMatchesFromInputFile("data/input/test/kaggle_1.xml", "data/output/reducedKaggleSet/1.csv", 1, "data/output/reducedKaggleSet/kaggle_1_red.xml");
+        String toPath;
+        for(int i = 1; i <= Constants.getMaxKaggleID(); i++){
+            System.out.println("[INFO ] Reducing file " + Constants.getDatasetPath("kaggle", i));
+
+            kaggle = new HashedDataSet<>();
+            cr.loadFromXML(new File(Constants.getDatasetPath("kaggle", i)), Constants.RECORD_PATH, kaggle);
+
+            toPath = String.format("data/output/reducedKaggleSet/kaggle_%d_red.xml", i);
+
+            reduceKaggleXML(allCompanies, kaggle, i, "data/output/reducedKaggleSet/", toPath);
         }
-
-        // File file1 = new File("data/input/kaggle_1.xml");
-        // File file2 = new File("data/input/kaggle_2.xml");
-        // File file3 = new File("data/input/kaggle_3.xml");
-        // File file4 = new File("data/input/kaggle_4.xml");
-
-        // if (!file1.exists()) {
-        //     file1.createNewFile();
-        //  }
-
-        //  if (!file2.exists()) {
-        //     file2.createNewFile();
-        //  }
-
-        //  if (!file3.exists()) {
-        //     file3.createNewFile();
-        //  }
-        //  if (!file4.exists()) {
-        //     file4.createNewFile();
-        //  }
-
-        // try (BufferedReader br = new BufferedReader(new FileReader(FILENAME, StandardCharsets.UTF_8))){
-
-        //     try(BufferedWriter bw1 = new BufferedWriter(new FileWriter(file1, StandardCharsets.UTF_8))){
-        //         try(BufferedWriter bw2 = new BufferedWriter(new FileWriter(file2, StandardCharsets.UTF_8))){
-        //             try(BufferedWriter bw3 = new BufferedWriter(new FileWriter(file3, StandardCharsets.UTF_8))){
-        //                 try(BufferedWriter bw4 = new BufferedWriter(new FileWriter(file4, StandardCharsets.UTF_8))){
-        //                 String line;
-        //                 Integer row = 0;
-            
-        //                 String header = br.readLine(); //first line
-        //                 String openingTag = br.readLine(); //secondLine
-        //                 String closingTag = "</Companies>";
-        //                 boolean closedCompanyTag1 = false;
-        //                 boolean closedCompanyTag2 = false;
-        //                 boolean closedCompanyTag3 = false;
-
-        //                 bw1.write(header);
-        //                 bw1.newLine();
-        //                 bw1.write(openingTag);
-        //                 bw1.newLine();
-
-        //                 bw2.write(header);
-        //                 bw2.newLine();
-        //                 bw2.write(openingTag);
-        //                 bw2.newLine();
-
-        //                 bw3.write(header);
-        //                 bw3.newLine();
-        //                 bw3.write(openingTag);
-        //                 bw3.newLine();
-
-        //                 bw4.write(header);
-        //                 bw4.newLine();
-        //                 bw4.write(openingTag);
-        //                 bw4.newLine();
-
-                        
-        //                 while((line = br.readLine()) != null){
-        //                     if(row%1000000 == 0){
-        //                         System.out.println(row);
-        //                     }
-
-        //                     if(row < 25000000 || !closedCompanyTag1){
-        //                         bw1.write(line);
-        //                         bw1.newLine();
-
-        //                         if(row >= 25000000){
-        //                             closedCompanyTag1 = line.contains("</Company>");
-        //                         }
-        //                     }
-        //                     else if(row < 50000000 || !closedCompanyTag2){
-        //                             bw2.write(line);
-        //                             bw2.newLine();
         
-        //                             if(row >= 50000000){
-        //                                 closedCompanyTag2 = line.contains("</Company>");
-        //                             }
-        //                     }
-        //                     else if(row < 75000000 || !closedCompanyTag3){
-        //                         bw3.write(line);
-        //                         bw3.newLine();
-    
-        //                         if(row >= 75000000){
-        //                             closedCompanyTag3 = line.contains("</Company>");
-        //                         }
-        //                 }
-        //                     else{
-        //                         bw4.write(line);
-        //                         bw4.newLine();      
-        //                     }
 
-        //                     row++;
-        //                 }
-
-        //                 bw1.write(closingTag); 
-        //                 bw2.write(closingTag);
-        //                 }}}}
-       
-
-        // }
-
-        
     }
 
 }

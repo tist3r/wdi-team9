@@ -50,11 +50,11 @@ public class IR_using_machine_learning {
 		// loading data
 		logger.info("*\tLoading datasets\t*");
 		HashedDataSet<Company, Attribute> dbpedia = new HashedDataSet<>();
-		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.recordPath, dbpedia);
+		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.RECORD_PATH, dbpedia);
 
 
 		HashedDataSet<Company, Attribute> forbes = new HashedDataSet<>();
-		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.recordPath, forbes);
+		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.RECORD_PATH, forbes);
 		
 		// load the training set
 		MatchingGoldStandard gsTraining = new MatchingGoldStandard();

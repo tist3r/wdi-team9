@@ -30,7 +30,8 @@
             "name": "Launch SplitLargeXML",
             "request": "launch",
             "mainClass": "de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.SplitLargeXML",
-            "projectName": "ExerciseIdentityResolution"
+            "projectName": "ExerciseIdentityResolution",
+            "vmArgs": "-Xmx8g"
         },
         {
             "type": "java",
