@@ -57,7 +57,7 @@ public class IR_using_machine_learning {
 		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.recordPath, forbes);
 		
 		// load the training set
-		LabeledMatchingGoldStandard gsTraining = new LabeledMatchingGoldStandard();
+		MatchingGoldStandard gsTraining = new MatchingGoldStandard();
 		System.out.println("[INFO ] Loading Train Data");
 		gsTraining.loadFromCSVFile(new File(Constants.getTrainData("dbpedia", "forbes")));
 
@@ -68,13 +68,13 @@ public class IR_using_machine_learning {
 		matchingRule.activateDebugReport("data/output/debugResultsMatchingRule.csv", 1000, gsTraining);
 		
 		// add comparators
-        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, true));
-        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, false));
-        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(4, true));
-        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(4, false));
-        matchingRule.addComparator(new CompanyNameComparatorLevenshtein(true));
-        matchingRule.addComparator(new CompanyNameComparatorLevenshtein(false));
-        matchingRule.addComparator(new CompanyNameComparatorJaccardToken());
+        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.55f));
+        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, false, 0.55f));
+        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(4, true, 0.55f));
+        matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(4, false, 0.55f));
+        matchingRule.addComparator(new CompanyNameComparatorLevenshtein(true,0.55f));
+        matchingRule.addComparator(new CompanyNameComparatorLevenshtein(false,0.55f));
+        matchingRule.addComparator(new CompanyNameComparatorJaccardToken(0.4f, false));
 		
 		// train the matching rule's model
 		logger.info("*\tLearning matching rule\t*");
@@ -101,7 +101,7 @@ public class IR_using_machine_learning {
 
 		// load the gold standard (test set)
 		logger.info("*\tLoading gold standard\t*");
-		LabeledMatchingGoldStandard gsTest = new LabeledMatchingGoldStandard();
+		MatchingGoldStandard gsTest = new MatchingGoldStandard();
 		System.out.println("[INFO ] Loading Test Data");
 		gsTest.loadFromCSVFile(new File(Constants.getTestData("dbpedia", "forbes")));
 		
@@ -109,6 +109,9 @@ public class IR_using_machine_learning {
 		logger.info("*\tEvaluating result\t*");
 		MatchingEvaluator<Company, Attribute> evaluator = new MatchingEvaluator<Company, Attribute>();
 		Performance perfTest = evaluator.evaluateMatching(correspondences, gsTest);
+
+		evaluator.writeEvaluation(new File("data/output/evaluation"), correspondences, gsTest);
+
 		
 		// print the evaluation result
 		logger.info("Company Test set evaluation");
