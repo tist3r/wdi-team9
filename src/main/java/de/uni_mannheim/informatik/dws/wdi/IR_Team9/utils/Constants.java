@@ -95,6 +95,36 @@ public class Constants {
         throw new KeyException(String.format("Invalid dataset key %s, %s or wrong order of sources", source1, source2));
     }
 
+    public static String getExperimentLogPath(){
+        return "data/output/experiments/experiment_log.csv";
+    }
+
+    public static String getExperimentBasicCorrPath(String ds1, String ds2, int experiment_id){
+        return String.format("%s%s_%s_corr.csv", getExperimentRootPath(experiment_id), ds1, ds2);
+    }
+
+    public static String getExperimentCompanyCorrPath(String ds1, String ds2, int experiment_id){
+        return String.format("%s%s_%s_corr_w_names.csv", getExperimentRootPath(experiment_id), ds1, ds2);
+    }
+
+    /**
+     * 
+     * @param experiment_id
+     * @param train_test Specifiy either "test" or "train"
+     * @return
+     */
+    public static String getExperimentEvaluationFilePath(int experiment_id, String train_test){
+        return String.format("%seval_%s.csv", getExperimentRootPath(experiment_id),train_test);
+    }
+
+    public static String getExperimentRootPath(int experiment_id){
+        return String.format("data/output/experiments/%d/", experiment_id);
+    }
+
+    public static String getExperimentBlockSizePath(int experiment_id){
+        return String.format("%sblockSizeInfo.csv", getExperimentRootPath(experiment_id));
+    }
+
     // public static void main(String[] args) throws Exception{
     //     System.out.println(getTrainData("dbpedia", "dw"));
     // }
