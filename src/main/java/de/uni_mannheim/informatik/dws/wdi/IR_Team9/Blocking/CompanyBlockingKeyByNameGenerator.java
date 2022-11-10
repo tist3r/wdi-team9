@@ -13,16 +13,39 @@ import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerator<Company, Attribute>{
     
     private static final long serialVersionUID = 1L;
+
+	private boolean basicNormalization = false;
+	private boolean removeFrequentTokens = false;
+
+
+	public CompanyBlockingKeyByNameGenerator() {
+	}
+
+
+	public CompanyBlockingKeyByNameGenerator(Boolean basicNormalization, Boolean removeFrequentTokens) {
+		this.basicNormalization = basicNormalization;
+		this.removeFrequentTokens = removeFrequentTokens;
+	}
+	
+
 	/*
      * Blocking based on first letter of company name.     * 
      */
 	@Override
 	public void generateBlockingKeys(Company record, Processable<Correspondence<Attribute, Matchable>> correspondences, DataIterator<Pair<String, Company>> resultCollector) {
 		try{
-			String preprocessedName = StringPreprocessing.tokenBasicNormalization(record.getName(), "", false);
+			String preprocessedName = record.getName();
+			if(this.removeFrequentTokens){
+				preprocessedName = StringPreprocessing.removeFrequentToken(preprocessedName, true);
+			}
+			if(this.basicNormalization){
+				preprocessedName = StringPreprocessing.tokenBasicNormalization(preprocessedName, "", false);
+			}
+
 			resultCollector.next(new Pair<>(preprocessedName.substring(0, 1), record));
+
 		}catch(NullPointerException e){
-			System.out.println("[Missing Name for ]"+record.getId());
+			System.out.println(String.format("[ERROR ] Missing Name for %s - skipping...",record.getId()));
 		}
 	}
 }
