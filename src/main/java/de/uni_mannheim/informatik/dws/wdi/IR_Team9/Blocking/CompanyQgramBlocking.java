@@ -40,6 +40,8 @@ public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, At
             //add also starting character
             if(!preprocessedName.equals("")){
                 resultCollector.next(new Pair<>(preprocessedName.substring(0,1), record));
+            }else{
+                resultCollector.next(new Pair<>(StringPreprocessing.tokenBasicNormalization(record.getName(), "", false).substring(0,1), record));
             }
             
 			
