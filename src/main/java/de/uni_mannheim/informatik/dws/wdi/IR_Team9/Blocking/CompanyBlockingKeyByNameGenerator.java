@@ -42,7 +42,13 @@ public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerato
 				preprocessedName = StringPreprocessing.tokenBasicNormalization(preprocessedName, "", false);
 			}
 
-			resultCollector.next(new Pair<>(preprocessedName.substring(0, 1), record));
+			if(preprocessedName.length()>0){
+				resultCollector.next(new Pair<>(preprocessedName.substring(0, 1), record));
+			}else{
+				resultCollector.next(new Pair<>(record.getName().toLowerCase().substring(0, 1), record));
+			}
+
+			
 
 		}catch(NullPointerException e){
 			System.out.println(String.format("[ERROR ] Missing Name for %s - skipping...",record.getId()));
