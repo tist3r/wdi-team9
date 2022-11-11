@@ -1,13 +1,8 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 
-import de.uni_mannheim.informatik.dws.winter.matching.rules.LinearCombinationMatchingRule;
-import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
+
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
-import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class Experiment1 extends AbstractExperiment{
 
