@@ -10,9 +10,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.jena.sparql.sse.builders.BuildException;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
@@ -21,10 +19,6 @@ import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEvaluator;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.AbstractBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
-import de.uni_mannheim.informatik.dws.winter.matching.blockers.SortedNeighbourhoodBlocker;
-import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardBlocker;
-import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
-import de.uni_mannheim.informatik.dws.winter.matching.rules.LinearCombinationMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
@@ -35,24 +29,24 @@ import de.uni_mannheim.informatik.dws.winter.model.io.CSVCorrespondenceFormatter
 import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 import de.uni_mannheim.informatik.dws.winter.utils.WinterLogManager;
 
-public class AbstractExperiment {
+public abstract class AbstractExperiment {
 
     static final Logger logger = WinterLogManager.activateLogger("default");
     static final CompanyXMLReader cr = new CompanyXMLReader();
     static final CompanyCSVCorrespondenceFormatter companyCorrWriter = new CompanyCSVCorrespondenceFormatter();
     static final CSVCorrespondenceFormatter basicCorrWriter = new CSVCorrespondenceFormatter();
     static final MatchingEvaluator<Company, Attribute> evaluator = new MatchingEvaluator<Company, Attribute>();
+    static final MatchingEngine<Company,Attribute> engine = new MatchingEngine<>();
 
-    
-    static boolean addedMatchingRule = false;
-    static boolean addedBlocker = false;
-    static MatchingRule<Company, Attribute> rule;
-    static MatchingEngine<Company,Attribute> engine;
-    static Blocker<Company, Attribute, Company, Attribute> blocker;
+    boolean addedMatchingRule = false;
+    boolean addedBlocker = false;
 
-    static Integer EXPERIMENT_ID; //to be set in the subclasses
-    static Integer MATCHING_RULE_ID; //to be set in the subclasses
-    static Integer BLOCKER_ID; //to be set in the subclasses
+    MatchingRule<Company, Attribute> rule;
+    Blocker<Company, Attribute, Company, Attribute> blocker;
+
+    Integer EXPERIMENT_ID; //to be set in the subclasses
+    Integer MATCHING_RULE_ID; //to be set in the subclasses
+    Integer BLOCKER_ID; //to be set in the subclasses
     
     String ds1Name;
     String ds2Name;
@@ -69,9 +63,10 @@ public class AbstractExperiment {
     int blockedPairs;
     
 
-    public AbstractExperiment(String ds1Name, String ds2Name) throws Exception{
+    public AbstractExperiment(String ds1Name, String ds2Name, int experimentID) throws Exception{
         this.ds1Name = ds1Name;
         this.ds2Name = ds2Name;
+        this.EXPERIMENT_ID = experimentID;
         this.loadData(ds1Name, ds2Name);
     }
 
@@ -81,41 +76,46 @@ public class AbstractExperiment {
     void loadData(String ds1Name, String ds2Name) throws Exception{
         // loading data
         logger.info("*\tLoading datasets\t*");
-        ds1 = new HashedDataSet<>();
+        this.ds1 = new HashedDataSet<>();
         cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
 
 
-        ds2 = new HashedDataSet<>();
+        this.ds2 = new HashedDataSet<>();
         cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
         this.loadedDatasets = true;
     }
+
+    void initializeExperiment(){
+        this.setupBlocker();
+        this.setupMatchingRule();
+    };
 
     /**
      * This method should be overwritten in the subclass.
      * After Matching rule has been set, super method has to be called and addedMAtchingRule Flag should be put to true.
      */
-    static void setupMatchingRule(){
+    void setupMatchingRule(){
         logger.info("*\tadding matching rule\t*");
         //matchingRule.activateDebugReport(..., 1000);
 
-        addedMatchingRule = true;
+        this.addedMatchingRule = true;
     }
 
     /**
      * This method should be overwritten in the subclass.
      * After Matching rule has been set, super method has to be called and addedBlocker Flag should be put to true.
      */
-    static void setupBlocker(){
+    void setupBlocker(){
         logger.info("*\tadding blocker\t*");
 
         if(blocker instanceof AbstractBlocker){
-            AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker) blocker;
+            AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker<Company,Attribute,Attribute>) blocker;
             b.collectBlockSizeData(Constants.getExperimentBlockSizePath(EXPERIMENT_ID), 2000);
         }else{
             logger.info("can't collect block size data ...");
         }
 
-        addedBlocker = true;
+        this.addedBlocker = true;
     }
 
 
@@ -126,7 +126,7 @@ public class AbstractExperiment {
         this.start = LocalDateTime.now();
         logger.info("*\tRunning identity resolution\t*");
 
-        Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(ds1, ds2, null, rule, blocker);
+        Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(this.ds1, this.ds2, null, this.rule, this.blocker);
         this.noCorrespondences = correspondences.size();
 
         basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, EXPERIMENT_ID)), correspondences);
@@ -143,6 +143,9 @@ public class AbstractExperiment {
             Processable<Correspondence<Company, Attribute>> correspondences = this.runIdentityResolution();
             this.evaluateMatching(correspondences);
             this.evaluateBlocker();
+
+            //append to file
+            ExperimentWriter.appendToExperimentCSV(this);
 
             return correspondences;
 
@@ -162,7 +165,7 @@ public class AbstractExperiment {
             //Load Test data
             gs.loadFromCSVFile(new File(Constants.getTestData(this.ds1Name, this.ds2Name)));
             this.perfTest = evaluator.evaluateMatching(correspondences, this.gs);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "train")), correspondences, this.gs);
+            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "test")), correspondences, this.gs);
 
         }catch(IOException e){
             System.out.println("[WARNING ] could not write evaluation file ...");
@@ -176,11 +179,16 @@ public class AbstractExperiment {
 
     void evaluateBlocker(){
         //reduction ration + blocker info
-        this.reductionRatio = blocker.getReductionRatio();
+        this.reductionRatio = this.blocker.getReductionRatio();
 
         if(blocker instanceof AbstractBlocker){
-            AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker) blocker;
-            this.blockedPairs = b.getBlockedPairs().size();
+            AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker<Company,Attribute,Attribute>) this.blocker;
+            if(b.getBlockedPairs() != null){
+                this.blockedPairs = b.getBlockedPairs().size();
+            }else{
+                this.blockedPairs = -1;
+            }
+            
         }else{
             this.blockedPairs = -1;
         }
@@ -194,7 +202,7 @@ public class AbstractExperiment {
         return MATCHING_RULE_ID;
     }
 
-    int getBlcokerID(){
+    int getBlockerID(){
         return BLOCKER_ID;
     }
 

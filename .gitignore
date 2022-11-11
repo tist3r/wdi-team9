@@ -1,4 +1,5 @@
 data/input/*
 !data/input/
+data/output/reducedKaggleSet/*
 .vscode
 .ipynb_checkpoints

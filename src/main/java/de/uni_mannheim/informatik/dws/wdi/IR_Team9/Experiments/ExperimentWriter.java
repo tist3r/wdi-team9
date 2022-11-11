@@ -42,7 +42,7 @@ public class ExperimentWriter {
             experiment.ds1Name,
             experiment.ds2Name,
             Integer.toString(experiment.getMatchingRuleID()), //params in Matching rule file
-            Integer.toString(experiment.getBlcokerID()), //params in Blocker file
+            Integer.toString(experiment.getBlockerID()), //params in Blocker file
             Double.toString(experiment.perfTrain.getPrecision()),
             Double.toString(experiment.perfTrain.getRecall()),
             Double.toString(experiment.perfTrain.getF1()),
@@ -95,6 +95,7 @@ public class ExperimentWriter {
             "Recall (Test)",
             "F1 (Test)",
             "#corr",
+            "Duration",
             "Reduction ratio",
             "#blocked pairs"
         };
@@ -103,5 +104,4 @@ public class ExperimentWriter {
     public static void main(String[] args) throws Exception{
         initializeFile();
     }
-
 }

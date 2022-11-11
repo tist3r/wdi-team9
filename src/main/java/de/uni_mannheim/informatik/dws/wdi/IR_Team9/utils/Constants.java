@@ -1,6 +1,9 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyException;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
@@ -118,8 +121,22 @@ public class Constants {
     }
 
     public static String getExperimentRootPath(int experiment_id){
-        return String.format("data/output/experiments/%d/", experiment_id);
+        String path = String.format("data/output/experiments/%d/", experiment_id);
+        
+        if(!Files.exists(Paths.get(path))){
+            //make experiment folder if not exists
+            try{
+                Files.createDirectories(Paths.get(path));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            
+        }
+
+        return path;
     }
+
+
 
     public static String getExperimentBlockSizePath(int experiment_id){
         return String.format("%sblockSizeInfo.csv", getExperimentRootPath(experiment_id));
