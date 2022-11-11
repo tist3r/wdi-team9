@@ -39,7 +39,7 @@ public class ExperimentWriter {
          */
 
          return new String[]{
-            Integer.toString(experiment.getExperimentID()),
+            experiment.toString(),
             experiment.ds1Name,
             experiment.ds2Name,
             Integer.toString(experiment.getMatchingRuleID()), //params in Matching rule file

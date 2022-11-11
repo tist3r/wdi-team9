@@ -74,6 +74,7 @@ public abstract class AbstractExperiment {
         this.loadData(ds1Name, ds2Name);
     }
 
+
     /*
      * Experiment Setup
      */
@@ -115,7 +116,10 @@ public abstract class AbstractExperiment {
 
         if(blocker instanceof AbstractBlocker){
             AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker<Company,Attribute,Attribute>) blocker;
-            b.collectBlockSizeData(Constants.getExperimentBlockSizePath(EXPERIMENT_ID), 2000);
+            b.collectBlockSizeData(Constants.getExperimentBlockSizePath(this.toString(), this.ds1Name, this.ds2Name), 4000);
+
+
+            //root path will be determined by mr id, blocker id and thresh e.g. 1_7_85
         }else{
             logger.info("can't collect block size data ...");
         }
@@ -140,8 +144,8 @@ public abstract class AbstractExperiment {
         
         this.noCorrespondences = correspondences.size();
 
-        basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, EXPERIMENT_ID)), correspondences);
-        companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPath(ds1Name, ds2Name, EXPERIMENT_ID)), correspondences);
+        basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, this.toString())), correspondences);
+        companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPath(ds1Name, ds2Name, this.toString())), correspondences);
 
         this.end = LocalDateTime.now();
 
@@ -185,11 +189,11 @@ public abstract class AbstractExperiment {
         try{
             //Evaluate Train data
             this.perfTrain = evaluator.evaluateMatching(correspondences, this.gsTrain);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "train")), correspondences, this.gsTrain);
+            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(this.toString(), "train")), correspondences, this.gsTrain);
     
             //Evaluate Test data
             this.perfTest = evaluator.evaluateMatching(correspondences, this.gsTest);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "test")), correspondences, this.gsTest);
+            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(this.toString(), "test")), correspondences, this.gsTest);
 
         }catch(IOException e){
             System.out.println("[WARNING ] could not write evaluation file ...");
@@ -215,6 +219,9 @@ public abstract class AbstractExperiment {
         }
     }
 
+    abstract void setBlocker(Blocker<Company, Attribute, Company, Attribute> blocker, Integer blockerID);
+    abstract void setMatchingRule(MatchingRule<Company, Attribute> rule, Integer ruleID);
+
     int getExperimentID(){
         return EXPERIMENT_ID;
     }
@@ -229,5 +236,16 @@ public abstract class AbstractExperiment {
 
     String getDurationString(){
         return DurationFormatUtils.formatDurationHMS(Duration.between(start, end).toMillis());
+    }
+
+    public String toString(){
+        String thresh = Double.toString(this.matchingThresh).split("\\.")[1];
+        if(thresh.length()>=2){
+            thresh = Double.toString(this.matchingThresh).split("\\.")[1].substring(0,2);
+        }else{
+            thresh = Double.toString(this.matchingThresh).split("\\.")[1].substring(0,1);
+        }
+
+        return String.format("%d_%d_%s",this.MATCHING_RULE_ID, this.BLOCKER_ID, thresh);
     }
 }

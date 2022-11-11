@@ -2,14 +2,12 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyException;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import org.apache.jena.tdb.base.file.FileException;
 
@@ -102,11 +100,11 @@ public class Constants {
         return "data/output/experiments/experiment_log.csv";
     }
 
-    public static String getExperimentBasicCorrPath(String ds1, String ds2, int experiment_id){
+    public static String getExperimentBasicCorrPath(String ds1, String ds2, String experiment_id){
         return String.format("%s%s_%s_corr.csv", getExperimentRootPath(experiment_id), ds1, ds2);
     }
 
-    public static String getExperimentCompanyCorrPath(String ds1, String ds2, int experiment_id){
+    public static String getExperimentCompanyCorrPath(String ds1, String ds2, String experiment_id){
         return String.format("%s%s_%s_corr_w_names.csv", getExperimentRootPath(experiment_id), ds1, ds2);
     }
 
@@ -116,12 +114,12 @@ public class Constants {
      * @param train_test Specifiy either "test" or "train"
      * @return
      */
-    public static String getExperimentEvaluationFilePath(int experiment_id, String train_test){
+    public static String getExperimentEvaluationFilePath(String experiment_id, String train_test){
         return String.format("%seval_%s.csv", getExperimentRootPath(experiment_id),train_test);
     }
 
-    public static String getExperimentRootPath(int experiment_id){
-        String path = String.format("data/output/experiments/%d/", experiment_id);
+    public static String getExperimentRootPath(String experiment_id){
+        String path = String.format("data/output/experiments/%s/", experiment_id);
         
         if(!Files.exists(Paths.get(path))){
             //make experiment folder if not exists
@@ -137,9 +135,8 @@ public class Constants {
     }
 
 
-
-    public static String getExperimentBlockSizePath(int experiment_id){
-        return String.format("%sblockSizeInfo.csv", getExperimentRootPath(experiment_id));
+    public static String getExperimentBlockSizePath(String experiment_id, String ds1, String ds2){
+        return String.format("%s%s_%s_blockSizeInfo.csv", getExperimentRootPath(experiment_id),ds1,ds2);
     }
 
     // public static void main(String[] args) throws Exception{

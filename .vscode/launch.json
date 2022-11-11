@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Experiment",
+            "request": "launch",
+            "mainClass": "de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment",
+            "projectName": "ExerciseIdentityResolution"
+        },
+        {
+            "type": "java",
             "name": "Launch Experiment1",
             "request": "launch",
             "mainClass": "de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment1",

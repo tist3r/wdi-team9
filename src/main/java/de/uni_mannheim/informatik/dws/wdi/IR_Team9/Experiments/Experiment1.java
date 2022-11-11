@@ -3,12 +3,26 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
+import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
+import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class Experiment1 extends AbstractExperiment{
 
     public Experiment1(String ds1, String ds2, int experimentID, double thresh) throws Exception{
         super(ds1, ds2, experimentID, thresh);
         this.initializeExperiment();
+    }
+
+    @Override
+    void setBlocker(Blocker<Company, Attribute, Company, Attribute> blocker, Integer blockerID) {
+        return;
+    }
+
+    @Override
+    void setMatchingRule(MatchingRule<Company, Attribute> rule, Integer ruleID) {
+        return;
     }
 
 
