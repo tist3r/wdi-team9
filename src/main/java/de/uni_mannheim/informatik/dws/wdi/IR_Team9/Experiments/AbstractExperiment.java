@@ -20,6 +20,7 @@ import de.uni_mannheim.informatik.dws.winter.matching.MatchingEvaluator;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.AbstractBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
@@ -56,17 +57,20 @@ public abstract class AbstractExperiment {
     HashedDataSet<Company, Attribute> ds1;
     HashedDataSet<Company, Attribute> ds2;
     int noCorrespondences;
-    MatchingGoldStandard gs = new MatchingGoldStandard();
+    MatchingGoldStandard gsTrain = new MatchingGoldStandard();
+    MatchingGoldStandard gsTest = new MatchingGoldStandard();
     Performance perfTrain;
     Performance perfTest;
     double reductionRatio;
     int blockedPairs;
+    double matchingThresh;
     
 
-    public AbstractExperiment(String ds1Name, String ds2Name, int experimentID) throws Exception{
+    public AbstractExperiment(String ds1Name, String ds2Name, int experimentID, double matchingThresh) throws Exception{
         this.ds1Name = ds1Name;
         this.ds2Name = ds2Name;
         this.EXPERIMENT_ID = experimentID;
+        this.matchingThresh = matchingThresh;
         this.loadData(ds1Name, ds2Name);
     }
 
@@ -86,6 +90,7 @@ public abstract class AbstractExperiment {
     }
 
     void initializeExperiment(){
+        this.loadTrainTestData();
         this.setupBlocker();
         this.setupMatchingRule();
     };
@@ -127,6 +132,12 @@ public abstract class AbstractExperiment {
         logger.info("*\tRunning identity resolution\t*");
 
         Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(this.ds1, this.ds2, null, this.rule, this.blocker);
+        
+        if(this.rule instanceof WekaMatchingRule){
+            WekaMatchingRule<Company, Attribute> r = (WekaMatchingRule<Company, Attribute>) rule;
+            logger.info(String.format("Matching rule is:\n%s", r.getModelDescription()));
+        }
+        
         this.noCorrespondences = correspondences.size();
 
         basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, EXPERIMENT_ID)), correspondences);
@@ -154,24 +165,34 @@ public abstract class AbstractExperiment {
         }
     }
 
+    void loadTrainTestData(){
+        try{
+            this.gsTrain.loadFromCSVFile(new File(Constants.getTrainData(this.ds1Name, this.ds2Name)));
+            //Load Test data
+            this.gsTest.loadFromCSVFile(new File(Constants.getTestData(this.ds1Name, this.ds2Name)));
+        }catch(KeyException e){
+            System.out.println("[WARNING ] could not load train and test data because dataset name is wrong ...");
+            e.printStackTrace();
+        }catch(IOException e){
+            System.out.println("[WARNING ] could not read train test data ...");
+            e.printStackTrace();
+        }
+    }
+
 
     void evaluateMatching(Processable<Correspondence<Company, Attribute>> correspondences){
-        //Load Train data
+        
         try{
-            this.gs.loadFromCSVFile(new File(Constants.getTrainData(this.ds1Name, this.ds2Name)));
-            this.perfTrain = evaluator.evaluateMatching(correspondences, this.gs);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "train")), correspondences, this.gs);
+            //Evaluate Train data
+            this.perfTrain = evaluator.evaluateMatching(correspondences, this.gsTrain);
+            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "train")), correspondences, this.gsTrain);
     
-            //Load Test data
-            gs.loadFromCSVFile(new File(Constants.getTestData(this.ds1Name, this.ds2Name)));
-            this.perfTest = evaluator.evaluateMatching(correspondences, this.gs);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "test")), correspondences, this.gs);
+            //Evaluate Test data
+            this.perfTest = evaluator.evaluateMatching(correspondences, this.gsTest);
+            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(EXPERIMENT_ID, "test")), correspondences, this.gsTest);
 
         }catch(IOException e){
             System.out.println("[WARNING ] could not write evaluation file ...");
-            e.printStackTrace();
-        }catch(KeyException e){
-            System.out.println("[WARNING ] could not load train and test data because dataset name is wrong ...");
             e.printStackTrace();
         }
 
