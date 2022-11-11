@@ -8,6 +8,8 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class BLOCKERS {
 
+    public static int NUM_BLOCKERS = 8;
+
     public static String blocker1Description;
     public static String blocker2Description;
     public static String blocker3Description;
@@ -16,6 +18,27 @@ public class BLOCKERS {
     public static String blocker6Description;
     public static String blocker7Description;
     public static String blocker8Description;
+
+
+    /**
+     * 
+     * @param id id of the blocker
+     * @return the blocker with the id
+     * @throws IndexOutOfBoundsException when the specified id does not exist
+     */
+    public static Blocker<Company, Attribute, Company, Attribute> getBlockerByID(int id) throws IndexOutOfBoundsException{
+        switch (id){
+            case 1: return getBlocker1();
+            case 2: return getBlocker2();
+            case 3: return getBlocker3();
+            case 4: return getBlocker4();
+            case 5: return getBlocker5();
+            case 6: return getBlocker6();
+            case 7: return getBlocker7();
+            case 8: return getBlocker8();
+            default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_BLOCKERS));
+        }
+    }
 
     public static Blocker<Company, Attribute, Company, Attribute> getBlocker1(){
         blocker1Description = "Standard Blocker using 3-grams as well as starting letters as keys.";

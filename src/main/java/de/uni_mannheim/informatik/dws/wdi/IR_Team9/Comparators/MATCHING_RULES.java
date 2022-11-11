@@ -8,9 +8,10 @@ import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
-import de.uni_mannheim.informatik.dws.winter.similarity.string.LevenshteinSimilarity;
 
 public class MATCHING_RULES {
+    public static int NUM_MATCHING_RULES = 7;
+
     public static String mr1Description;
     public static String mr2Description;
     public static String mr3Description;
@@ -21,6 +22,39 @@ public class MATCHING_RULES {
     public static String mr8Description;
     public static String mr9Description;
     public static String mr10Description;
+
+
+    /**
+     * 
+     * @param id id of the matching rule
+     * @param thresh matching threshold for positive matches
+     * @param jaccardWeight jaccard weight for matching rule 5
+     * @param ds1 ds1 for MR7
+     * @param ds2 ds2 for MR7
+     * @param gsTrain gold standard for MR7
+     * @return the matching rule with the id
+     * @throws IndexOutOfBoundsException when the specified id does not exist
+     */
+    public static MatchingRule<Company, Attribute> getRuleByID(
+        int id,
+        double thresh,
+        double jaccardWeight,
+        HashedDataSet<Company, Attribute> ds1,
+        HashedDataSet<Company, Attribute> ds2,
+        MatchingGoldStandard gsTrain) 
+        throws IndexOutOfBoundsException{
+        
+            switch (id){
+            case 1: return getMR1(thresh);
+            case 2: return getMR2(thresh);
+            case 3: return getMR3(thresh);
+            case 4: return getMR4(thresh);
+            case 5: return getMR5(thresh, jaccardWeight);
+            case 6: return getMR6(thresh);
+            case 7: return getMR7(thresh, ds1, ds2, gsTrain);
+            default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
+        }
+    }
 
 
     /**
