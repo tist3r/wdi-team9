@@ -24,6 +24,7 @@ public class ExperimentWriter {
          * dataset 1
          * dataset 2
          * Matching Rule id
+         * rule thresh
          * Blocker with params & KeyGenerator
          * precision (train)
          * recall (train)
@@ -42,6 +43,7 @@ public class ExperimentWriter {
             experiment.ds1Name,
             experiment.ds2Name,
             Integer.toString(experiment.getMatchingRuleID()), //params in Matching rule file
+            Double.toString(experiment.matchingThresh),
             Integer.toString(experiment.getBlockerID()), //params in Blocker file
             Double.toString(experiment.perfTrain.getPrecision()),
             Double.toString(experiment.perfTrain.getRecall()),
@@ -87,6 +89,7 @@ public class ExperimentWriter {
             "Dataset 1",
             "Dataset 2",
             "Matching Rule ID",
+            "Matching Rule Threshold",
             "Blocker ID",
             "Precision (Train)",
             "Recall (Train)",
