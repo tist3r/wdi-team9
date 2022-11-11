@@ -6,10 +6,25 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Experiment1",
+            "request": "launch",
+            "mainClass": "de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment1",
+            "projectName": "ExerciseIdentityResolution"
+        },
+        {
+            "type": "java",
+            "name": "Launch ExperimentWriter",
+            "request": "launch",
+            "mainClass": "de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.ExperimentWriter",
+            "projectName": "ExerciseIdentityResolution"
+        },
+        {
+            "type": "java",
             "name": "Launch IR_using_machine_learning",
             "request": "launch",
             "mainClass": "de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.IR_using_machine_learning",
-            "projectName": "ExerciseIdentityResolution"
+            "projectName": "ExerciseIdentityResolution",
+            "vmArgs": "-Xmx5g"
         },
         {
             "type": "java",

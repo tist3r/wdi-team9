@@ -14,7 +14,7 @@ public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerato
     
     private static final long serialVersionUID = 1L;
 
-	private boolean basicNormalization = false;
+	private boolean basicNormalization = true;
 	private boolean removeFrequentTokens = false;
 
 

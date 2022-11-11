@@ -227,7 +227,7 @@ public class SplitLargeXML {
         
         //removeNonMatchesFromInputFile("data/input/test/kaggle_1.xml", "data/output/reducedKaggleSet/1.csv", 1, "data/output/reducedKaggleSet/kaggle_1_red.xml");
         String toPath;
-        for(int i = 1; i <= Constants.getMaxKaggleID(); i++){
+        for(int i = 90; i <= Constants.getMaxKaggleID(); i++){
             System.out.println("[INFO ] Reducing file " + Constants.getDatasetPath("kaggle", i));
 
             kaggle = new HashedDataSet<>();
