@@ -1,1 +1,2 @@
 "Experiment ID","Dataset 1","Dataset 2","Matching Rule ID","Matching Rule Threshold","Blocker ID","Precision (Train)","Recall (Train)","F1 (Train)","Precision (Test)","Recall (Test)","F1 (Test)","#corr","Duration","Reduction ratio","#blocked pairs"
+"1_1_85","dbpedia","forbes","1","0.85","1","0.9878787878787879","0.806930693069307","0.888283378746594","0.9642857142857143","0.7714285714285715","0.8571428571428572","742","0:00:11.695","0.9003801405249019","-1"
