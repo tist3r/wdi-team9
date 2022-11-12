@@ -1,9 +1,13 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Sandbox;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,10 +19,11 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyBy
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorLevenshtein;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.CorrespondenceFile;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.MultiSimCorrespondence;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
@@ -68,12 +73,12 @@ public class GoldStandardIntegration{
     /*
      * Method to read a single correspondence file and put the contents into a collection
      */
-    private static void readCorrespondenceFile(Map<String, CorrespondenceFile> c, String path, Integer simId) {
+    private static void readCorrespondenceFile(Map<String, MultiSimCorrespondence> c, String path, Integer simId) {
         System.out.println("[INFO ] reading correspondence file: " + path);
         try(CSVReader reader = new CSVReader(new FileReader(path))){
             for(String[] tokens : reader.readAll()){
 
-                CorrespondenceFile cf = new CorrespondenceFile();
+                MultiSimCorrespondence cf = new MultiSimCorrespondence();
                 cf.id1 = tokens[0];
                 cf.id2 = tokens[1];
                 cf.setSimAtID(simId, Double.parseDouble(tokens[2]));
@@ -106,7 +111,7 @@ public class GoldStandardIntegration{
         String path2 = "data/output/namedgs/gs_"+source1+"_"+source2+"_"+blockerIndication+"_2.csv";
         String path3 = "data/output/namedgs/gs_"+source1+"_"+source2+"_"+blockerIndication+"_3.csv";
 
-        Map<String, CorrespondenceFile> correspondences = new TreeMap<>();
+        Map<String, MultiSimCorrespondence> correspondences = new TreeMap<>();
 
         readCorrespondenceFile(correspondences, path1, 1);
         readCorrespondenceFile(correspondences, path2, 2);
@@ -124,10 +129,10 @@ public class GoldStandardIntegration{
      * Writes a CSV containing all basic similarity scores.
      * 
      */
-    private static void writeCombinedCSV(String path, Map<String, CorrespondenceFile> correspondences) throws Exception{
+    private static void writeCombinedCSV(String path, Map<String, MultiSimCorrespondence> correspondences) throws Exception{
         try(CSVWriter writer = new CSVWriter(new FileWriter(path))){
 
-            for (CorrespondenceFile cf: correspondences.values()) {
+            for (MultiSimCorrespondence cf: correspondences.values()) {
                 String[] values = {cf.id1, cf.id2, Double.toString(cf.sim1), Double.toString(cf.sim2), Double.toString(cf.sim3), cf.name1, cf.name2};
                 writer.writeNext(values);
             }
@@ -149,6 +154,28 @@ public class GoldStandardIntegration{
         standardIntegration(path1, path2, m1, blocker, "gs_"+source1+"_"+source2+"_"+blockerIndication+"_1");
         standardIntegration(path1, path2, m2, blocker, "gs_"+source1+"_"+source2+"_"+blockerIndication+"_2");
         standardIntegration(path1, path2, m3, blocker, "gs_"+source1+"_"+source2+"_"+blockerIndication+"_3");
+    }
+
+
+    private static void kaggleIntegration() throws Exception{
+        int[] rules = new int[]{1,2,5};
+        String[] kaggleSets = new String[]{"kaggle_a_1","kaggle_a_2","kaggle_a_3","kaggle_a_4"};
+        Experiment e;
+
+        for(int rule = 0; rule < rules.length; rule++){
+            for(int set = 0; set < kaggleSets.length; set++){
+                try{
+                    e = new Experiment("dbpedia", kaggleSets[set], 100, 0.2, 9, rules[rule]);
+                    e.runExperiment();
+                }catch(OutOfMemoryError oom){
+                    oom.printStackTrace();
+
+                    try(BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get("data/logs/kaggleAggLog.txt"),StandardOpenOption.APPEND)){
+                        bufferedWriter.write(kaggleSets[set] + Integer.toString(rules[rule]));
+                    }
+                }
+            }
+        }
     }
 
 
