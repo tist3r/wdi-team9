@@ -29,7 +29,7 @@ public class Constants {
     private static final String aggregatedKaggleFolder = "data/output/aggregatedKaggle/";
 
 
-    private static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes"}));
+    private static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "kaggle_a_1", "kaggle_a_2", "kaggle_a_3", "kaggle_a_4"}));
 
 
     public static String getKagglePath(Integer id) throws FileException{
@@ -169,6 +169,44 @@ public class Constants {
 
     public static String getKaggleAggregatedRedXMLPath(int id){
         return String.format("%skaggle_a_%d.xml", aggregatedKaggleFolder, id);
+    }
+
+    /**
+     * @author Thomas
+     * Returns path to sorted top k correspondences for the experiment ID
+     * @param experimentID
+     * @return
+     */
+    public static String getSortedCorrespondencesPath(String experimentID){
+        return String.format("data/output/sortedCorrespondences/%s.csv", experimentID);
+    }
+
+    /**
+     * Returns the dataset name of the final kaggle input partitions.
+     * @return
+     */
+    public static String[] getAggregateKagglePartitionedDSNames(){
+        return new String[]{"kaggle_a_1","kaggle_a_2","kaggle_a_3","kaggle_a_4"};
+    }
+
+    /**
+     * Returns the dataset name of the final kaggle input partitions by the partition ID
+     * @return
+     */
+    public static String getAggregateKagglePartitionedDSNamesByID(int i){
+        if(i > 0 && i <= 4){
+            return getAggregateKagglePartitionedDSNames()[i-1];
+        }
+
+        throw new IndexOutOfBoundsException();    
+    }
+
+    /**
+     * Returns the path of the Kaggle error log
+     * @return
+     */
+    public static String getKaggleErrorLogPath(){
+        return "logs/kaggleErrorLog.txt";
     }
 
     public static void main(String[] args) throws Exception{
