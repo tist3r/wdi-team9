@@ -48,22 +48,29 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
             company.setTotalEmpEst(null);
         }
 
-        if (getValueFromChildElement(node, "Sales") != null){
+        try{
             company.setSalesAmount(Integer.parseInt(getValueFromChildElement(node, "Sales")));
+        } catch (NumberFormatException e){
+            company.setSalesAmount(null);
         }
 
-        if (getValueFromChildElement(node, "Profits") != null){
+        try{
             company.setProfitAmount(Integer.parseInt(getValueFromChildElement(node, "Profits")));
+        } catch (NumberFormatException e){
+            company.setProfitAmount(null);
         }
 
-        if (getValueFromChildElement(node, "Market_value") != null){
+        try{
             company.setMvAmount(Integer.parseInt(getValueFromChildElement(node, "Market_value")));
+        } catch (NumberFormatException e){
+            company.setMvAmount(null);
         }
 
-        if (getValueFromChildElement(node, "Assets") != null){
+        try{
             company.setAssetAmount(Integer.parseInt(getValueFromChildElement(node, "Assets")));
+        } catch (NumberFormatException e){
+            company.setAssetAmount(null);
         }
-
 
         company.setSector(getValueFromChildElement(node, "Sector"));
         company.setGlobalRank(getValueFromChildElement(node, "Global_rank"));
