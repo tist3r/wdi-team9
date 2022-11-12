@@ -48,7 +48,7 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
             company.setTotalEmpEst(null);
         }
         
-        //TODO: Sales, Profit, etc.
+        //TODO: Data Fusion -> Sales, Profit, etc.
 
 
         company.setSector(getValueFromChildElement(node, "Sector"));

@@ -1,11 +1,16 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
+import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 
@@ -16,6 +21,33 @@ public class ExperimentWriter {
             String[] values = format(experiment);
             writer.writeNext(values);
         }       
+    }
+
+
+    /**
+     * Reads experiment log IDs to a set.
+     * @return the set of IDs
+     */
+    public static Set<String> getConductedExperiments(){
+
+        Set<String> exp = new HashSet<String>();
+
+        try(CSVReader reader = new CSVReader(new FileReader(Constants.getExperimentLogPath()))){
+            List<String[]> lines = reader.readAll();
+
+            
+
+            for(String[] line : lines){
+                exp.add(line[0]);
+            }
+
+
+        }catch(IOException e){
+            e.printStackTrace();
+
+        }
+
+        return exp;
     }
 
     public static String[] format(AbstractExperiment experiment){

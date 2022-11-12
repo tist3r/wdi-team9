@@ -3,8 +3,10 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,7 +27,7 @@ import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 
-public class SplitLargeXML {
+public class KaggleUtils {
 
     private static final String FILENAME = "data/input/companies_shorted_results.xml"; //companies_shorted_results.xml
     private static Integer maxID;
@@ -182,7 +184,7 @@ public class SplitLargeXML {
     public static void runBasicIR(HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, String toPath) throws Exception{
         System.out.println("[INFO ] Running basic IR ...");
         
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule = new LinearCombinationMatchingRule<>(0.3);
+        LinearCombinationMatchingRule<Company, Attribute> matchingRule = new LinearCombinationMatchingRule<>(0.85);
 
         matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1);
 
@@ -203,14 +205,17 @@ public class SplitLargeXML {
     }
 
 
+    public static void reduceKaggleXMLs(int startID, int endID) throws Exception{
+        //check bounds for loop
+        if(endID > Constants.getMaxKaggleID()){
+            endID = Constants.getMaxKaggleID();
+        }
 
-    public static void main(String[] args) throws Exception{
+        if(startID < 1){
+            startID = 1;
+        }
 
-        // Integer lineLimit = 1000000;
-
-        // splitXML(FILENAME, "data/input/test/", "kaggle", lineLimit);
-
-        //Load all but Kaggle Datasets
+        //Load all but Kaggle Datasets into one Dataset
         HashedDataSet<Company, Attribute> allCompanies = new HashedDataSet<>();
 		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.RECORD_PATH, allCompanies);
 		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.RECORD_PATH, allCompanies);
@@ -223,18 +228,99 @@ public class SplitLargeXML {
 		
 
         
-        //removeNonMatchesFromInputFile("data/input/test/kaggle_1.xml", "data/output/reducedKaggleSet/1.csv", 1, "data/output/reducedKaggleSet/kaggle_1_red.xml");
+        
         String toPath;
-        for(int i = 90; i <= Constants.getMaxKaggleID(); i++){
+        for(int i = startID; i <= endID; i++){
             System.out.println("[INFO ] Reducing file " + Constants.getDatasetPath("kaggle", i));
 
             kaggle = new HashedDataSet<>();
             cr.loadFromXML(new File(Constants.getDatasetPath("kaggle", i)), Constants.RECORD_PATH, kaggle);
 
             toPath = String.format("data/output/reducedKaggleSet/kaggle_%d_red.xml", i);
-
-            reduceKaggleXML(allCompanies, kaggle, i, "data/output/reducedKaggleSet/", toPath);
+            runBasicIR(allCompanies, kaggle, toPath);
         }
+    }
+
+    /**
+     * Aggregates reduced kaggle files into larger partitions.
+     * @param numTargetPartitions number of desired final partitions
+     */
+    public static void combineReducedKaggleXMLs(int numTargetPartitions){
+        int numReduced = Constants.getNumKaggleReducedPartitions(); //number of reduced partitons
+
+        double xmlPerPartition = Math.ceil((1d*numReduced)/numTargetPartitions);
+
+        int currID = 0;
+        String line;
+
+        for(int i = 1; i <= numTargetPartitions; i++){
+            try(BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.getKaggleAggregatedRedXMLPath(i),StandardCharsets.UTF_8))){
+                for(int j = 1; j <= xmlPerPartition; j++){
+
+                    currID++; //increase overall ID counter
+
+                    System.out.println(String.format("[INFO ] Reading file %d ...", currID));
+
+                    try(BufferedReader br = new BufferedReader(new FileReader(Constants.getKaggleReducedXMLPath(currID),StandardCharsets.UTF_8))){
+                        //read file to StrinBuffer 
+                        while((line = br.readLine()) != null){
+
+                            //The first file writes opening tags
+                            if(j == 1 && (line.contains("<Companies") || line.contains("xml version"))){
+                                bw.write(line);
+                                bw.write("\n");
+                            }
+
+                            //others ommit opening and closing tags. 
+                            if(!line.contains("Companies") && !line.contains("xml version")  && currID<numReduced){
+                                bw.write(line);
+                                bw.write("\n");
+                            }
+
+                            //last writes closing tag
+                            if((j == xmlPerPartition || currID == numReduced) && line.contains("</Companies>")){
+                                bw.write(line);
+                                bw.write("\n");
+                            }
+                        }
+                    }catch(FileNotFoundException e){
+                        System.out.println(String.format("[WARNING ] no file with the id %d ...", currID));
+                    }
+                }
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static boolean checkLastLineKaggleAggreagted(int id) throws Exception{
+        String line;
+        String prevLine ="";
+        try(BufferedReader br = new BufferedReader(new FileReader(Constants.getKaggleAggregatedRedXMLPath(1)))){
+            
+            while((line = br.readLine()) != null){
+                prevLine = line;
+            }
+
+            System.out.println(prevLine);
+        }
+
+        return prevLine.contains("</Companies>");
+    }
+
+
+
+    public static void main(String[] args) throws Exception{
+        // Integer lineLimit = 1000000;
+
+        // splitXML(FILENAME, "data/input/test/", "kaggle", lineLimit);
+        
+        //removeNonMatchesFromInputFile("data/input/test/kaggle_1.xml", "data/output/reducedKaggleSet/1.csv", 1, "data/output/reducedKaggleSet/kaggle_1_red.xml");
+
+        //reduceKaggleXMLs(1, Constants.getMaxKaggleID());
+
+        combineReducedKaggleXMLs(4);
+
         
 
     }

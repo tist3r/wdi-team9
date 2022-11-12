@@ -19,7 +19,6 @@ public class CorrespondenceFile {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return id1 + id2;
     }
 }

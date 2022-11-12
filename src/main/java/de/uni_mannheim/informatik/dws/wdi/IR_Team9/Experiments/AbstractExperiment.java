@@ -71,7 +71,6 @@ public abstract class AbstractExperiment {
         this.ds2Name = ds2Name;
         this.EXPERIMENT_ID = experimentID;
         this.matchingThresh = matchingThresh;
-        this.loadData(ds1Name, ds2Name);
     }
 
 
@@ -116,7 +115,7 @@ public abstract class AbstractExperiment {
 
         if(blocker instanceof AbstractBlocker){
             AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker<Company,Attribute,Attribute>) blocker;
-            b.collectBlockSizeData(Constants.getExperimentBlockSizePath(this.toString(), this.ds1Name, this.ds2Name), 4000);
+            b.collectBlockSizeData(Constants.getExperimentBlockSizePath(this.toString(), this.ds1Name, this.ds2Name), 6000);
 
 
             //root path will be determined by mr id, blocker id and thresh e.g. 1_7_85
@@ -246,6 +245,17 @@ public abstract class AbstractExperiment {
             thresh = Double.toString(this.matchingThresh).split("\\.")[1].substring(0,1);
         }
 
-        return String.format("%d_%d_%s",this.MATCHING_RULE_ID, this.BLOCKER_ID, thresh);
+        return String.format("%d_%d_%s_%s_%s",this.MATCHING_RULE_ID, this.BLOCKER_ID, thresh, this.ds1Name, this.ds2Name);
+    }
+
+    public static String getID(String ds1Name, String ds2Name, int ruleID, int blockerID, double matchingThresh){
+        String thresh = Double.toString(matchingThresh).split("\\.")[1];
+        if(thresh.length()>=2){
+            thresh = Double.toString(matchingThresh).split("\\.")[1].substring(0,2);
+        }else{
+            thresh = Double.toString(matchingThresh).split("\\.")[1].substring(0,1);
+        }
+
+        return String.format("%d_%d_%s_%s_%s",ruleID, blockerID, thresh, ds1Name, ds2Name);
     }
 }

@@ -8,7 +8,7 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class BLOCKERS {
 
-    public static int NUM_BLOCKERS = 8;
+    public static int NUM_BLOCKERS = 9;
 
     public static String blocker1Description;
     public static String blocker2Description;
@@ -36,6 +36,7 @@ public class BLOCKERS {
             case 6: return getBlocker6();
             case 7: return getBlocker7();
             case 8: return getBlocker8();
+            case 9: return getBlocker9();
             default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_BLOCKERS));
         }
     }
@@ -86,5 +87,11 @@ public class BLOCKERS {
         blocker8Description = "Sorted neigborhoodblocker with 3 gram key and w=60.";
 
         return new SortedNeighbourhoodBlocker<>(new CompanyBlockingKeyByNameGenerator(true, true), 60);
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker9(){
+        blocker8Description = "First letter of tokens";
+
+        return new StandardRecordBlocker<>(new CompanyNameTokenGenerator(3));
     }
 }

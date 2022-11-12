@@ -25,6 +25,8 @@ public class Constants {
 
 
     private static final String gsFolder = "data/goldstandard/";
+    private static final String redKaggleFolder = "data/output/reducedKaggleSet/";
+    private static final String aggregatedKaggleFolder = "data/output/aggregatedKaggle/";
 
 
     private static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes"}));
@@ -59,6 +61,10 @@ public class Constants {
             case "dbpedia": return dbpediaPath;
             case "dw": return dataworldPath;
             case "forbes": return forbesPath;
+            case "kaggle_a_1": return getKaggleAggregatedRedXMLPath(1);
+            case "kaggle_a_2": return getKaggleAggregatedRedXMLPath(2);
+            case "kaggle_a_3": return getKaggleAggregatedRedXMLPath(3);
+            case "kaggle_a_4": return getKaggleAggregatedRedXMLPath(4);
             default: throw new KeyException("Invalid Key. Use either dbpedia, dw, or forbes. For Kaggle Paths use the overloaded function");
         }
     }
@@ -139,7 +145,33 @@ public class Constants {
         return String.format("%s%s_%s_blockSizeInfo.csv", getExperimentRootPath(experiment_id),ds1,ds2);
     }
 
-    // public static void main(String[] args) throws Exception{
-    //     System.out.println(getTrainData("dbpedia", "dw"));
-    // }
+
+    public static String getKaggleReducedXMLPath(int id){
+        return String.format("%skaggle_%d_red.xml", getKaggleReducedXMLRootPath(), id);
+    }
+
+    public static String getKaggleReducedXMLRootPath(){
+        return redKaggleFolder;
+    }
+
+    public static int getNumKaggleReducedPartitions(){
+        Integer maxID = Stream.of(new File(getKaggleReducedXMLRootPath()).listFiles())
+            .filter(file -> !file.isDirectory())
+            .map(File::getName)
+            .filter(filename -> filename.matches("[0-9]{2}\\.csv"))
+            .map(filename -> filename.replaceAll("\\.csv", ""))
+            .map(d -> Integer.parseInt(d))
+            .max(Integer::compare).orElseThrow(NoSuchElementException::new);
+
+        //System.out.println(maxID);
+        return maxID;
+    }
+
+    public static String getKaggleAggregatedRedXMLPath(int id){
+        return String.format("%skaggle_a_%d.xml", aggregatedKaggleFolder, id);
+    }
+
+    public static void main(String[] args) throws Exception{
+        System.out.println(getNumKaggleReducedPartitions());
+    }
 }

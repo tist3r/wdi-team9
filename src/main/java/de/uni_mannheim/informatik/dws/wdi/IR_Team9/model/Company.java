@@ -32,7 +32,6 @@ public class Company implements Matchable{
 	protected String provenance;
 
 
-    //TODO: add all attributes
     private String name;
     private String url;
     private List<String> industries;
