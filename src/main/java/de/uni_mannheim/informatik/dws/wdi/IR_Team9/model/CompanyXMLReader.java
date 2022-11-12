@@ -47,8 +47,22 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
         } catch (NumberFormatException e){
             company.setTotalEmpEst(null);
         }
-        
-        //TODO: Data Fusion -> Sales, Profit, etc.
+
+        if (getValueFromChildElement(node, "Sales") != null){
+            company.setSalesAmount(Integer.parseInt(getValueFromChildElement(node, "Sales")));
+        }
+
+        if (getValueFromChildElement(node, "Profits") != null){
+            company.setProfitAmount(Integer.parseInt(getValueFromChildElement(node, "Profits")));
+        }
+
+        if (getValueFromChildElement(node, "Market_value") != null){
+            company.setMvAmount(Integer.parseInt(getValueFromChildElement(node, "Market_value")));
+        }
+
+        if (getValueFromChildElement(node, "Assets") != null){
+            company.setAssetAmount(Integer.parseInt(getValueFromChildElement(node, "Assets")));
+        }
 
 
         company.setSector(getValueFromChildElement(node, "Sector"));
