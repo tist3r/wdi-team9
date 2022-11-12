@@ -55,7 +55,7 @@ public class Experiment extends AbstractExperiment{
      * @param redo
      * @param conductedExp
      */
-    static void runForDatasetCombination(
+    public static void runForDatasetCombination(
         String ds1Name,
         String ds2Name, 
         int experimentID,
@@ -64,6 +64,8 @@ public class Experiment extends AbstractExperiment{
         int ruleID,
         boolean redo,
         Set<String> conductedExp){
+
+            logger.info("Conduction experiment " + getID(ds1Name, ds2Name, ruleID, blockerID, thresh));
 
             try{
                 if(redo || !hasAlreadyRun(ds1Name, ds2Name, ruleID, blockerID, thresh, conductedExp)){
@@ -97,7 +99,7 @@ public class Experiment extends AbstractExperiment{
      * @param redo
      * @param conductedExp
      */
-    static void runForAllDatasets(int experimentID, double thresh, int blockerID, int ruleID, boolean redo, Set<String> conductedExp){
+    public static void runForAllDatasets(int experimentID, double thresh, int blockerID, int ruleID, boolean redo, Set<String> conductedExp){
         String dbpedia = "dbpedia";
         String forbes = "forbes";
         String dw = "dw";

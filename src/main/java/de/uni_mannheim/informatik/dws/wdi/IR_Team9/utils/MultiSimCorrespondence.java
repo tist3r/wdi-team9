@@ -3,6 +3,7 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Set;
@@ -149,8 +150,14 @@ public class MultiSimCorrespondence {
         return sortedSet;
     }
 
-    public static void writeTopKCorrespondences(String inPath, String outPath, int k, boolean withNames) throws IOException{
-        writeSetToFile(getOrderedCFfromInput(inPath, true, withNames), 10000, outPath, true);
+    public static void writeTopKCorrespondences(String inPath, String outPath, int k, boolean withNames, boolean overwrite) throws IOException{
+        if(!Files.exists(Paths.get(outPath)) || overwrite){
+            writeSetToFile(getOrderedCFfromInput(inPath, true, withNames), 10000, outPath, true);
+        }else{
+            System.out.println(String.format("skipping because %s already exists", outPath));
+        }
+
+        
     }
 
     public static void main(String[] args) throws Exception{

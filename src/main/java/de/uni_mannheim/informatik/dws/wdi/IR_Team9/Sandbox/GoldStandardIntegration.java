@@ -23,6 +23,7 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.MultiSimCorrespondence;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
@@ -157,43 +158,54 @@ public class GoldStandardIntegration{
     }
 
 
-    private static void kaggleIntegration() throws Exception{
+    private static void kaggleIntegration(String otherDsName) throws Exception{
         int[] rules = new int[]{1,2,5};
-        String[] kaggleSets = new String[]{"kaggle_a_1","kaggle_a_2","kaggle_a_3","kaggle_a_4"};
-        Experiment e;
+        String[] kaggleSets = Constants.getAggregateKagglePartitionedDSNames();
+        String id;
 
         for(int rule = 0; rule < rules.length; rule++){
             for(int set = 0; set < kaggleSets.length; set++){
-                try{
-                    e = new Experiment("dbpedia", kaggleSets[set], 100, 0.2, 9, rules[rule]);
-                    e.runExperiment();
-                }catch(OutOfMemoryError oom){
-                    oom.printStackTrace();
 
-                    try(BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get("data/logs/kaggleAggLog.txt"),StandardOpenOption.APPEND)){
-                        bufferedWriter.write(kaggleSets[set] + Integer.toString(rules[rule]));
-                    }
-                }
+                Experiment.runForDatasetCombination(
+                    otherDsName,
+                    kaggleSets[set],
+                    100, 
+                    0.2, 
+                    9, 
+                    rules[rule], 
+                    false, 
+                    Experiment.getConductedExperiments());
+
+                id = Experiment.getID(otherDsName, kaggleSets[set], rules[rule], 9, 0.2);
+
+                MultiSimCorrespondence.writeTopKCorrespondences(
+                    Constants.getExperimentCompanyCorrPath(otherDsName, kaggleSets[set], id),
+                    Constants.getSortedCorrespondencesPath(id, true),
+                    10000,
+                    true,
+                    false);
             }
         }
+
+        
     }
 
 
     public static void main(String[] args) throws Exception{
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.5);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.5);
-        LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.5);
+        // LinearCombinationMatchingRule<Company, Attribute> matchingRule1 = new LinearCombinationMatchingRule<>(0.5);
+        // LinearCombinationMatchingRule<Company, Attribute> matchingRule2 = new LinearCombinationMatchingRule<>(0.5);
+        // LinearCombinationMatchingRule<Company, Attribute> matchingRule3 = new LinearCombinationMatchingRule<>(0.5);
 
-        matchingRule1.activateDebugReport("data/output/IR_forbes_dbpedia_debug.csv", 3000);
+        // matchingRule1.activateDebugReport("data/output/IR_forbes_dbpedia_debug.csv", 3000);
 
-        matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1);
-        matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(true), 1);
-        matchingRule3.addComparator(new CompanyNameComparatorLevenshtein(true), 0.5);
-        matchingRule3.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.5);
+        // matchingRule1.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1);
+        // matchingRule2.addComparator(new CompanyNameComparatorLevenshtein(true), 1);
+        // matchingRule3.addComparator(new CompanyNameComparatorLevenshtein(true), 0.5);
+        // matchingRule3.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.5);
 
-        //StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
+        // //StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyBlockingKeyByNameGenerator());
 
-        StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyQgramBlocking(3));
+        // StandardRecordBlocker<Company, Attribute> blocker = new StandardRecordBlocker<Company, Attribute>(new CompanyQgramBlocking(3));
 
 
         // String inPath;
@@ -208,8 +220,8 @@ public class GoldStandardIntegration{
         // }
 
         //for everything without kaggle
-        calculateAllSimilarities("dw", "forbes", dataworldPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3, "q");
-        makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes_q.csv", "q");
+        // calculateAllSimilarities("dw", "forbes", dataworldPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3, "q");
+        // makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes_q.csv", "q");
 
         /*
          * IDs without name:
@@ -217,6 +229,8 @@ public class GoldStandardIntegration{
          * -Kaggle_512292 (1)
          * -Kaggle_2599908 (4)
          */
+
+        kaggleIntegration("dbpedia");
 
 
     }

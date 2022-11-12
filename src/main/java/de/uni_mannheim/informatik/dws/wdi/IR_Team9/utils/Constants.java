@@ -177,7 +177,10 @@ public class Constants {
      * @param experimentID
      * @return
      */
-    public static String getSortedCorrespondencesPath(String experimentID){
+    public static String getSortedCorrespondencesPath(String experimentID, boolean withNames){
+        if(withNames){
+            return String.format("data/output/sortedCorrespondences/%s_w_names.csv", experimentID);
+        }
         return String.format("data/output/sortedCorrespondences/%s.csv", experimentID);
     }
 
