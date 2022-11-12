@@ -24,31 +24,7 @@ public class ExperimentWriter {
     }
 
 
-    /**
-     * Reads experiment log IDs to a set.
-     * @return the set of IDs
-     */
-    public static Set<String> getConductedExperiments(){
-
-        Set<String> exp = new HashSet<String>();
-
-        try(CSVReader reader = new CSVReader(new FileReader(Constants.getExperimentLogPath()))){
-            List<String[]> lines = reader.readAll();
-
-            
-
-            for(String[] line : lines){
-                exp.add(line[0]);
-            }
-
-
-        }catch(IOException e){
-            e.printStackTrace();
-
-        }
-
-        return exp;
-    }
+    
 
     public static String[] format(AbstractExperiment experiment){
         /*

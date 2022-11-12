@@ -1,16 +1,20 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.security.KeyException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.jena.sparql.sse.builders.BuildException;
 import org.slf4j.Logger;
 
-
+import au.com.bytecode.opencsv.CSVReader;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
@@ -152,7 +156,7 @@ public abstract class AbstractExperiment {
     }
 
 
-    Processable<Correspondence<Company, Attribute>> runExperiment() throws Exception{
+    public Processable<Correspondence<Company, Attribute>> runExperiment() throws Exception{
         if(this.loadedDatasets && addedBlocker && addedMatchingRule){
             Processable<Correspondence<Company, Attribute>> correspondences = this.runIdentityResolution();
             this.evaluateMatching(correspondences);
@@ -248,6 +252,36 @@ public abstract class AbstractExperiment {
         return String.format("%d_%d_%s_%s_%s",this.MATCHING_RULE_ID, this.BLOCKER_ID, thresh, this.ds1Name, this.ds2Name);
     }
 
+    
+
+
+    /*EXPERIMENT MANAGEMENT */
+
+    /**
+     * Given a set of experiment ids, determines if the experiment to test was already conducted
+     * @param ds1Name
+     * @param ds2Name
+     * @param ruleID
+     * @param blockerID
+     * @param thresh
+     * @param conductedExp
+     * @return
+     */
+    static boolean hasAlreadyRun(String ds1Name, String ds2Name, int ruleID, int blockerID, double thresh, Set<String> conductedExp){
+        String id = getID(ds1Name, ds2Name, ruleID, blockerID, thresh);
+
+        return conductedExp.contains(id);
+    }
+
+    /**
+     * Makes ID from experiment input parameters
+     * @param ds1Name
+     * @param ds2Name
+     * @param ruleID
+     * @param blockerID
+     * @param matchingThresh
+     * @return
+     */
     public static String getID(String ds1Name, String ds2Name, int ruleID, int blockerID, double matchingThresh){
         String thresh = Double.toString(matchingThresh).split("\\.")[1];
         if(thresh.length()>=2){
@@ -257,5 +291,27 @@ public abstract class AbstractExperiment {
         }
 
         return String.format("%d_%d_%s_%s_%s",ruleID, blockerID, thresh, ds1Name, ds2Name);
+    }
+
+
+    /**
+     * Reads experiment log IDs to a set.
+     * @return the set of IDs
+     */
+    public static Set<String> getConductedExperiments(){
+
+        Set<String> exp = new HashSet<String>();
+
+        try(CSVReader reader = new CSVReader(new FileReader(Constants.getExperimentLogPath()))){
+            List<String[]> lines = reader.readAll();
+
+            for(String[] line : lines){
+                exp.add(line[0]);
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return exp;
     }
 }
