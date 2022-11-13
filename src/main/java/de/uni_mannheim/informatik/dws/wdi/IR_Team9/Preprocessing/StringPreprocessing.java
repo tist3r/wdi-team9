@@ -1,13 +1,14 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class StringPreprocessing {
 
-
-    static String[] FREQUENT_TOKENS = {
+    static String[] _FREQUENT_TOKENS = {
         "bank", "group", "of", "and",
         "holding", "energy", "financial",
         "international", "industries", "inc", "incorporated",
@@ -16,6 +17,20 @@ public class StringPreprocessing {
         "pharmaceutical", "pharmaceuticals", "ltd", "limited", 
         "sa", "ag"
     };
+
+    //set that keeps frequent tokens for better performance
+    static final Set<String> FREQUENT_TOKENS = makeFrequentTokenSet(_FREQUENT_TOKENS);
+
+
+    private static Set<String> makeFrequentTokenSet(String[] tokens){
+        Set<String> freqTokens = new HashSet<>();
+
+        for(String ft : tokens){
+            freqTokens.add(ft);
+        }
+
+        return freqTokens;
+    }
 
     /** 
      * @param token the token that is to be nomralized
@@ -31,50 +46,85 @@ public class StringPreprocessing {
         return token.toLowerCase();
     }
 
+    /**
+     * Removes punctuation from a String.
+     * @param token the string to be processed
+     * @param exclude symbols that should not be removed. If all punctuation should be removed put "".
+     * @return the preprocessed string
+     */
     public static String removePunctuation(String token, String exclude){
         String removeRegex = "[\\p{Punct}]";
 
-        if (!exclude.matches("")){
-            //TODO improve performance
+        if (exclude.matches(removeRegex)){
             removeRegex = "[\\p{Punct}&&[^"+exclude+"]]";
+        }else if(exclude.length() == 0){}
+        else{
+            System.out.println(String.format("exclude String %s not valid - contains other things than punctuations. Removing all punctuation ...", exclude));
         }
 
         return token.replaceAll(removeRegex, "");
     }
 
-    public static String removeFrequentToken(String s, boolean removePunctuation){
+    /**
+     * Removes punctuation from a String.
+     * @param token the string to be processed
+     * @return the preprocessed string
+     */
+    public static String removePunctuation(String token){
+        return removePunctuation(token, "");
+    }
+
+    /**
+     * Removes frequent tokens from a give String. Before Punctuation can be removed.
+     * @param s
+     * @param removePunctuation
+     * @return
+     */
+    public static String removeFrequentTokens(String s, boolean removePunctuation){
         if(removePunctuation){
             s = removePunctuation(s, "");
         }
 
-        return removeFrequentToken(s);
+        return removeFrequentTokens(s);
     }
 
     
-    public static String removeFrequentToken(String s){
+    /**
+     * Removes frequent tokens from a string (split by whitespace)
+     * @param s
+     * @return
+     */
+    public static String removeFrequentTokens(String s){
+        /*
+         * Starts from an empty Stringbuffer and appends all tokens to it (split by whitespace) that do not match a frequent token.
+         */
+
         StringTokenizer tokenizer = new StringTokenizer(s);
         String token;
         StringBuffer sb = new StringBuffer();
-        boolean isFrequentToken;
+        // boolean isFrequentToken;
         
         while(tokenizer.hasMoreTokens()){
-            isFrequentToken = false;
+            // isFrequentToken = false;
             token = tokenizer.nextToken();
+            token = token.toLowerCase();
 
-            for(String ft : FREQUENT_TOKENS){
-                if(ft.equalsIgnoreCase(token)){
-                    isFrequentToken = true;
-                    break;
-                }
-            }
+            // for(String ft : _FREQUENT_TOKENS){
+            // //loop through all frequent tokens to see if one mathches
+            // //TODO optimize performance
+            //     if(ft.equalsIgnoreCase(token)){
+            //         //if token matches the frequent token skip to the next token.
+            //         isFrequentToken = true;
+            //         break;
+            //     }
+            // }
 
-            if(!isFrequentToken){
+            if(!FREQUENT_TOKENS.contains(token)){ //token is not a frequent token
                 sb.append(token);
                 sb.append(" ");
             }
         }
         return sb.toString().trim();
-
     }
 
     public static String removeWhitespaces(String token){
