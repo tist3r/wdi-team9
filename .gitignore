@@ -1,5 +1,8 @@
 data/input/*
 !data/input/
 data/output/reducedKaggleSet/*
+data/output/experiments/*
+!data/output/experiments/experiment_log.csv
 .vscode
 .ipynb_checkpoints
+target/*
