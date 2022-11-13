@@ -1,12 +1,16 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -159,6 +163,76 @@ public class MultiSimCorrespondence {
 
         
     }
+
+    /**
+     * Method to read a single correspondence file and put the contents into a collection. sim ID of the file can be specified
+     */
+    private static void readCorrespondenceFile(Map<String, MultiSimCorrespondence> c, String inPath, Integer simId) {
+        System.out.println("[INFO ] reading correspondence file: " + inPath);
+        try(CSVReader reader = new CSVReader(Files.newBufferedReader(Paths.get(inPath), StandardCharsets.UTF_8))){
+            String[] tokens;
+            while((tokens = reader.readNext()) != null){
+            //for(String[] tokens : reader.readAll()){
+
+                MultiSimCorrespondence cf = new MultiSimCorrespondence();
+                cf.id1 = tokens[0];
+                cf.id2 = tokens[1];
+                cf.setSimAtID(simId, Double.parseDouble(tokens[2]));
+                cf.name1 = tokens[3];
+                cf.name2 = tokens[4];
+
+                String key = cf.id1 + cf.id2;
+
+                //System.out.println(cf);
+
+                if (c.containsKey(key)){
+                    c.get(key).setSimAtID(simId, Double.parseDouble(tokens[2]));
+                } else{
+                    c.put(key, cf);
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Read all correspondance files and write them to a combined one.
+     */
+    
+    public static void makeCombinedCorrespondenceFile(Map<String, Integer> experimentIDs, String toPath, boolean overwrite) throws Exception{
+        //Collection to hold the information
+        Map<String, MultiSimCorrespondence> correspondences = new TreeMap<>();
+
+        //Input paths
+        String inPath;
+        for(String id : experimentIDs.keySet()){
+            inPath = Constants.getSortedCorrespondencesPath(id, true);
+            readCorrespondenceFile(correspondences, inPath, experimentIDs.get(id));
+        }
+
+        //write that out to a file again
+        if(!Files.exists(Paths.get(toPath)) || overwrite){
+            writeCombinedCSV(toPath, correspondences);
+        }  
+    }
+
+    /**
+     * Writes a CSV containing all basic similarity scores.
+     * 
+     */
+    private static void writeCombinedCSV(String toPath, Map<String, MultiSimCorrespondence> correspondences) throws Exception{
+        try(CSVWriter writer = new CSVWriter(new FileWriter(toPath))){
+
+            for (MultiSimCorrespondence cf: correspondences.values()) {
+                String[] values = {cf.id1, cf.id2, Double.toString(cf.sim1), Double.toString(cf.sim2), Double.toString(cf.sim3), cf.name1, cf.name2};
+                writer.writeNext(values);
+            }
+
+        }
+    }
+
 
     public static void main(String[] args) throws Exception{
         String inPath = "data/output/experiments/5_9_2_dbpedia_kaggle_a_2/dbpedia_kaggle_a_2_corr_w_names.csv";

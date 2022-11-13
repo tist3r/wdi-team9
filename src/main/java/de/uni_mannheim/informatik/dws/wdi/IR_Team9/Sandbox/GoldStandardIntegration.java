@@ -6,8 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -162,10 +164,14 @@ public class GoldStandardIntegration{
         int[] rules = new int[]{1,2,5};
         String[] kaggleSets = Constants.getAggregateKagglePartitionedDSNames();
         String id;
+        
+        for(int set = 0; set < kaggleSets.length; set++){
 
-        for(int rule = 0; rule < rules.length; rule++){
-            for(int set = 0; set < kaggleSets.length; set++){
+            Map<String, Integer> toBeCombined = new HashMap<>();
 
+            for(int rule = 0; rule < rules.length; rule++){
+
+                //run Experiment
                 Experiment.runForDatasetCombination(
                     otherDsName,
                     kaggleSets[set],
@@ -178,13 +184,29 @@ public class GoldStandardIntegration{
 
                 id = Experiment.getID(otherDsName, kaggleSets[set], rules[rule], 9, 0.2);
 
-                MultiSimCorrespondence.writeTopKCorrespondences(
-                    Constants.getExperimentCompanyCorrPath(otherDsName, kaggleSets[set], id),
-                    Constants.getSortedCorrespondencesPath(id, true),
-                    10000,
-                    true,
-                    false);
+                //write top k correspondences
+                try{
+                    MultiSimCorrespondence.writeTopKCorrespondences(
+                        Constants.getExperimentCompanyCorrPath(otherDsName, kaggleSets[set], id),
+                        Constants.getSortedCorrespondencesPath(id, true),
+                        10000,
+                        true,
+                        false);
+                }catch(NoSuchFileException e){
+                    e.printStackTrace();
+                }
+
+                //combine top k correspondences
+                toBeCombined.put(id, rule+1);
             }
+
+            //combine top k correspondences
+            MultiSimCorrespondence.makeCombinedCorrespondenceFile(
+                toBeCombined,
+                Constants.getCombinedMultiSimFilePath(otherDsName, kaggleSets[set],
+                "t"),
+                true);
+
         }
 
         
@@ -221,7 +243,7 @@ public class GoldStandardIntegration{
 
         //for everything without kaggle
         // calculateAllSimilarities("dw", "forbes", dataworldPath, forbesPath, blocker, matchingRule1, matchingRule2, matchingRule3, "q");
-        // makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes_q.csv", "q");
+        //makeCombinedCorrespondenceFile("dw", "forbes", "data/output/combinedFiles/dw_forbes_q.csv", "q");
 
         /*
          * IDs without name:
@@ -231,6 +253,8 @@ public class GoldStandardIntegration{
          */
 
         kaggleIntegration("dbpedia");
+        
+
 
 
     }

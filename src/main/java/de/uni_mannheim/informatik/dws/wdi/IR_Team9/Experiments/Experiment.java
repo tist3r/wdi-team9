@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
@@ -75,17 +76,17 @@ public class Experiment extends AbstractExperiment{
                     logger.info("Skipping, already conducted ...");
                 }
             }catch(OutOfMemoryError oom){
-                oom.printStackTrace();
+                logger.warn("OOM exception thrown ..."+oom.getMessage());
 
                 try(BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(Constants.getKaggleErrorLogPath()),StandardOpenOption.APPEND)){
-                    bufferedWriter.write(getID(ds1Name, ds2Name, ruleID, blockerID, thresh));
+                    bufferedWriter.write(getID(ds1Name, ds2Name, ruleID, blockerID, thresh)+LocalDateTime.now());
                     bufferedWriter.write("\n");
                 }catch(Exception e){
-                    e.printStackTrace();
+                    logger.warn("unexpected exception when writing OOM error log" + e.getMessage()); 
                 }
             }
             catch(Exception e){
-                e.printStackTrace();
+                logger.warn("unexpected exception " + e.getMessage());
             }
 
     }

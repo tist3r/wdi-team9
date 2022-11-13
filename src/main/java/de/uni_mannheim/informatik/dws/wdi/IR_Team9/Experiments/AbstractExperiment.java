@@ -158,7 +158,10 @@ public abstract class AbstractExperiment {
 
     public Processable<Correspondence<Company, Attribute>> runExperiment() throws Exception{
         if(this.loadedDatasets && addedBlocker && addedMatchingRule){
+            logger.info("Starting identity resolution for " + this.toString());
             Processable<Correspondence<Company, Attribute>> correspondences = this.runIdentityResolution();
+
+            logger.info("Starting evaluation of experiment");
             this.evaluateMatching(correspondences);
             this.evaluateBlocker();
 
@@ -178,11 +181,9 @@ public abstract class AbstractExperiment {
             //Load Test data
             this.gsTest.loadFromCSVFile(new File(Constants.getTestData(this.ds1Name, this.ds2Name)));
         }catch(KeyException e){
-            System.out.println("[WARNING ] could not load train and test data because dataset name is wrong ...");
-            e.printStackTrace();
+            System.out.println("[WARNING ] could not load train and test data because dataset name is wrong ..." + e.getMessage());
         }catch(IOException e){
-            System.out.println("[WARNING ] could not read train test data ...");
-            e.printStackTrace();
+            System.out.println("[WARNING ] could not read train test data ..." + e.getMessage());
         }
     }
 

@@ -212,6 +212,11 @@ public class Constants {
         return "logs/kaggleErrorLog.txt";
     }
 
+
+    public static String getCombinedMultiSimFilePath(String ds1Name, String ds2Name, String blockerIndication){
+        return String.format("data/output/combinedFiles/%s_%s_%s.csv", ds1Name,ds2Name,blockerIndication);
+    }
+
     public static void main(String[] args) throws Exception{
         System.out.println(getNumKaggleReducedPartitions());
     }
