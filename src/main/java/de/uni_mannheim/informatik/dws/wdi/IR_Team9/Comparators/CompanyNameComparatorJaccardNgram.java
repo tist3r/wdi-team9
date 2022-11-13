@@ -13,22 +13,29 @@ import de.uni_mannheim.informatik.dws.winter.similarity.string.JaccardOnNGramsSi
  */
 public class CompanyNameComparatorJaccardNgram extends AbstractT9Comparator{
 
-    private JaccardOnNGramsSimilarity sim;
+    private JaccardOnNGramsSimilarity simMeasure;
 
     public CompanyNameComparatorJaccardNgram(int n){
             //define Similarity measure
-            this.sim = new JaccardOnNGramsSimilarity(n);
+            this.simMeasure = new JaccardOnNGramsSimilarity(n);
             this.rmFrequentTokens = false;
     }
 
     public CompanyNameComparatorJaccardNgram(int n, boolean rmFrequentTokens){
-        this.sim = new JaccardOnNGramsSimilarity(n);
+        this.simMeasure = new JaccardOnNGramsSimilarity(n);
         this.rmFrequentTokens = rmFrequentTokens;
         this.postProcessingThresh = 0;
     }
 
+    /**
+     * Constructor with the option to specify a post processing threshold after which the similarity is reduced to zero.
+     * This is especially helpful for classifiers, in order to not distort their learned matching rules.
+     * @param n n-gram length
+     * @param rmFrequentTokens if frequent tokens should be removed during pre-processing
+     * @param postProcessingThresh
+     */
     public CompanyNameComparatorJaccardNgram(int n, boolean rmFrequentTokens, float postProcessingThresh){
-        this.sim = new JaccardOnNGramsSimilarity(n);
+        this.simMeasure = new JaccardOnNGramsSimilarity(n);
         this.rmFrequentTokens = rmFrequentTokens;
         this.postProcessingThresh = postProcessingThresh;
     }
@@ -40,8 +47,8 @@ public class CompanyNameComparatorJaccardNgram extends AbstractT9Comparator{
         String name2 = record2.getName();
         //preprocessing
         if(this.rmFrequentTokens){
-            name1 = StringPreprocessing.removeFrequentToken(name1, true);
-            name2 = StringPreprocessing.removeFrequentToken(name2, true);
+            name1 = StringPreprocessing.removeFrequentTokens(name1, true);
+            name2 = StringPreprocessing.removeFrequentTokens(name2, true);
         }
 
         name1 = StringPreprocessing.tokenBasicNormalization(name1, "", false);
@@ -49,8 +56,8 @@ public class CompanyNameComparatorJaccardNgram extends AbstractT9Comparator{
 
         //System.out.println(name1 + " " + name2);
 
+        Double similarity =  simMeasure.calculate(name1,name2);
 
-        Double similarity =  sim.calculate(name1,name2);
         Double postProcessedSimilarity = this.getPostProcessedSim(similarity);
 
         this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);

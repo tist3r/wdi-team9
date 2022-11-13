@@ -26,8 +26,8 @@ public class CompanyNameComparatorLevenshtein extends AbstractT9Comparator{
         String name2 = record2.getName();
 
         if(this.rmFrequentTokens){
-            name1 = StringPreprocessing.removeFrequentToken(name1, true);
-            name2 = StringPreprocessing.removeFrequentToken(name2, true);
+            name1 = StringPreprocessing.removeFrequentTokens(name1, true);
+            name2 = StringPreprocessing.removeFrequentTokens(name2, true);
         }
 
         name1 = StringPreprocessing.tokenBasicNormalization(name1, "", false);

@@ -5,6 +5,10 @@ import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.Comparat
 import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.ComparatorLogger;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
+/**
+ * Class that implements common Comparator logic.
+ * @author Thomas
+ */
 public abstract class AbstractT9Comparator implements Comparator<Company, Attribute> {
 
     boolean rmFrequentTokens = false;
@@ -12,6 +16,11 @@ public abstract class AbstractT9Comparator implements Comparator<Company, Attrib
     ComparatorLogger comparisonLog;
 
 
+    /**
+     * Returns the postprocessed similarity - in this case 0 below a preset threshold.
+     * @param sim the original similarity.
+     * @return
+     */
     double getPostProcessedSim(double sim){
         if(sim < this.postProcessingThresh){
             return 0d;
@@ -20,6 +29,15 @@ public abstract class AbstractT9Comparator implements Comparator<Company, Attrib
         return sim;
     }
 
+    /**
+     * Writes the comparison log for the comparator
+     * @param record1
+     * @param record2
+     * @param similarity calculated similarity of the comparator
+     * @param postProcessedSimilarity post processed similarity
+     * @param r1pp preprocessed record name
+     * @param r2pp preprocessed record name
+     */
     void writeLog(Company record1, Company record2, double similarity, double postProcessedSimilarity, String r1pp, String r2pp){
         if(this.comparisonLog != null){
             String className = getClass().getName();

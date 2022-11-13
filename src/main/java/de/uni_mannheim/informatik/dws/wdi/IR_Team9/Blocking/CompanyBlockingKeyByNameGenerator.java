@@ -36,7 +36,7 @@ public class CompanyBlockingKeyByNameGenerator extends RecordBlockingKeyGenerato
 		try{
 			String preprocessedName = record.getName();
 			if(this.removeFrequentTokens){
-				preprocessedName = StringPreprocessing.removeFrequentToken(preprocessedName, true);
+				preprocessedName = StringPreprocessing.removeFrequentTokens(preprocessedName, true);
 			}
 			if(this.basicNormalization){
 				preprocessedName = StringPreprocessing.tokenBasicNormalization(preprocessedName, "", false);

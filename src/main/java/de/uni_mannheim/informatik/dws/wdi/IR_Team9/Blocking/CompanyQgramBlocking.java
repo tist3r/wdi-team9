@@ -27,7 +27,7 @@ public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, At
 	@Override
 	public void generateBlockingKeys(Company record, Processable<Correspondence<Attribute, Matchable>> correspondences, DataIterator<Pair<String, Company>> resultCollector) {
 		try{
-            String preprocessedName = StringPreprocessing.removeFrequentToken(record.getName(), true);
+            String preprocessedName = StringPreprocessing.removeFrequentTokens(record.getName(), true);
             preprocessedName = StringPreprocessing.tokenBasicNormalization(preprocessedName, "", false);
 
             List<String> ngrams = StringPreprocessing.ngrams(this.n, preprocessedName);
