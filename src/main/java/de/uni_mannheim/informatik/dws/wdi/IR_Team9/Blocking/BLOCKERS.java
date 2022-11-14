@@ -90,8 +90,8 @@ public class BLOCKERS {
     }
 
     public static Blocker<Company, Attribute, Company, Attribute> getBlocker9(){
-        blocker8Description = "First letter of tokens";
+        blocker8Description = "First letter of tokens after removing frequent tokens. Only blocker capable of handling the large dataset.";
 
-        return new StandardRecordBlocker<>(new CompanyNameTokenGenerator(3));
+        return new StandardRecordBlocker<>(new CompanyNameStartTokenGenerator(3, true));
     }
 }
