@@ -22,6 +22,7 @@ public class Constants {
     private static final String forbesPath = "data/input/Forbes_results.xml";
     private static final String dataworldPath = "data/input/dataworld_ts.xml";
     private static final String kagglePath = "data/input/companies_shorted_results.xml";
+    private static final String kaggleInputPath = "data/input/kaggle.xml";
 
 
     private static final String gsFolder = "data/goldstandard/";
@@ -65,6 +66,8 @@ public class Constants {
             case "kaggle_a_2": return getKaggleAggregatedRedXMLPath(2);
             case "kaggle_a_3": return getKaggleAggregatedRedXMLPath(3);
             case "kaggle_a_4": return getKaggleAggregatedRedXMLPath(4);
+            case "_kaggle": return kaggleInputPath;
+            case "KAGGLE_ORIGINAL": return kagglePath;
             default: throw new KeyException("Invalid Key. Use either dbpedia, dw, or forbes. For Kaggle Paths use the overloaded function");
         }
     }
@@ -215,6 +218,15 @@ public class Constants {
 
     public static String getCombinedMultiSimFilePath(String ds1Name, String ds2Name, String blockerIndication){
         return String.format("data/output/combinedFiles/%s_%s_%s.csv", ds1Name,ds2Name,blockerIndication);
+    }
+
+    /**
+     * Returns the export path for ML model/matching rule description
+     * @param experimentID
+     * @return
+     */
+    public static String getMLModelPath(String experimentID){
+        return String.format("%smodel", getExperimentRootPath(experimentID));
     }
 
     public static void main(String[] args) throws Exception{
