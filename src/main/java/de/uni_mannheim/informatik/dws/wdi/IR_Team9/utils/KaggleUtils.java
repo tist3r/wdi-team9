@@ -9,7 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -309,8 +312,104 @@ public class KaggleUtils {
     }
 
 
+    public static Set<String> keepPercentageOrAboveThresh(double thresh, double percentage, boolean debug) throws Exception{
+        //read all correspondence file
+            //keep and write to final file if
+                //similarity above a certain threshold or a certain percentage flag is true
 
-    public static void main(String[] args) throws Exception{
+        System.out.println("Starting to get IDs");
+        Set<String> toKeep = new HashSet<String>();
+        String[] line;
+        String kaggleID;
+        double similarity;
+
+
+        for(int i = 1; i <= 95; i++){
+            try(CSVReader reader = new CSVReader(Files.newBufferedReader(Paths.get(String.format("%s%d.csv", Constants.getKaggleReducedXMLRootPath(),i)), StandardCharsets.ISO_8859_1))){
+                //System.out.println("Reading file " + String.format("%s%d.csv", Constants.getKaggleReducedXMLRootPath(),i));
+                while((line = reader.readNext())!=null){
+                    //System.out.println("Reading file");
+                    kaggleID = line[1];
+                    similarity = Double.parseDouble(line[2]);
+
+                    //System.out.println(kaggleID);
+                    //System.out.println(Double.toString(similarity));
+
+                    if(similarity >= thresh || Math.random() < percentage){
+                        toKeep.add(kaggleID);
+                    }
+
+                }
+
+
+            }catch(NoSuchFileException e){
+                System.out.println(e.getMessage());
+            }
+        }
+        System.out.println("Collected IDs, found " + Integer.toString(toKeep.size()));
+
+        if(debug){
+            try(BufferedWriter writer = Files.newBufferedWriter(Paths.get("debug.txt"),StandardCharsets.UTF_8)){
+                for(String s : toKeep){
+                    writer.write(s);
+                    writer.write("\n");
+                }
+            }
+        }
+
+        return toKeep;
+    }
+
+    public static void writeIDsToKeepToFile(Set<String> toKeep) throws IOException{
+        try(BufferedReader reader = Files.newBufferedReader(Paths.get(Constants.getDatasetPath("kaggle")),StandardCharsets.UTF_8)){
+            try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(Constants.getDatasetPath("_kaggle")),StandardCharsets.UTF_8)){
+                writer.write(reader.readLine()); //first line
+                writer.write("\n");
+                writer.write(reader.readLine()); //root tag
+                writer.write("\n");
+
+                String line;
+                String ppline; //preprocessed line
+                String prevLine ="";
+                String id;
+
+                while((line = reader.readLine()) != null){
+                    
+                    if(line.contains("<ID>")){
+                        ppline = line.trim().replace("<ID>", "");
+                        id = ppline.substring(0, ppline.indexOf("<"));
+
+                        if(toKeep.contains(id)){
+                            writer.write(prevLine);
+                            writer.write("\n");
+
+                            do{
+                                writer.write(line);
+                                writer.write("\n");
+                            }while(!(line = reader.readLine()).contains("</Company>"));
+
+                            writer.write(line); //write closing tag
+                            writer.write("\n");
+                        }
+                    }
+                    prevLine = line;
+                }
+
+                //write closing loop tag
+                writer.write(prevLine);
+
+            }
+        }catch(KeyException k){
+            System.out.println(k.getMessage());
+        }catch(NoSuchFileException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+
+
+    public static void main(String[] args) {
         // Integer lineLimit = 1000000;
 
         // splitXML(FILENAME, "data/input/test/", "kaggle", lineLimit);
@@ -319,8 +418,14 @@ public class KaggleUtils {
 
         //reduceKaggleXMLs(1, Constants.getMaxKaggleID());
 
-        combineReducedKaggleXMLs(4);
+        //combineReducedKaggleXMLs(4);
 
+        try{
+            writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.78, 0.15, true));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
         
 
     }

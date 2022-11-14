@@ -204,6 +204,7 @@ public class Constants {
      * Returns the dataset name of the final kaggle input partitions.
      * @return
      */
+    @Deprecated
     public static String[] getAggregateKagglePartitionedDSNames(){
         return new String[]{"kaggle_a_1","kaggle_a_2","kaggle_a_3","kaggle_a_4"};
     }
@@ -240,7 +241,7 @@ public class Constants {
         return String.format("data/output/combinedFiles/%s_%s_%s.csv", ds1Name,ds2Name,blockerIndication);
     }
 
-    
+
     /**
      * Returns the export path for ML model/matching rule description
      * @param experimentID
@@ -313,6 +314,6 @@ public class Constants {
     }
 
     public static void main(String[] args) throws Exception{
-        System.out.println(getNumKaggleReducedPartitions());
+        System.out.println(getExperimentEvaluationFilePath("abc", "nicht test"));
     }
 }
