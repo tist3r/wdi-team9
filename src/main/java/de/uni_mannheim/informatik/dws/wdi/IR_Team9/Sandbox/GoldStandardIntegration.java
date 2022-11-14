@@ -163,7 +163,7 @@ public class GoldStandardIntegration{
 
 
     private static void kaggleIntegration(String otherDsName) throws Exception{
-        int[] rules = new int[]{1,2,5};
+        int[] rules = new int[]{1,2,9};
         //String[] kaggleSets = Constants.getAggregateKagglePartitionedDSNames();
         String kagglePath = Constants.getDatasetPath("_kaggle");
 
@@ -184,7 +184,7 @@ public class GoldStandardIntegration{
                     0.2, 
                     9, 
                     rules[rule], 
-                    false, 
+                    true, 
                     Experiment.getConductedExperiments());
 
                 id = Experiment.getID(otherDsName, "_kaggle", rules[rule], 9, 0.2);
@@ -196,7 +196,7 @@ public class GoldStandardIntegration{
                         Constants.getSortedCorrespondencesPath(id, true),
                         10000,
                         true,
-                        false);
+                        true);
                 }catch(NoSuchFileException e){
                     e.printStackTrace();
                 }
@@ -209,7 +209,7 @@ public class GoldStandardIntegration{
             MultiSimCorrespondence.makeCombinedCorrespondenceFile(
                 toBeCombined,
                 Constants.getCombinedMultiSimFilePath(otherDsName, "_kaggle",
-                "t"),
+                "t1"),
                 true);
 
         //}
