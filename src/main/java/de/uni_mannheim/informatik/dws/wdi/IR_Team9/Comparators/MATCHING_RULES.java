@@ -10,7 +10,7 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 8;
+    public static int NUM_MATCHING_RULES = 9;
 
     public static String mr1Description;
     public static String mr2Description;
@@ -53,6 +53,7 @@ public class MATCHING_RULES {
             case 6: return getMR6(thresh);
             case 7: return getMR7(thresh, ds1, ds2, gsTrain);
             case 8: return getMR8(thresh, ds1, ds2, gsTrain);
+            case 9: return getMR9(thresh);
             default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
     }
@@ -199,6 +200,23 @@ public class MATCHING_RULES {
 		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
 
 		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR9(double thresh){
+        mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true), 1d/3);
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1d/3);
+            rule.addComparator(new CompanyNameComparatorJaccardToken(), 1d/3);
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
 
         return rule;
     }
