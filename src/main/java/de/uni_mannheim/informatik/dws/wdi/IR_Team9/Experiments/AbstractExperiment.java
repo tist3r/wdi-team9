@@ -68,6 +68,8 @@ public abstract class AbstractExperiment {
     double reductionRatio;
     int blockedPairs;
     double matchingThresh;
+
+    LocalDateTime timeStarted;
     
 
     public AbstractExperiment(String ds1Name, String ds2Name, int experimentID, double matchingThresh) throws Exception{
@@ -75,6 +77,7 @@ public abstract class AbstractExperiment {
         this.ds2Name = ds2Name;
         this.EXPERIMENT_ID = experimentID;
         this.matchingThresh = matchingThresh;
+        this.timeStarted = LocalDateTime.now();
     }
 
 

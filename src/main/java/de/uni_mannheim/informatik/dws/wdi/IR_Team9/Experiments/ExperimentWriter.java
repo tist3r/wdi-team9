@@ -39,6 +39,7 @@ public class ExperimentWriter {
          * Time
          * reduction ration
          * blocked pairs
+         * datetime conducted
          */
 
          return new String[]{
@@ -57,7 +58,8 @@ public class ExperimentWriter {
             Integer.toString(experiment.noCorrespondences),
             experiment.getDurationString(),
             Double.toString(experiment.reductionRatio),
-            Integer.toString(experiment.blockedPairs)
+            Integer.toString(experiment.blockedPairs),
+            experiment.timeStarted.toString()
         };
     }
 
@@ -103,7 +105,8 @@ public class ExperimentWriter {
             "#corr",
             "Duration",
             "Reduction ratio",
-            "#blocked pairs"
+            "#blocked pairs",
+            "dateTime"
         };
     }
 
