@@ -312,13 +312,15 @@ public class KaggleUtils {
     }
 
 
-    public static Set<String> keepPercentageOrAboveThresh(double thresh, double percentage, boolean debug) throws Exception{
+    public static Set<String> keepPercentageOrAboveThresh(double thresh1, double thresh2, double percOfAboveThresh2, double percRandom, boolean debug) throws Exception{
         //read all correspondence file
             //keep and write to final file if
                 //similarity above a certain threshold or a certain percentage flag is true
 
         System.out.println("Starting to get IDs");
+
         Set<String> toKeep = new HashSet<String>();
+
         String[] line;
         String kaggleID;
         double similarity;
@@ -334,11 +336,13 @@ public class KaggleUtils {
 
                     //System.out.println(kaggleID);
                     //System.out.println(Double.toString(similarity));
-
-                    if(similarity >= thresh || Math.random() < percentage){
+                    if(similarity >= thresh1){
+                        toKeep.add(kaggleID);
+                    }else if(similarity >= thresh2 && Math.random() < percOfAboveThresh2){
+                        toKeep.add(kaggleID);
+                    }else if(Math.random() < percRandom){
                         toKeep.add(kaggleID);
                     }
-
                 }
 
 
@@ -361,8 +365,8 @@ public class KaggleUtils {
     }
 
     public static void writeIDsToKeepToFile(Set<String> toKeep) throws IOException{
-        try(BufferedReader reader = Files.newBufferedReader(Paths.get(Constants.getDatasetPath("kaggle")),StandardCharsets.UTF_8)){
-            try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(Constants.getDatasetPath("_kaggle")),StandardCharsets.UTF_8)){
+        try(BufferedReader reader = Files.newBufferedReader(Paths.get(Constants.getDatasetPath("KAGGLE_ORIGINAL")),StandardCharsets.UTF_8)){
+            try(BufferedWriter writer = Files.newBufferedWriter(Paths.get("kaggle_new.xml"),StandardCharsets.UTF_8)){
                 writer.write(reader.readLine()); //first line
                 writer.write("\n");
                 writer.write(reader.readLine()); //root tag
@@ -421,7 +425,7 @@ public class KaggleUtils {
         //combineReducedKaggleXMLs(4);
 
         try{
-            writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.78, 0.15, true));
+            writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.75, 0.5, 0.8, 0.15, false));
         }catch(Exception e){
             e.printStackTrace();
         }
