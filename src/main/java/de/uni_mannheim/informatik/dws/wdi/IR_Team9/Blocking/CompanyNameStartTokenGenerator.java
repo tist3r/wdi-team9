@@ -1,6 +1,5 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking;
 
-import java.util.List;
 import java.util.StringTokenizer;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.StringPreprocessing;

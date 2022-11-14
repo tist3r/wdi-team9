@@ -1,7 +1,6 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 
 import java.io.BufferedWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
