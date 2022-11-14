@@ -168,6 +168,19 @@ public abstract class AbstractExperiment {
             //append to file
             ExperimentWriter.appendToExperimentCSV(this);
 
+
+            if(this.rule instanceof WekaMatchingRule){
+                WekaMatchingRule<Company, Attribute> wekaRule = (WekaMatchingRule<Company, Attribute>) this.rule;
+                try{
+                    //if weka Matching rule write model to file
+                    wekaRule.exportModel(new File(Constants.getMLModelPath(this.toString())));
+                }catch(Exception e){
+                    logger.warn("Could not write ML model to file for experiment " + this.toString());
+                }
+            }
+            
+            
+
             return correspondences;
 
         }else{

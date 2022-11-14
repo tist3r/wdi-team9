@@ -115,11 +115,11 @@ public class Experiment extends AbstractExperiment{
         runForDatasetCombination(dw, forbes, experimentID, thresh, blockerID, ruleID, redo, conductedExp);
 
         //kaggle
-        for(int i = 1; i <=4; i++){
-            runForDatasetCombination(dbpedia, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
-            runForDatasetCombination(dw, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
-            runForDatasetCombination(forbes, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
-        }
+        // for(int i = 1; i <=4; i++){
+        //     runForDatasetCombination(dbpedia, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
+        //     runForDatasetCombination(dw, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
+        //     runForDatasetCombination(forbes, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
+        // }
     }   
 
 
@@ -129,7 +129,7 @@ public class Experiment extends AbstractExperiment{
         int experimentID = 1;
 
         for(int blockerID = 1; blockerID <= BLOCKERS.NUM_BLOCKERS; blockerID++){ //blockerID
-            for(int ruleID = 1; ruleID <= MATCHING_RULES.NUM_MATCHING_RULES; ruleID++){
+            for(int ruleID = 8; ruleID <= MATCHING_RULES.NUM_MATCHING_RULES; ruleID++){
                 runForAllDatasets(experimentID, thresh, blockerID, ruleID, false, getConductedExperiments());
                 experimentID++;
             }

@@ -17,10 +17,12 @@ import org.slf4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyByNameGenerator;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorLevenshtein;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
@@ -162,10 +164,12 @@ public class GoldStandardIntegration{
 
     private static void kaggleIntegration(String otherDsName) throws Exception{
         int[] rules = new int[]{1,2,5};
-        String[] kaggleSets = Constants.getAggregateKagglePartitionedDSNames();
+        //String[] kaggleSets = Constants.getAggregateKagglePartitionedDSNames();
+        String kagglePath = Constants.getDatasetPath("_kaggle");
+
         String id;
         
-        for(int set = 0; set < kaggleSets.length; set++){
+        //for(int set = 0; set < kaggleSets.length; set++){
 
             Map<String, Integer> toBeCombined = new HashMap<>();
 
@@ -174,7 +178,8 @@ public class GoldStandardIntegration{
                 //run Experiment
                 Experiment.runForDatasetCombination(
                     otherDsName,
-                    kaggleSets[set],
+                    //kaggleSets[set],
+                    "_kaggle",
                     100, 
                     0.2, 
                     9, 
@@ -182,12 +187,12 @@ public class GoldStandardIntegration{
                     false, 
                     Experiment.getConductedExperiments());
 
-                id = Experiment.getID(otherDsName, kaggleSets[set], rules[rule], 9, 0.2);
+                id = Experiment.getID(otherDsName, "_kaggle", rules[rule], 9, 0.2);
 
                 //write top k correspondences
                 try{
                     MultiSimCorrespondence.writeTopKCorrespondences(
-                        Constants.getExperimentCompanyCorrPath(otherDsName, kaggleSets[set], id),
+                        Constants.getExperimentCompanyCorrPath(otherDsName, "_kaggle", id),
                         Constants.getSortedCorrespondencesPath(id, true),
                         10000,
                         true,
@@ -203,13 +208,38 @@ public class GoldStandardIntegration{
             //combine top k correspondences
             MultiSimCorrespondence.makeCombinedCorrespondenceFile(
                 toBeCombined,
-                Constants.getCombinedMultiSimFilePath(otherDsName, kaggleSets[set],
+                Constants.getCombinedMultiSimFilePath(otherDsName, "_kaggle",
                 "t"),
                 true);
 
-        }
+        //}
 
         
+    }
+
+    /**
+     * Function to test if a certain dataset is able to be processed
+     * @throws Exception
+     */
+    public static void testPartitions() throws Exception{
+
+        CompanyXMLReader cr = new CompanyXMLReader();
+        HashedDataSet<Company, Attribute> dbPedia = new HashedDataSet<>();
+
+		cr.loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.RECORD_PATH, dbPedia);
+
+        HashedDataSet<Company, Attribute> kaggle12 = new HashedDataSet<>();
+        // cr.loadFromXML(new File(Constants.getDatasetPath("kaggle_a_1")), Constants.RECORD_PATH, kaggle12);
+        // cr.loadFromXML(new File(Constants.getDatasetPath("kaggle_a_2")), Constants.RECORD_PATH, kaggle12);
+        cr.loadFromXML(new File(Constants.getDatasetPath("_kaggle")), Constants.RECORD_PATH, kaggle12);
+
+
+        Blocker<Company,Attribute,Company,Attribute> blocker = BLOCKERS.getBlocker9();
+
+        MatchingEngine<Company, Attribute> engine = new MatchingEngine<>();
+
+        Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(dbPedia, kaggle12, null, MATCHING_RULES.getMR1(0.85), blocker);
+
     }
 
 
@@ -252,7 +282,12 @@ public class GoldStandardIntegration{
          * -Kaggle_2599908 (4)
          */
 
-        kaggleIntegration("dbpedia");
+        String[] dsNames = new String[] {"dbpedia", "forbes", "dw"};
+        for(String dsName : dsNames){
+            kaggleIntegration(dsName);
+        }
+
+        //testPartitions();
         
 
 

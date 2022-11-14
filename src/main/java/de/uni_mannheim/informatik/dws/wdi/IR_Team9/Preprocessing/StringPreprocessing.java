@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 public class StringPreprocessing {
 
-    static String[] _FREQUENT_TOKENS = {
+    static String[] _FREQUENT_TOKENS_1 = {
         "bank", "group", "of", "and",
         "holding", "energy", "financial",
         "international", "industries", "inc", "incorporated",
@@ -18,8 +18,12 @@ public class StringPreprocessing {
         "sa", "ag"
     };
 
+    static String[] _FREQUENT_TOKENS_2 = {
+        "entertainment"
+    };
+
     //set that keeps frequent tokens for better performance
-    static final Set<String> FREQUENT_TOKENS = makeFrequentTokenSet(_FREQUENT_TOKENS);
+    static final Set<String> FREQUENT_TOKENS = makeFrequentTokenSet(_FREQUENT_TOKENS_1);
 
 
     private static Set<String> makeFrequentTokenSet(String[] tokens){
@@ -102,22 +106,11 @@ public class StringPreprocessing {
         StringTokenizer tokenizer = new StringTokenizer(s);
         String token;
         StringBuffer sb = new StringBuffer();
-        // boolean isFrequentToken;
         
         while(tokenizer.hasMoreTokens()){
             // isFrequentToken = false;
             token = tokenizer.nextToken();
             token = token.toLowerCase();
-
-            // for(String ft : _FREQUENT_TOKENS){
-            // //loop through all frequent tokens to see if one mathches
-            // //TODO optimize performance
-            //     if(ft.equalsIgnoreCase(token)){
-            //         //if token matches the frequent token skip to the next token.
-            //         isFrequentToken = true;
-            //         break;
-            //     }
-            // }
 
             if(!FREQUENT_TOKENS.contains(token)){ //token is not a frequent token
                 sb.append(token);
