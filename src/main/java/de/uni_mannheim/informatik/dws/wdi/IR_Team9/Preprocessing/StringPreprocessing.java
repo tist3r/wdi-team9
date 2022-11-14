@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 public class StringPreprocessing {
 
-    static String[] _FREQUENT_TOKENS_1 = {
+    private static String[] _FREQUENT_TOKENS_1 = {
         "bank", "group", "of", "and",
         "holding", "energy", "financial",
         "international", "industries", "inc", "incorporated",
@@ -18,18 +18,25 @@ public class StringPreprocessing {
         "sa", "ag"
     };
 
-    static String[] _FREQUENT_TOKENS_2 = {
-        "entertainment"
+    private static String[] _FREQUENT_TOKENS_2 = {
+        "entertainment", "services", "company",
+        "technology", "insurance", "management",
+        "engineering", "construction", "solution", "solutions",
+        "manufacturing", "investment", "investments", "development"
     };
 
     //set that keeps frequent tokens for better performance
-    static final Set<String> FREQUENT_TOKENS = makeFrequentTokenSet(_FREQUENT_TOKENS_1);
+    static final Set<String> FREQUENT_TOKENS = makeFrequentTokenSet(_FREQUENT_TOKENS_1, _FREQUENT_TOKENS_2);
 
 
-    private static Set<String> makeFrequentTokenSet(String[] tokens){
+    private static Set<String> makeFrequentTokenSet(String[] tokens1, String[] tokens2){
         Set<String> freqTokens = new HashSet<>();
 
-        for(String ft : tokens){
+        for(String ft : tokens1){
+            freqTokens.add(ft);
+        }
+
+        for(String ft : tokens2){
             freqTokens.add(ft);
         }
 
