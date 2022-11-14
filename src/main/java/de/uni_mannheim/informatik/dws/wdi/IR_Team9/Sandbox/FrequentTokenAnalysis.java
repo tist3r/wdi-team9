@@ -74,8 +74,9 @@ public class FrequentTokenAnalysis {
     }
 
     public static void main(String[] args) throws Exception {
-        String inPath = "data/output/combinedFiles/dbpedia_dw.csv";
-        String outPath = "data/output/combinedFiles/frequent_tokens.csv";
+        //String inPath = "data/output/combinedFiles/dbpedia_dw.csv";
+        String inPath = "data/output/combinedFiles/dbpedia__kaggle_t.csv";
+        String outPath = "data/output/combinedFiles/frequent_tokens1.csv";
 
         List<Entry<String, Integer>> occurences = getFrequentTokens(inPath);
         writeOccurences(occurences, outPath);
