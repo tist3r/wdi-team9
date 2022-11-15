@@ -10,7 +10,7 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 15;
+    public static int NUM_MATCHING_RULES = 20;
 
     public static String mr1Description;
     public static String mr2Description;
@@ -61,6 +61,10 @@ public class MATCHING_RULES {
                 case 14: return getMR14(thresh);
                 case 15: return getMR15(thresh);
                 case 16: return getMR16(thresh, ds1, ds2, gsTrain);
+                case 17: return getMR17(thresh);
+                case 18: return getMR18(thresh);
+                case 19: return getMR19(thresh);
+                case 20: return getMR20(thresh, ds1, ds2, gsTrain);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
@@ -362,6 +366,80 @@ public class MATCHING_RULES {
         rule.addComparator(new CompanyNameComparatorJaccardNgram(3, false, 0.7f));
         rule.addComparator(new CompanyNameComparatorLevenshtein(false,0.7f));
         rule.addComparator(new CompanyNameComparatorJaccardToken(0.5f, false));
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR17(double thresh){
+        //mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.3);
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.3);
+            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.6f), 0.4);
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR18(double thresh){
+        //mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.3);
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.3);
+            rule.addComparator(new RogueTokenComparator(), 0.4);
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR19(double thresh){
+        //mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(4, true, 0.4f), 0.5); //takes care of order
+            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f), 0.5); //takes care of missing tokens but stresses present ones
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR20(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        //mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        //mr11Description = "Weka logistic regression matching rule with postprocessing parameters and fewer comparators";
+
+        String options[] = new String[] { "-S" };
+		String modelType = "SimpleLogistic"; // use a logistic regression
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f));
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f));
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(4, true, 0.5f));
+        rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f));
 
         // train the matching rule's model
 		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
