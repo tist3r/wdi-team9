@@ -16,6 +16,8 @@ public class CompanyNameStartTokenGenerator extends RecordBlockingKeyGenerator<C
 
     private int n;
     private boolean rmFrequentTokens;
+    private boolean rmPuctForFrequentTokens;
+
 
     public CompanyNameStartTokenGenerator(){
         n = 1;
@@ -30,6 +32,12 @@ public class CompanyNameStartTokenGenerator extends RecordBlockingKeyGenerator<C
         this.rmFrequentTokens = rmFrequentTokens;
     }
 
+    public CompanyNameStartTokenGenerator(int n, boolean rmFrequentTokens, boolean rmPuctForFrequentTokens){
+        this.n = n;
+        this.rmFrequentTokens = rmFrequentTokens;
+        this.rmPuctForFrequentTokens = rmPuctForFrequentTokens;
+    }
+
     private static final long serialVersionUID = 1L;
 	/*
      * Blocking based on first letter of company name.     * 
@@ -39,7 +47,7 @@ public class CompanyNameStartTokenGenerator extends RecordBlockingKeyGenerator<C
 		String ppName = StringPreprocessing.removePunctuation(record.getName().toLowerCase(), "");
 
         if(rmFrequentTokens){
-            ppName = StringPreprocessing.removeFrequentTokens(ppName);
+            ppName = StringPreprocessing.removeFrequentTokens(ppName, this.rmPuctForFrequentTokens);
         }
 
         StringTokenizer tokenizer = new StringTokenizer(ppName);
