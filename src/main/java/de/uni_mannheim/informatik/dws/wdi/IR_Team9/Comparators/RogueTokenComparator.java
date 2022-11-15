@@ -13,6 +13,8 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 public class RogueTokenComparator extends AbstractT9Comparator{
 
     private RogueTokenSimilarity sim = new RogueTokenSimilarity();
+    private boolean boost = false;
+    private float boostThresh = 1;
 
 
     public RogueTokenComparator() {
@@ -20,6 +22,12 @@ public class RogueTokenComparator extends AbstractT9Comparator{
 
     public RogueTokenComparator(float postProcessThresh) {
         this.postProcessingThresh = postProcessThresh;
+    }
+
+    public RogueTokenComparator(float postProcessThresh, boolean boost, float boostThresh) {
+        this.postProcessingThresh = postProcessThresh;
+        this.boost = boost;
+        this.boostThresh = boostThresh;
     }
    
     @Override
@@ -31,11 +39,20 @@ public class RogueTokenComparator extends AbstractT9Comparator{
 
         Double similarity = sim.calculate(name1, name2);
 
-		Double postProcessedSimilarity = this.getPostProcessedSim(similarity);
+		Double postProcessedSimilarity = this.boost(similarity);
+        postProcessedSimilarity = this.getPostProcessedSim(similarity);
 
 		this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
         return postProcessedSimilarity;
+    }
+
+    private double boost(double sim){
+        if(this.boost && sim >= this.boostThresh){
+            return sim + Math.sqrt(sim)/10;
+        }
+
+        return sim;
     }
 
 
