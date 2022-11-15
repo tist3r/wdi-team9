@@ -37,12 +37,12 @@ public class Constants {
     /**
      * Collection that can be used to check valid DS names or to loop over them.
      */
-    public static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "_kaggle"}));
+    public static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "kaggle"}));
 
 
      /**
      * Returns the input folder path of the specified dataset.
-     * Possible keys are dbpedia, dw, forbes, and _kaggle.
+     * Possible keys are dbpedia, dw, forbes, and kaggle.
      * KAGGLE_ORIGINAL can be specified but will be problematic during processing.
      * @dsName dataset name
      */
@@ -55,9 +55,9 @@ public class Constants {
             //case "kaggle_a_2": return getKaggleAggregatedRedXMLPath(2);
             //case "kaggle_a_3": return getKaggleAggregatedRedXMLPath(3);
             //case "kaggle_a_4": return getKaggleAggregatedRedXMLPath(4);
-            case "_kaggle": return kaggleInputPath;
+            case "kaggle": return kaggleInputPath;
             case "KAGGLE_ORIGINAL": return kagglePath;
-            default: throw new KeyException("Invalid Key. Use either dbpedia, dw, or forbes. For Kaggle Paths use the overloaded function");
+            default: throw new KeyException("Invalid Key. Use either dbpedia, dw, forbes, or kaggle.");
         }
     }
 
