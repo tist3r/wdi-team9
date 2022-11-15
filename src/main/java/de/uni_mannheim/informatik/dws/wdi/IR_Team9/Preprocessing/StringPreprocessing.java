@@ -22,7 +22,8 @@ public class StringPreprocessing {
         "entertainment", "services", "company",
         "technology", "insurance", "management",
         "engineering", "construction", "solution", "solutions",
-        "manufacturing", "investment", "investments", "development"
+        "manufacturing", "investment", "investments", "development",
+        "plc", "bv", "llc"
     };
 
     //set that keeps frequent tokens for better performance
