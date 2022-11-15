@@ -15,7 +15,7 @@ public class CompanyNameComparatorJaccardToken extends AbstractT9Comparator{
     //define Similarity measure
     private TokenizingJaccardSimilarity sim = new TokenizingJaccardSimilarity();
 
-	public CompanyNameComparatorJaccardToken(float postProcessingThresh, boolean rmFrequentTokens) {
+    public CompanyNameComparatorJaccardToken(float postProcessingThresh, boolean rmFrequentTokens) {
 		this.postProcessingThresh = postProcessingThresh;
 		this.rmFrequentTokens = rmFrequentTokens;
 	}
@@ -43,5 +43,14 @@ public class CompanyNameComparatorJaccardToken extends AbstractT9Comparator{
 		this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
         return postProcessedSimilarity;
-    }   
+    }
+    
+    
+    /*Some names have brackets with some value in it (uk) or (company). in these cases the similarity can be postprocessed */
+    public static void main(String[] args) {
+        //"Covanta","covanta corp"
+
+        TokenizingJaccardSimilarity comp = new TokenizingJaccardSimilarity();
+        System.out.println(comp.calculate("Shell","Royal Dutch Shell"));
+    }
 }
