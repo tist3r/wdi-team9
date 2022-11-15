@@ -40,7 +40,7 @@ public class RogueTokenComparator extends AbstractT9Comparator{
 
 		this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
-        return postProcessedSimilarity;
+        return Math.min(postProcessedSimilarity,1);
     }
 
     private double boost(double sim){
