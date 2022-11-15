@@ -104,7 +104,8 @@ public class StringPreprocessing {
     
     /**
      * Removes frequent tokens from a string (split by whitespace)
-     * @param s
+     * Lowercasing is done by the function
+     * @param s name (does not have to be lowercased)
      * @return
      */
     public static String removeFrequentTokens(String s){
