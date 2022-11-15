@@ -1,9 +1,5 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.StringPreprocessing;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
