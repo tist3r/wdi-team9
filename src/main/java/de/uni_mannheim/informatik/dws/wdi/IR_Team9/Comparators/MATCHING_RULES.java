@@ -10,7 +10,7 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 9;
+    public static int NUM_MATCHING_RULES = 15;
 
     public static String mr1Description;
     public static String mr2Description;
@@ -45,16 +45,24 @@ public class MATCHING_RULES {
         throws IndexOutOfBoundsException{
         
             switch (id){
-            case 1: return getMR1(thresh);
-            case 2: return getMR2(thresh);
-            case 3: return getMR3(thresh);
-            case 4: return getMR4(thresh);
-            case 5: return getMR5(thresh, jaccardWeight);
-            case 6: return getMR6(thresh);
-            case 7: return getMR7(thresh, ds1, ds2, gsTrain);
-            case 8: return getMR8(thresh, ds1, ds2, gsTrain);
-            case 9: return getMR9(thresh);
-            default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
+                case 1: return getMR1(thresh);
+                case 2: return getMR2(thresh);
+                case 3: return getMR3(thresh);
+                case 4: return getMR4(thresh);
+                case 5: return getMR5(thresh, jaccardWeight);
+                case 6: return getMR6(thresh);
+                case 7: return getMR7(thresh, ds1, ds2, gsTrain);
+                case 8: return getMR8(thresh, ds1, ds2, gsTrain);
+                case 9: return getMR9(thresh);
+                case 10: return getMR10(thresh, ds1, ds2, gsTrain);
+                case 11: return getMR11(thresh, ds1, ds2, gsTrain);
+                case 12: return getMR12(thresh, ds1, ds2, gsTrain);
+                case 13: return getMR13(thresh, ds1, ds2, gsTrain);
+                case 14: return getMR14(thresh);
+                case 15: return getMR15(thresh);
+                case 16: return getMR16(thresh, ds1, ds2, gsTrain);
+
+                default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
     }
 
@@ -217,6 +225,149 @@ public class MATCHING_RULES {
             e.printStackTrace();
             System.exit(0);
         }
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR10(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        mr10Description = "Weka logistic regression matching rule with postprocessing parameters and fewer comparators";
+
+        String options[] = new String[] { "-S" };
+		String modelType = "SimpleLogistic"; // use a logistic regression
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.55f));
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true,0.55f));
+        rule.addComparator(new CompanyNameComparatorJaccardToken(0.4f, false));
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR11(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        //mr11Description = "Weka logistic regression matching rule with postprocessing parameters and fewer comparators";
+
+        String options[] = new String[] { "-S" };
+		String modelType = "SimpleLogistic"; // use a logistic regression
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.4f));
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true,0.4f));
+        rule.addComparator(new CompanyNameComparatorJaccardToken(0.4f, false));
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR12(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        //mr11Description = "Weka logistic regression matching rule with postprocessing parameters and fewer comparators";
+
+        String options[] = new String[] { "-S" };
+		String modelType = "SimpleLogistic"; // use a logistic regression
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.62f));
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true,0.62f));
+        rule.addComparator(new CompanyNameComparatorJaccardToken(0.5f, false));
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR13(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        //mr8Description = "Weka tree matching rule with postprocessing parameters";
+
+        // create a matching rule & provide classifier, options
+        String tree = "J48"; // new instance of tree
+        String options[] = new String[1];
+        options[0] = "-U";
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, tree, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.55f));
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true,0.55f));
+        rule.addComparator(new CompanyNameComparatorJaccardToken(0.4f, false));
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR14(double thresh){
+        //mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.75/2);
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(4, true), 0.75/2);
+            rule.addComparator(new CompanyNameComparatorJaccardToken(), 0.25);
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR15(double thresh){
+        //mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
+
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.25);
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.25);
+            rule.addComparator(new CompanyNameComparatorJaccardToken(), 0.5);
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR16(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        //mr11Description = "Weka logistic regression matching rule with postprocessing parameters and fewer comparators";
+
+        String options[] = new String[] { "-S" };
+		String modelType = "SimpleLogistic"; // use a logistic regression
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.62f));
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true,0.62f));
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, false, 0.7f));
+        rule.addComparator(new CompanyNameComparatorLevenshtein(false,0.7f));
+        rule.addComparator(new CompanyNameComparatorJaccardToken(0.5f, false));
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
 
         return rule;
     }
