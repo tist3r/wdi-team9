@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
@@ -124,14 +126,23 @@ public class Experiment extends AbstractExperiment{
 
     public static void main(String[] args) throws Exception {
 
-        double thresh = 0.85;
+        double[] threshs = new double[]{0.8, 0.85};
         int experimentID = 1;
 
-        for(int blockerID = 1; blockerID <= BLOCKERS.NUM_BLOCKERS; blockerID++){ //blockerID
-            for(int ruleID = 8; ruleID <= MATCHING_RULES.NUM_MATCHING_RULES; ruleID++){
-                runForAllDatasets(experimentID, thresh, blockerID, ruleID, false, getConductedExperiments());
-                experimentID++;
+        int blockerID = 10;
+
+        for(int ruleID = 20; ruleID >= 19; ruleID--){
+            for(int threshID = 0; threshID < threshs.length; threshID++){
+                Experiment.runForDatasetCombination("dbpedia", "kaggle", experimentID, threshs[threshID], blockerID, ruleID, true, getConductedExperiments());
             }
-        }   
+        }
+
+        
+        // for(int blockerID = 1; blockerID <= BLOCKERS.NUM_BLOCKERS; blockerID++){ //blockerID
+        //     for(int ruleID = 8; ruleID <= MATCHING_RULES.NUM_MATCHING_RULES; ruleID++){
+        //         runForAllDatasets(experimentID, thresh, blockerID, ruleID, false, getConductedExperiments());
+        //         experimentID++;
+        //     }
+        // }   
     }
 }
