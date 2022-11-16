@@ -8,7 +8,6 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 public class LCSComparator extends AbstractT9Comparator{
 
     private LongestCommonSubsequenceSimilarity.NormalizationFlag normalizationFlag = LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG;
-    private boolean boostAndPenalize = false;
     private LongestCommonSubsequenceSimilarity simMeasure;
 
 
@@ -21,32 +20,40 @@ public class LCSComparator extends AbstractT9Comparator{
         this.simMeasure = new LongestCommonSubsequenceSimilarity(this.normalizationFlag);
     }
 
-    public LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag normalizationFlag, boolean boostAndPenalize) {
-        this.normalizationFlag = normalizationFlag;
-        this.simMeasure = new LongestCommonSubsequenceSimilarity(this.normalizationFlag);
+    public LCSComparator(
+        LongestCommonSubsequenceSimilarity.NormalizationFlag normalizationFlag, 
+        boolean boostAndPenalize, 
+        float boostThresh, 
+        float boostingFactor, 
+        BOOST_FUNCTIONS boostFunction) {
+
+            this.normalizationFlag = normalizationFlag;
+            this.simMeasure = new LongestCommonSubsequenceSimilarity(this.normalizationFlag);
+
+            this.boostAndPenalize =boostAndPenalize;
+            this.boostThresh = boostThresh;
+            this.boostingFactor = boostingFactor;
+            this.boostFunction = boostFunction;
     }
 
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
+
+        /* PREPROCESSING */
+        // no preprocessing here - done by the similarity class
+        
+        /* CALCULATION */
         double similarity = simMeasure.calculate(record1.getName(), record2.getName());
         
-        double ppSimilarity = boostOrPenalize(similarity);
 
+        /*POSTPROCESSING */
+        double ppSimilarity = this.postProcessSim(similarity);
+        
+        /*DEBUG LOG */
         this.writeLog(record1, record2, similarity, ppSimilarity, record1.getName(), record2.getName());
 
-        return Math.min(ppSimilarity,1);
-    }
-
-
-    private double boostOrPenalize(double sim){
-        if(boostAndPenalize && sim > 0.6){
-            return sim + Math.sqrt(sim)/10;
-        }else if (boostAndPenalize && sim < 0.5){
-            return sim - Math.sqrt(sim)/10;
-        }
-
-        return sim;
+        return ppSimilarity; //ensure return value is between 1 and 0
     }
     
 }

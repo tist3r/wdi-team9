@@ -15,31 +15,51 @@ public class CompanyNameComparatorJaccardToken extends AbstractT9Comparator{
     //define Similarity measure
     private TokenizingJaccardSimilarity sim = new TokenizingJaccardSimilarity();
 
+    public CompanyNameComparatorJaccardToken() {
+	}
+
     public CompanyNameComparatorJaccardToken(float postProcessingThresh, boolean rmFrequentTokens) {
-		this.postProcessingThresh = postProcessingThresh;
+		this.dropToZeroThresh = postProcessingThresh;
 		this.rmFrequentTokens = rmFrequentTokens;
 	}
 
-	public CompanyNameComparatorJaccardToken() {
+    public CompanyNameComparatorJaccardToken(
+        float postProcessingThresh, 
+        boolean rmFrequentTokens,
+        boolean boostAndPenalize,
+        float boostThresh,
+        float boostFactor,
+        BOOST_FUNCTIONS boostFunction) {
+
+		    this(postProcessingThresh, rmFrequentTokens);
+            this.boostAndPenalize = boostAndPenalize;
+            this.boostThresh = boostThresh;
+            this.boostingFactor = boostFactor;
+            this.boostFunction = boostFunction;
 	}
-	
+
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
-		String name1 = record1.getName();
+		
+        /* PREPROCESSING */
+        String name1 = record1.getName();
         String name2 = record2.getName();
         
-		//preprocessing
         if(this.rmFrequentTokens){
             name1 = StringPreprocessing.removeFrequentTokens(name1, true);
             name2 = StringPreprocessing.removeFrequentTokens(name2, true);
         }
-
         // Further preprocessing is done by the TokenizingJAccardSImilarity Class
+
+
+        /* CALCULATION */
         Double similarity = sim.calculate(name1, name2);
 
-		Double postProcessedSimilarity = this.getPostProcessedSim(similarity);
+        /* POSTPROCESSING */
+		Double postProcessedSimilarity = this.postProcessSim(similarity);
 
+        /* DEBUG LOG */
 		this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
         return postProcessedSimilarity;

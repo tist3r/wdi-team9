@@ -16,12 +16,27 @@ public class CompanyNameComparatorLevenshtein extends AbstractT9Comparator{
 
     public CompanyNameComparatorLevenshtein(boolean rmFrequentTokens, float postProcessingThresh){
         this.rmFrequentTokens = rmFrequentTokens;
-        this.postProcessingThresh = postProcessingThresh;
+        this.dropToZeroThresh = postProcessingThresh;
     }
+
+    public CompanyNameComparatorLevenshtein(
+        float postProcessingThresh, 
+        boolean rmFrequentTokens,
+        boolean boostAndPenalize,
+        float boostThresh,
+        float boostFactor,
+        BOOST_FUNCTIONS boostFunction) {
+
+		    this(rmFrequentTokens, postProcessingThresh);
+            this.boostAndPenalize = boostAndPenalize;
+            this.boostThresh = boostThresh;
+            this.boostingFactor = boostFactor;
+            this.boostFunction = boostFunction;
+	}
 
     @Override
     public double compare(Company record1, Company record2, Correspondence<Attribute, Matchable> schemaCorrespondence) {
-        // Preprocessing
+        /* PREPROCESSING */
         String name1 = record1.getName();
         String name2 = record2.getName();
 
@@ -34,9 +49,13 @@ public class CompanyNameComparatorLevenshtein extends AbstractT9Comparator{
         name2 = StringPreprocessing.tokenBasicNormalization(name2, "", false);
 
 
+        /* CALCULATION */
         Double similarity =  sim.calculate(name1,name2);
-        Double postProcessedSimilarity = getPostProcessedSim(similarity);
 
+        /* POSTPROCESSING */
+        Double postProcessedSimilarity = keepOrDropToZero(similarity);
+
+        /* DEBUG LOG */
         this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
         return postProcessedSimilarity;

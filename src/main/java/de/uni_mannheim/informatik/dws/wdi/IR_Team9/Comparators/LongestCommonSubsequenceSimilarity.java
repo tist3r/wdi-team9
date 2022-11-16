@@ -19,6 +19,9 @@ public class LongestCommonSubsequenceSimilarity extends SimilarityMeasure<String
 
 
   /*Credit to: https://www.geeksforgeeks.org/longest-common-subsequence-dp-4/ */
+    /**
+   * Preprocessing is handeled by the calculate function
+   */
     @Override
     public double calculate(String first, String second) {
         first = StringPreprocessing.tokenBasicNormalization(first, "", false);
