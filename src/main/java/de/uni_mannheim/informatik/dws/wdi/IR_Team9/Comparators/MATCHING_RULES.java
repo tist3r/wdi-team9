@@ -11,7 +11,7 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 22;
+    public static int NUM_MATCHING_RULES = 23;
 
     public static String mr1Description;
     public static String mr2Description;
@@ -68,6 +68,8 @@ public class MATCHING_RULES {
                 case 20: return getMR20(thresh, ds1, ds2, gsTrain);
                 case 21: return getMR21(thresh);
                 case 22: return getMR22(thresh, ds1, ds2, gsTrain);
+                case 23: return getMR23(thresh);
+                case 24: return getMR24(thresh, ds1, ds2, gsTrain);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
@@ -387,7 +389,7 @@ public class MATCHING_RULES {
         try{
             rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.3);
             rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 0.3);
-            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.6f), 0.4);
+            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.6f, AbstractT9Comparator.BOOST_FUNCTIONS.X3,2), 0.4);
         }catch(Exception e){
             e.printStackTrace();
             System.exit(0);
@@ -419,7 +421,7 @@ public class MATCHING_RULES {
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorJaccardNgram(4, true, 0.4f), 0.5); //takes care of order
-            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f), 0.5); //takes care of missing tokens but stresses present ones
+            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, AbstractT9Comparator.BOOST_FUNCTIONS.X3, 2), 0.5); //takes care of missing tokens but stresses present ones
         }catch(Exception e){
             e.printStackTrace();
             System.exit(0);
@@ -442,7 +444,7 @@ public class MATCHING_RULES {
         rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f));
         rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f));
         rule.addComparator(new CompanyNameComparatorJaccardNgram(4, true, 0.5f));
-        rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f));
+        rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, AbstractT9Comparator.BOOST_FUNCTIONS.X3,2));
 
         // train the matching rule's model
 		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
@@ -458,8 +460,8 @@ public class MATCHING_RULES {
         try{
             rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f),0.3); //three a bit more robust to typos than 4
             rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f),0.3); //typos
-            rule.addComparator(new LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG, true),0.2); //Order
-            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f),0.2); //remediating the removal of frequent tokens
+            rule.addComparator(new LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG, true, 0.5f, AbstractT9Comparator.BOOST_FUNCTIONS.X3, 2),0.2); //Order
+            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, AbstractT9Comparator.BOOST_FUNCTIONS.X3,2),0.2); //remediating the removal of frequent tokens
         }catch(Exception e){
             e.printStackTrace();
             System.exit(0);
@@ -481,7 +483,49 @@ public class MATCHING_RULES {
         rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f)); //three a bit more robust to typos than 4
         rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f)); //typos
         rule.addComparator(new LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG, true)); //Order
-        rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f)); //remediating the removal of frequent tokens
+        rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, 0.3f)); //remediating the removal of frequent tokens
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR23(double thresh){
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f),0.3); //three a bit more robust to typos than 4
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f),0.15); //typos
+            rule.addComparator(new LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG, true),0.25); //Order
+            rule.addComparator(new RogueTokenComparator(0.4f, true, 0.75f, 0.6f),0.3); //remediating the removal of frequent tokens
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR24(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        //mr8Description = "Weka tree matching rule with postprocessing parameters";
+
+        // create a matching rule & provide classifier, options
+        String tree = "J48"; // new instance of tree
+        String options[] = new String[1];
+        options[0] = "-R";
+        //options[1] = "-C 0.35";
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, tree, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f)); //three a bit more robust to typos than 4
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f)); //typos
+        rule.addComparator(new LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG, true)); //Order
+        rule.addComparator(new RogueTokenComparator(0.4f, true, 0.75f, 0.6f)); //remediating the removal of frequent tokens
 
         // train the matching rule's model
 		RuleLearner<Company, Attribute> learner = new RuleLearner<>();

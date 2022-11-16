@@ -20,12 +20,21 @@ public class LCSComparator extends AbstractT9Comparator{
         this.simMeasure = new LongestCommonSubsequenceSimilarity(this.normalizationFlag);
     }
 
+    
+    /**
+     * 
+     * @param normalizationFlag
+     * @param boostAndPenalize
+     * @param boostThresh
+     * @param boostingFactor
+     * @param boostFunction
+     */
     public LCSComparator(
         LongestCommonSubsequenceSimilarity.NormalizationFlag normalizationFlag, 
         boolean boostAndPenalize, 
         float boostThresh, 
-        float boostingFactor, 
-        BOOST_FUNCTIONS boostFunction) {
+        BOOST_FUNCTIONS boostFunction,
+        float boostingFactor) {
 
             this.normalizationFlag = normalizationFlag;
             this.simMeasure = new LongestCommonSubsequenceSimilarity(this.normalizationFlag);

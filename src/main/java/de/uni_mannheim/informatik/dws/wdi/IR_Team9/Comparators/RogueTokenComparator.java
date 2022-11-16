@@ -20,6 +20,14 @@ public class RogueTokenComparator extends AbstractT9Comparator{
         this.dropToZeroThresh = dropToZeroThresh;
     }
 
+    /**
+     * Composite constructor for boosting
+     * @param dropToZeroThresh
+     * @param boostAndPenalize
+     * @param boostThresh
+     * @param boostFunction
+     * @param boostingFactor
+     */
     public RogueTokenComparator(
         float dropToZeroThresh, 
         boolean boostAndPenalize, 
