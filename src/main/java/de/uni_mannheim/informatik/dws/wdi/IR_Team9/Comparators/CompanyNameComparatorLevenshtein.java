@@ -20,8 +20,8 @@ public class CompanyNameComparatorLevenshtein extends AbstractT9Comparator{
     }
 
     public CompanyNameComparatorLevenshtein(
-        float postProcessingThresh, 
         boolean rmFrequentTokens,
+        float postProcessingThresh, 
         boolean boostAndPenalize,
         float boostThresh,
         float boostFactor,
@@ -53,7 +53,7 @@ public class CompanyNameComparatorLevenshtein extends AbstractT9Comparator{
         Double similarity =  sim.calculate(name1,name2);
 
         /* POSTPROCESSING */
-        Double postProcessedSimilarity = keepOrDropToZero(similarity);
+        Double postProcessedSimilarity = this.postProcessSim(boostThresh);
 
         /* DEBUG LOG */
         this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);

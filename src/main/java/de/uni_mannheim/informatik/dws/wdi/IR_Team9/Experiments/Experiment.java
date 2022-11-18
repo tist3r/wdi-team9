@@ -126,14 +126,14 @@ public class Experiment extends AbstractExperiment{
 
     public static void main(String[] args) throws Exception {
 
-        double[] threshs = new double[]{0.8, 0.85};
+        double[] threshs = new double[]{0.5, 0.7, 0.8, 0.85, 0.9};
         int experimentID = 1;
 
-        int blockerID = 10;
+        int blockerID = 9;
 
-        for(int ruleID = 20; ruleID >= 19; ruleID--){
+        for(int ruleID = 25; ruleID <= 26; ruleID++){
             for(int threshID = 0; threshID < threshs.length; threshID++){
-                Experiment.runForDatasetCombination("dbpedia", "kaggle", experimentID, threshs[threshID], blockerID, ruleID, true, getConductedExperiments());
+                Experiment.runForDatasetCombination("dbpedia", "forbes", experimentID, threshs[threshID], blockerID, ruleID, true, getConductedExperiments());
             }
         }
 
