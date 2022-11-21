@@ -70,6 +70,7 @@ public abstract class AbstractExperiment {
     MatchingGoldStandard gsTest = new MatchingGoldStandard();
     Performance perfTrain;
     Performance perfTest;
+    Performance perfTestTop1;
     double reductionRatio;
     int blockedPairs;
     double matchingThresh;
@@ -127,7 +128,7 @@ public abstract class AbstractExperiment {
 
         if(blocker instanceof AbstractBlocker){
             AbstractBlocker<Company,Attribute,Attribute> b = (AbstractBlocker<Company,Attribute,Attribute>) blocker;
-            b.collectBlockSizeData(Constants.getExperimentBlockSizePath(this.toString(), this.ds1Name, this.ds2Name), 6000);
+            b.collectBlockSizeData(Constants.getExperimentBlockSizePath(this.toString(), this.ds1Name, this.ds2Name, this.BLOCKER_ID), 6000);
 
 
             //root path will be determined by mr id, blocker id and thresh e.g. 1_7_85
@@ -147,18 +148,24 @@ public abstract class AbstractExperiment {
         logger.info("*\tRunning identity resolution\t*");
 
         Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(this.ds1, this.ds2, null, this.rule, this.blocker);
+        this.end = LocalDateTime.now();
+
 
         if(this.rule instanceof WekaMatchingRule){
             WekaMatchingRule<Company, Attribute> r = (WekaMatchingRule<Company, Attribute>) rule;
             logger.info(String.format("Matching rule is:\n%s", r.getModelDescription()));
         }
 
-        this.end = LocalDateTime.now();
+        correspondences = correspondences.distinct();
         
         this.noCorrespondences = correspondences.size();
 
+
         basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, this.toString())), correspondences);
         companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPath(ds1Name, ds2Name, this.toString())), correspondences);
+
+        this.evaluateMatching(correspondences, "All");
+
         
         //get top 1 global correspondences
         MaximumBipartiteMatchingAlgorithm<Company,Attribute> maxWeight = new MaximumBipartiteMatchingAlgorithm<>(correspondences);
@@ -167,8 +174,12 @@ public abstract class AbstractExperiment {
 
         this.noCorrespondencesTop1 = top1correspondences.size();
 
+
         basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPathTop1(ds1Name, ds2Name, this.toString())), correspondences);
         companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPathTop1(ds1Name, ds2Name, this.toString())), correspondences);
+
+        this.evaluateMatching(top1correspondences, "Top1");
+
 
         return correspondences;
     }
@@ -180,7 +191,6 @@ public abstract class AbstractExperiment {
             Processable<Correspondence<Company, Attribute>> correspondences = this.runIdentityResolution();
 
             logger.info("Starting evaluation of experiment");
-            this.evaluateMatching(correspondences);
             this.evaluateBlocker();
 
             //append to file
@@ -219,17 +229,22 @@ public abstract class AbstractExperiment {
     }
 
 
-    void evaluateMatching(Processable<Correspondence<Company, Attribute>> correspondences){
+    void evaluateMatching(Processable<Correspondence<Company, Attribute>> correspondences, String flag){
         
         try{
             //Evaluate Train data
             this.perfTrain = evaluator.evaluateMatching(correspondences, this.gsTrain);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(this.toString(), "train")), correspondences, this.gsTrain);
+            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(this.toString(), "train", "")), correspondences, this.gsTrain);
     
             //Evaluate Test data
-            this.perfTest = evaluator.evaluateMatching(correspondences, this.gsTest);
-            evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(this.toString(), "test")), correspondences, this.gsTest);
+            if(flag.matches("All")){
+                this.perfTest = evaluator.evaluateMatching(correspondences, this.gsTest);
+            }else{
+                this.perfTestTop1 = evaluator.evaluateMatching(correspondences, this.gsTest);
+                evaluator.writeEvaluation(new File(Constants.getExperimentEvaluationFilePath(this.toString(), "test", flag)), correspondences, this.gsTest);
+            }
 
+            
         }catch(IOException e){
             System.out.println("[WARNING ] could not write evaluation file ...");
             e.printStackTrace();
@@ -241,12 +256,9 @@ public abstract class AbstractExperiment {
 
             cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, this.toString())),this.ds1, this.ds2);
 
-            logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(this.toString(), "all"));
-            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(this.toString(), "all")));
+            logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(this.toString(), flag));
+            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(this.toString(), flag)));
 
-            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPathTop1(ds1Name, ds2Name, this.toString())),this.ds1, this.ds2);
-            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(this.toString(), "top1")));
-    
         }catch(IOException e){
             logger.warn("Could not evaluate correspondences ...");
             e.printStackTrace();
