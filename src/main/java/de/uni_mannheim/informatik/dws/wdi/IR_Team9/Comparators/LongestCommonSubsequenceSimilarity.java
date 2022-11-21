@@ -24,6 +24,7 @@ public class LongestCommonSubsequenceSimilarity extends SimilarityMeasure<String
    */
     @Override
     public double calculate(String first, String second) {
+        //Todo: implement removal of frequent tokens
         first = StringPreprocessing.tokenBasicNormalization(first, "", false);
         second = StringPreprocessing.tokenBasicNormalization(second, "", false);
 

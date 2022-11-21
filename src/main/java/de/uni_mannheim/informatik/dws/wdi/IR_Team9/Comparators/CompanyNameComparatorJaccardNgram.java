@@ -81,5 +81,14 @@ public class CompanyNameComparatorJaccardNgram extends AbstractT9Comparator{
         this.writeLog(record1, record2, similarity, postProcessedSimilarity, name1, name2);
 
         return postProcessedSimilarity;
-    }    
+    }
+    
+    public static void main(String[] args) {
+        JaccardOnNGramsSimilarity simMeasure = new JaccardOnNGramsSimilarity(4);
+
+        String s1 = "shell";
+        String s2 = "royaldutchshell";
+
+        System.out.println(simMeasure.calculate(s1, s2));
+    }
 }

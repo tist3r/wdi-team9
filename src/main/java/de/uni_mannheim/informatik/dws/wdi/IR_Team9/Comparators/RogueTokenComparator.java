@@ -70,7 +70,7 @@ public class RogueTokenComparator extends AbstractT9Comparator{
 
    public static void main(String[] args) {
         String s1 = "Kobe Steel";
-        String s2 = "Kobe Financial limited";
+        String s2 = "Kobe Financial";
 
         RogueTokenSimilarity sim = new RogueTokenSimilarity();
 
