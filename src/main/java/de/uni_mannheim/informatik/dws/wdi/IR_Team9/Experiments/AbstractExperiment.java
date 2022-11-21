@@ -19,13 +19,17 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
+import de.uni_mannheim.informatik.dws.winter.datafusion.CorrespondenceSet;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEvaluator;
+import de.uni_mannheim.informatik.dws.winter.matching.algorithms.MaximumBipartiteMatchingAlgorithm;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.AbstractBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
+import de.uni_mannheim.informatik.dws.winter.model.FusibleDataSet;
+import de.uni_mannheim.informatik.dws.winter.model.FusibleHashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.Performance;
@@ -58,9 +62,10 @@ public abstract class AbstractExperiment {
     boolean loadedDatasets = false;
     LocalDateTime start;
     LocalDateTime end;
-    HashedDataSet<Company, Attribute> ds1;
-    HashedDataSet<Company, Attribute> ds2;
+    FusibleHashedDataSet<Company, Attribute> ds1;
+    FusibleHashedDataSet<Company, Attribute> ds2;
     int noCorrespondences;
+    int noCorrespondencesTop1;
     MatchingGoldStandard gsTrain = new MatchingGoldStandard();
     MatchingGoldStandard gsTest = new MatchingGoldStandard();
     Performance perfTrain;
@@ -87,11 +92,11 @@ public abstract class AbstractExperiment {
     void loadData(String ds1Name, String ds2Name) throws Exception{
         // loading data
         logger.info("*\tLoading datasets\t*");
-        this.ds1 = new HashedDataSet<>();
+        this.ds1 = new FusibleHashedDataSet<>();
         cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
 
 
-        this.ds2 = new HashedDataSet<>();
+        this.ds2 = new FusibleHashedDataSet<>();
         cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
         this.loadedDatasets = true;
     }
@@ -142,18 +147,28 @@ public abstract class AbstractExperiment {
         logger.info("*\tRunning identity resolution\t*");
 
         Processable<Correspondence<Company, Attribute>> correspondences = engine.runIdentityResolution(this.ds1, this.ds2, null, this.rule, this.blocker);
-        
+
         if(this.rule instanceof WekaMatchingRule){
             WekaMatchingRule<Company, Attribute> r = (WekaMatchingRule<Company, Attribute>) rule;
             logger.info(String.format("Matching rule is:\n%s", r.getModelDescription()));
         }
+
+        this.end = LocalDateTime.now();
         
         this.noCorrespondences = correspondences.size();
 
         basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, this.toString())), correspondences);
         companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPath(ds1Name, ds2Name, this.toString())), correspondences);
+        
+        //get top 1 global correspondences
+        MaximumBipartiteMatchingAlgorithm<Company,Attribute> maxWeight = new MaximumBipartiteMatchingAlgorithm<>(correspondences);
+        maxWeight.run();
+        Processable<Correspondence<Company, Attribute>> top1correspondences = maxWeight.getResult();
 
-        this.end = LocalDateTime.now();
+        this.noCorrespondencesTop1 = top1correspondences.size();
+
+        basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPathTop1(ds1Name, ds2Name, this.toString())), correspondences);
+        companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPathTop1(ds1Name, ds2Name, this.toString())), correspondences);
 
         return correspondences;
     }
@@ -220,6 +235,23 @@ public abstract class AbstractExperiment {
             e.printStackTrace();
         }
 
+
+        try{
+            CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
+
+            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, this.toString())),this.ds1, this.ds2);
+
+            logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(this.toString(), "all"));
+            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(this.toString(), "all")));
+
+            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPathTop1(ds1Name, ds2Name, this.toString())),this.ds1, this.ds2);
+            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(this.toString(), "top1")));
+    
+        }catch(IOException e){
+            logger.warn("Could not evaluate correspondences ...");
+            e.printStackTrace();
+        }
+        
     }
 
     void evaluateBlocker(){

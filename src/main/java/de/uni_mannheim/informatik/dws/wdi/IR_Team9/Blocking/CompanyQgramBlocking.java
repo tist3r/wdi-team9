@@ -15,9 +15,15 @@ import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, Attribute>{
 
     private Integer n;
+    private boolean includeFirstCharacter = true;
 
     public CompanyQgramBlocking(Integer n){
         this.n = n;
+    }
+
+    public CompanyQgramBlocking(Integer n, boolean includeFirstCharacter){
+        this.n = n;  
+        this.includeFirstCharacter = includeFirstCharacter;      
     }
 
     private static final long serialVersionUID = 1L;
@@ -37,12 +43,16 @@ public class CompanyQgramBlocking extends RecordBlockingKeyGenerator<Company, At
                 resultCollector.next(new Pair<>(ngram, record));
             }
 
-            //add also starting character
-            if(!preprocessedName.equals("")){
-                resultCollector.next(new Pair<>(preprocessedName.substring(0,1), record));
-            }else{
-                resultCollector.next(new Pair<>(StringPreprocessing.tokenBasicNormalization(record.getName(), "", false).substring(0,1), record));
+
+            if(includeFirstCharacter){
+                //add also starting character
+                if(!preprocessedName.equals("")){
+                    resultCollector.next(new Pair<>(preprocessedName.substring(0,1), record));
+                }else{
+                    resultCollector.next(new Pair<>(StringPreprocessing.tokenBasicNormalization(record.getName(), "", false).substring(0,1), record));
+                }
             }
+
             
 			
 		}catch(NullPointerException e){

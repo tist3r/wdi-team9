@@ -2,9 +2,12 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.model;
 
 import java.util.List;
 
+import de.uni_mannheim.informatik.dws.winter.model.AbstractRecord;
+import de.uni_mannheim.informatik.dws.winter.model.Fusible;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;
+import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
-public class Company implements Matchable{
+public class Company extends AbstractRecord<Attribute>{
 
     /* EXAMPLE RECORD
     <Company>
@@ -297,6 +300,21 @@ public class Company implements Matchable{
 		}else
 			return false;
 	}
+
+
+    public static final Attribute NAME = new Attribute("Name");
+	public static final Attribute URL = new Attribute("URL");
+
+    @Override
+	public boolean hasValue(Attribute attribute) {
+		if(attribute==NAME)
+			return this.getName() != null && !this.getName().isEmpty();
+		else if(attribute==URL)
+			return this.getUrl() != null && !this.getUrl().isEmpty();
+		else
+			return false;
+	}
+
 
     
 }

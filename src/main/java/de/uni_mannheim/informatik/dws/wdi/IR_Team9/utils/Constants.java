@@ -20,6 +20,7 @@ public class Constants {
     public static final String RECORD_PATH = "/Companies/Company";
 
     private static String kaggleBasePath = "data/input/test/";
+    private static String blockerBasePath = "data/output/blockers/";
     private static Integer maxKaggleId = getMaxKaggleID();
 
     private static final String dbpediaPath = "data/input/dbpedia.xml";
@@ -107,6 +108,15 @@ public class Constants {
     }
 
     /**
+     * Returns the path for the correspondence file with names included. For top 1
+     */
+    public static String getExperimentBasicCorrPathTop1(String ds1, String ds2, String experiment_id){
+        return String.format("%s%s_%s_corr_top1.csv", getExperimentRootPath(experiment_id), ds1, ds2);
+    }
+
+
+
+    /**
      * Returns the path for the correspondence file with names included.
      * @param ds1
      * @param ds2
@@ -115,6 +125,22 @@ public class Constants {
      */
     public static String getExperimentCompanyCorrPath(String ds1, String ds2, String experiment_id){
         return String.format("%s%s_%s_corr_w_names.csv", getExperimentRootPath(experiment_id), ds1, ds2);
+    }
+
+        /**
+     * Returns the path for the correspondence file with names included.
+     * @param ds1
+     * @param ds2
+     * @param experiment_id
+     * @return
+     */
+    public static String getExperimentCompanyCorrPathTop1(String ds1, String ds2, String experiment_id){
+        return String.format("%s%s_%s_corr_w_names_top1.csv", getExperimentRootPath(experiment_id), ds1, ds2);
+    }
+
+
+    public static String getGroupSizeDistPath(String experiment_id, String flag){
+        return String.format("%sgroup_size_dist_%s.csv", getExperimentRootPath(experiment_id), flag);
     }
 
     /**
@@ -164,7 +190,8 @@ public class Constants {
      * @return
      */
     public static String getExperimentBlockSizePath(String experiment_id, String ds1, String ds2){
-        return String.format("%s%s_%s_blockSizeInfo.csv", getExperimentRootPath(experiment_id),ds1,ds2);
+        return String.format("%s%s_%s_blockSizeInfo.csv",blockerBasePath,ds1,ds2);
+        //return String.format("%s%s_%s_blockSizeInfo.csv", getExperimentRootPath(experiment_id),ds1,ds2);
     }
 
 

@@ -19,10 +19,10 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class Experiment extends AbstractExperiment{
 
-    public Experiment(String ds1, String ds2, int experimentID, double thresh, int blockerID, int ruleID) throws Exception{
-        super(ds1, ds2, experimentID, thresh);
+    public Experiment(String ds1Name, String ds2Name, int experimentID, double thresh, int blockerID, int ruleID) throws Exception{
+        super(ds1Name, ds2Name, experimentID, thresh);
 
-        this.loadData(ds1, ds2);
+        this.loadData(ds1Name, ds2Name);
         this.loadTrainTestData();
 
         this.setMatchingRule(MATCHING_RULES.getRuleByID(ruleID, thresh, 0.5, this.ds1, this.ds2, this.gsTrain), ruleID);
@@ -126,12 +126,12 @@ public class Experiment extends AbstractExperiment{
 
     public static void main(String[] args) throws Exception {
 
-        double[] threshs = new double[]{0.5, 0.7, 0.8, 0.85, 0.9};
+        double[] threshs = new double[]{0.9};
         int experimentID = 1;
 
         int blockerID = 9;
 
-        for(int ruleID = 25; ruleID <= 26; ruleID++){
+        for(int ruleID = 1; ruleID <= 1; ruleID++){
             for(int threshID = 0; threshID < threshs.length; threshID++){
                 Experiment.runForDatasetCombination("dbpedia", "forbes", experimentID, threshs[threshID], blockerID, ruleID, true, getConductedExperiments());
             }

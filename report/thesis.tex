@@ -9,6 +9,7 @@
 \usepackage{latexsym}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{wasysym}
 
 \usepackage{ntheorem}
 
@@ -132,21 +133,66 @@ These are some randomly chosen examples from other works. Take a look at the end
 \section{Gold Standard}
 \label{sec:gold-standard-IR}
 
-In order to create the gold standard we ran initial identity resolutions with cheap matching rules. With a threshold of 0.3 we use Jaccard 3 Grams, Levensthein Similarity and a combined matching rule (check IDs)!! File Gold Standard integration.
-The results were then combined into one file which for each individual correspondence outline the similarity calculated by every similarity measure as well as the company names.
-Correspondences were labeld as certain matches if at least one of the similarity scores had a high matching threshold > 0.95 and an actual match was present.
-Correspondences were labeled as fuzzy if the similarity measures did not agree on a rating which was indicated by the average similarity. 
-Correspondecnes with low average similarity were labeled as obvious non matches after verifying that they indeed do not match.
-Afterwards a random sample out of every category was drawn so that the distribution 20/30/50 distribution for the gold standard was being met.
-The data was then split into train and test set with an sklearn python script, with a test size of … and stratified on the gold standard category.
+In order to create the gold standard we ran initial identity resolutions with cheap matching rules. With a threshold of 0.3 we used three different matching rules: \begin{itemize}
+	\item Jaccard-3-Grams on company names (with frequent tokens removed)
+	\item Levensthein Similarity on company names (with frequent tokens removed)
+	\item a combined matching rule of the above (50/50) 
+	%TODO !! --> maybe use something different, add rule IDs?
+\end{itemize}
+%TODO add file references?? File Gold Standard integration.
+%TODO global matching
+%TODO source for string matching https://ebookcentral.proquest.com/lib/unimannheim-ebooks/reader.action?docID=945451
+The results were then combined into one file which for each individual correspondence outlined the similarity calculated by every similarity measure as well as the company names.
 
---Note on balance of gold standard
+We then labeled the matches into matching record pairs, corner-case matches and non-matches, and non-matches. 
+Correspondences were labeld as certain matches if at least one of the similarity scores had a high matching threshold $>$ 0.95 and an actual match was present.
+Correspondences were labeled as fuzzy if the similarity measures did not agree on a rating which was indicated by the average similarity, i.e. one similarity measure had a high certainty while the other one had a low certainty.
+Correspondecnes with low average similarity were labeled as non-matches after verifying that they indeed did not match.
+To achieve the distribution according to the rule of thumb outlined in the lecture, which states to include 20\% matching record matching pairs, 30\% corner-case matches and non-matches (fuzzy), and 50\% non-matching record pairs a random sample out of the labled correspondences was drawn.
+%TODO was their a problem to achieve this distribution?
+The data was then split into train and test set using a python script, with a test size of 0.25 and stratified on the gold standard category.
+
+%TODO Note on balance of gold standard, positives and negatives
+
+After running several identity resolutions the evaluation logs were analyzed and the gold standard was amended to cater to the identified false positive correspondences (according to the previous gold standard) by adding them to the gold standard, usually as corner-cases. 
 
 \section{Matching Rules}
-\label{sec:good}
+\label{sec:matching-rules}
+The company name was the sole variable we could rely on during the identity resolution. To this end, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented a plethora of different matching rules, therefore we limit ourselves to the top 10 based on their F1-scores.
+%TODO why these comparators - maybe put with challenges?
+Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). We also implemented post-processing capabilities. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function above a threshold of 0.8 and penalized below. %TODO might be necessary to outline this a little bit more, which type of functions and why those
+
+
+
+\begin{table}[]
+	\label{table:comparators}
+	
+	\begin{tabular}{lllcc}
+		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   \\
+		ID & Similarity   measure       & Parameters           & \multicolumn{1}{l}{PWL\textsuperscript{1}} & \multicolumn{1}{l}{Rm FT\textsuperscript{2}} \\
+		1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)                     \\
+		2  & Jaccard on tokens          &                      & *                       & (\checked)                       \\
+		3  & Levensthein                &                      & \checked & (\checked)                       \\
+		4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       \\
+		5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -                        
+	\end{tabular}
+
+\caption[Comparator Overview]%
+{Comparator Overview \small\medspace\medspace \textsuperscript{1}Lowercasing and removal of punctuation and whitespaces -  latter not removed for token-based similarity metrics, \textsuperscript{2}Removal of frequent tokens, * Preprocessing done by pre-implemented similarity measure, \checked \space used in comparator, (\checked) optional}
+
+\end{table}
+
+
 
 \section{Blockers}
-\label{sec:good}
+\label{sec:blockers}
+
+We used three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented: \begin{enumerate}
+	\item First letter of the company name.
+	\item Qgrams and first letter of the company name. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computaionally efficient. %TODO run without first letter
+	\item N starting characters of each company name token.
+\end{enumerate}
+
 
 \section{Analysis of Errors}
 \label{sec:evil}
@@ -156,6 +202,7 @@ The data was then split into train and test set with an sklearn python script, w
 \label{cha:data-fusion}
 
 
+%TODO Style Table
 \begin{table}[h]
 
 \begin{center}

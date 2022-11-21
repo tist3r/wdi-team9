@@ -1,14 +1,20 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.model;
 
 import java.lang.NumberFormatException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.w3c.dom.Node;
 
+import de.uni_mannheim.informatik.dws.winter.model.FusibleFactory;
+import de.uni_mannheim.informatik.dws.winter.model.RecordGroup;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.model.io.XMLMatchableReader;
+import org.apache.commons.lang3.StringUtils;
 
 
-public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
+public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> implements FusibleFactory<Company, Attribute>{
 
     @Override
     public Company createModelFromElement(Node node, String provenanceInfo) {
@@ -96,5 +102,19 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute>{
         return company;
     }
 
-    
+    @Override
+    public Company createInstanceForFusion(RecordGroup<Company, Attribute> cluster) {
+        	
+        List<String> ids = new LinkedList<>();
+        
+        for (Company m : cluster.getRecords()) {
+            ids.add(m.getIdentifier());
+        }
+        
+        Collections.sort(ids);
+        
+        String mergedId = StringUtils.join(ids, '+');
+        
+        return new Company(mergedId, "fused");
+	}
 }
