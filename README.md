@@ -41,9 +41,4 @@ Sames as gs, but additionally with company names for easy manual evaluation.
 ### Folder: reducedKaggleSet
 The kaggle dataset was too large to be processed by one machine. Therefore a simple similarity function was run across the whole file.
 Any company name that had at least 30% similarity with one of the company names in dbpedia, forbes, or dw was kept, the other ones discarded.
-<<<<<<< HEAD
 This folder contains the output of the similarity comparison as well as the reduced xml files per partition.
-=======
-This folder contains the output of the similarity comparison as well as the reduced xml files per partition.
-
->>>>>>> db45bad7a03cc3926a946a4516f51e7f74eea2f6
