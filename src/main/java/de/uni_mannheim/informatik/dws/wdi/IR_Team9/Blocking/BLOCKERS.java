@@ -8,7 +8,7 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class BLOCKERS {
 
-    public static int NUM_BLOCKERS = 10;
+    public static int NUM_BLOCKERS = 14;
 
     public static String blocker1Description;
     public static String blocker2Description;
@@ -38,6 +38,12 @@ public class BLOCKERS {
             case 8: return getBlocker8();
             case 9: return getBlocker9();
             case 10: return getBlocker10();
+            case 11: return getBlocker11();
+            case 12: return getBlocker12();
+
+            case 13: return getBlocker13();
+            case 14: return getBlocker14();
+
             default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_BLOCKERS));
         }
     }
@@ -100,5 +106,29 @@ public class BLOCKERS {
         blocker8Description = "First letter of tokens after removing frequent tokens. Only blocker capable of handling the large dataset.";
 
         return new StandardRecordBlocker<>(new CompanyNameStartTokenGenerator(3, true, true));
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker11(){
+        //blocker1Description = "Standard Blocker using 3-grams as well as starting letters as keys.";
+
+        return new StandardRecordBlocker<Company, Attribute>(new CompanyQgramBlocking(3,false));
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker12(){
+        //blocker1Description = "Standard Blocker using 3-grams as well as starting letters as keys.";
+
+        return new StandardRecordBlocker<Company, Attribute>(new CompanyQgramBlocking(4,false));
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker13(){
+        //blocker5Description = "Sorted neigborhoodblocker with 3 gram key and w=20.";
+
+        return new SortedNeighbourhoodBlocker<>(new CompanyQgramBlocking(3, false), 20);
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker14(){
+        //blocker5Description = "Sorted neigborhoodblocker with 3 gram key and w=20.";
+
+        return new SortedNeighbourhoodBlocker<>(new CompanyQgramBlocking(3, false), 40);
     }
 }

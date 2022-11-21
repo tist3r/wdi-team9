@@ -96,7 +96,7 @@ public class Constants {
      * @return
      */
     public static String getExperimentLogPath(){
-        return "data/output/experiments/experiment_log.csv";
+        return "data/output/experiments/experiment_log_new.csv";
     }
 
 
@@ -159,6 +159,16 @@ public class Constants {
         return String.format("%seval_%s.csv", getExperimentRootPath(experiment_id),train_test);
     }
 
+    public static String getExperimentEvaluationFilePath(String experiment_id, String train_test, String flag){
+        if(!(train_test.matches("train") || train_test.matches("test"))){
+            //if key not correctly specified change it to "test"
+            logger.warn(String.format("Train / Test flag for creating the path was wrongly specified (%s). Using -test- instead", train_test));
+            train_test = "test";
+        }
+
+        return String.format("%seval_%s%s.csv", getExperimentRootPath(experiment_id),train_test, flag);
+    }
+
 
     /**
      * Returns the root path for an experiment ID.
@@ -189,8 +199,8 @@ public class Constants {
      * @param ds2
      * @return
      */
-    public static String getExperimentBlockSizePath(String experiment_id, String ds1, String ds2){
-        return String.format("%s%s_%s_blockSizeInfo.csv",blockerBasePath,ds1,ds2);
+    public static String getExperimentBlockSizePath(String experiment_id, String ds1, String ds2, int blockerID){
+        return String.format("%s%d%s_%s_blockSizeInfo.csv",blockerBasePath,blockerID,ds1,ds2);
         //return String.format("%s%s_%s_blockSizeInfo.csv", getExperimentRootPath(experiment_id),ds1,ds2);
     }
 

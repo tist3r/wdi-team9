@@ -18,7 +18,7 @@ public class BlockLogEvaluator {
 
         Set<String> exp = new HashSet<String>();
 
-        try(CSVReader reader = new CSVReader(new FileReader(Constants.getExperimentBlockSizePath(experimentID, ds1Name, ds2Name)))){
+        try(CSVReader reader = new CSVReader(new FileReader(Constants.getExperimentBlockSizePath(experimentID, ds1Name, ds2Name, 1)))){
             int numBlocks;
             int blockSize;
             int blockedPairs = 0;

@@ -13,7 +13,7 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 26;
+    public static int NUM_MATCHING_RULES = 27;
 
     public static String mr1Description;
     public static String mr2Description;
@@ -74,6 +74,7 @@ public class MATCHING_RULES {
                 case 24: return getMR24(thresh, ds1, ds2, gsTrain);
                 case 25: return getMR25(thresh, ds1, ds2, gsTrain);
                 case 26: return getMR26(thresh, ds1, ds2, gsTrain);
+                case 27: return getMR27(thresh);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
@@ -589,9 +590,25 @@ public class MATCHING_RULES {
         return rule;
     }
 
+    public static MatchingRule<Company, Attribute> getMR27(double thresh){
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f),0.3); //three a bit more robust to typos than 4
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f),0.2); //typos
+            rule.addComparator(new LCSComparator(
+                LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG,
+                0.3f,
+                true,
+                0.5f,
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3,
+                2),0.2); //Order
+            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, AbstractT9Comparator.BOOST_FUNCTIONS.X3,2),0.3); //remediating the removal of frequent tokens
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
 
-
-
-
+        return rule;
+    }
     
 }

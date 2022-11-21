@@ -1,5 +1,6 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,10 @@ public class StringPreprocessing {
         return freqTokens;
     }
 
+    public static String normalizeLetters(String token){
+        return Normalizer.normalize(token, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+    }
+
     /** 
      * @param token the token that is to be nomralized
      * @param upper indicated if token should be converted to uppercase; default lower
@@ -52,6 +57,7 @@ public class StringPreprocessing {
      * @return normalized token
     */
     public static String normalizeCase(String token, boolean upper){
+        token = normalizeLetters(token);
         if(upper){
             return token.toUpperCase();
         }
@@ -60,12 +66,13 @@ public class StringPreprocessing {
     }
 
     /**
-     * Removes punctuation from a String.
+     * Removes punctuation from a String and replaces it with a whitespace
      * @param token the string to be processed
      * @param exclude symbols that should not be removed. If all punctuation should be removed put "".
      * @return the preprocessed string
      */
     public static String removePunctuation(String token, String exclude){
+        token = normalizeLetters(token);
         String removeRegex = "[\\p{Punct}]";
 
         if (exclude.matches(removeRegex)){
@@ -75,15 +82,16 @@ public class StringPreprocessing {
             System.out.println(String.format("exclude String %s not valid - contains other things than punctuations. Removing all punctuation ...", exclude));
         }
 
-        return token.replaceAll(removeRegex, "");
+        return token.replaceAll(removeRegex, " ");
     }
 
     /**
-     * Removes punctuation from a String.
+     * Removes punctuation from a String and replaces it with a whitespace
      * @param token the string to be processed
      * @return the preprocessed string
      */
     public static String removePunctuation(String token){
+        token = normalizeLetters(token);
         return removePunctuation(token, "");
     }
 
@@ -94,6 +102,7 @@ public class StringPreprocessing {
      * @return
      */
     public static String removeFrequentTokens(String s, boolean removePunctuation){
+        s = normalizeLetters(s);
         if(removePunctuation){
             s = removePunctuation(s, "");
         }
@@ -109,6 +118,7 @@ public class StringPreprocessing {
      * @return
      */
     public static String removeFrequentTokens(String s){
+        s = normalizeLetters(s);
         /*
          * Starts from an empty Stringbuffer and appends all tokens to it (split by whitespace) that do not match a frequent token.
          */
@@ -131,11 +141,13 @@ public class StringPreprocessing {
     }
 
     public static String removeWhitespaces(String token){
+        token = normalizeLetters(token);
         String removeRegex = "[\\s]";
         return token.replaceAll(removeRegex, "");
     }
 
     public static String removePunctuationWhitespaces(String token, String exclude){
+        token = normalizeLetters(token);
         String removeRegex = "[\\s\\p{Punct}]";
 
         if (!exclude.matches("")){
@@ -151,6 +163,7 @@ public class StringPreprocessing {
     }
 
     public static String tokenBasicNormalization(String token, String exclude, boolean upper){
+        token = normalizeLetters(token);
         return normalizeCase(removePunctuationWhitespaces(token, exclude), upper);
     }
 
@@ -158,6 +171,7 @@ public class StringPreprocessing {
      * Taken from: https://www.educative.io/answers/how-to-generate-an-n-gram-in-java
      */
     public static List<String> ngrams(int n, String str) {
+        str = normalizeLetters(str);
         List<String> ngrams = new ArrayList<String>();
         for (int i = 0; i < str.length() - n + 1; i++)
             // Add the substring or size n

@@ -59,7 +59,11 @@ public class ExperimentWriter {
             experiment.getDurationString(),
             Double.toString(experiment.reductionRatio),
             Integer.toString(experiment.blockedPairs),
-            experiment.timeStarted.toString()
+            experiment.timeStarted.toString(),
+            Integer.toString(experiment.noCorrespondencesTop1),
+            Double.toString(experiment.perfTestTop1.getPrecision()),
+            Double.toString(experiment.perfTestTop1.getRecall()),
+            Double.toString(experiment.perfTestTop1.getF1()),
         };
     }
 
@@ -106,7 +110,11 @@ public class ExperimentWriter {
             "Duration",
             "Reduction ratio",
             "#blocked pairs",
-            "dateTime"
+            "dateTime",
+            "#corr top1",
+            "Precision top1",
+            "Recall top1",
+            "F1 top1"
         };
     }
 

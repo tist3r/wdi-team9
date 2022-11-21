@@ -1,5 +1,6 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
+import java.text.Normalizer;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -117,6 +118,8 @@ public class LongestCommonSubsequenceSimilarity extends SimilarityMeasure<String
         System.out.println(lcss1.calculate("Royal Dutch Shell", "Shell"));
         System.out.println(lcss1.calculate("CAE Inc.","cae technology services inc"));
 
+        System.out.println(Double.valueOf(0.4d * Integer.valueOf(500).doubleValue()).doubleValue());
+        System.out.println(Normalizer.normalize("ácüöäcént", Normalizer.Form.NFD).replaceAll("\\p{M}", ""));
     }
 
 

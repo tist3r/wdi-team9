@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
@@ -29,6 +30,11 @@ public class Experiment extends AbstractExperiment{
         this.setBlocker(BLOCKERS.getBlockerByID(blockerID), blockerID);
     }
 
+    public Experiment(String ds1Name, String ds2Name, int experimentID, double thresh, double[] threshsForLMR, int blockerID, int ruleID) throws Exception{
+        this(ds1Name, ds2Name, experimentID, thresh, blockerID, ruleID);
+        this.threshsToEvaluateForLinearMatchingRules = threshsForLMR;
+    }
+
 
     @Override
     void setBlocker(Blocker<Company, Attribute, Company, Attribute> blocker, Integer blockerID) {
@@ -46,12 +52,27 @@ public class Experiment extends AbstractExperiment{
     }
 
 
+
+    public static void runForDatasetCombination(
+        String ds1Name,
+        String ds2Name, 
+        int experimentID,
+        double thresh,
+        int blockerID,
+        int ruleID,
+        boolean redo,
+        Set<String> conductedExp){
+            runForDatasetCombination(ds1Name, ds2Name, experimentID, thresh, null, blockerID, ruleID, redo, conductedExp);
+        }
+
+
     /**
      * runs the specified experiment for a dataset combination
      * @param ds1Name
      * @param ds2Name
      * @param experimentID
      * @param thresh
+     * @param threshs
      * @param blockerID
      * @param ruleID
      * @param redo
@@ -62,6 +83,7 @@ public class Experiment extends AbstractExperiment{
         String ds2Name, 
         int experimentID,
         double thresh,
+        double[] threshs,
         int blockerID,
         int ruleID,
         boolean redo,
@@ -71,7 +93,7 @@ public class Experiment extends AbstractExperiment{
 
             try{
                 if(redo || !hasAlreadyRun(ds1Name, ds2Name, ruleID, blockerID, thresh, conductedExp)){
-                    Experiment e = new Experiment(ds1Name, ds2Name, experimentID, thresh, blockerID, ruleID);
+                    Experiment e = new Experiment(ds1Name, ds2Name, experimentID, thresh, threshs, blockerID, ruleID);
                     e.runExperiment();
                 }else{
                     logger.info("Skipping, already conducted ...");
@@ -115,6 +137,9 @@ public class Experiment extends AbstractExperiment{
         //dw - forbes
         runForDatasetCombination(dw, forbes, experimentID, thresh, blockerID, ruleID, redo, conductedExp);
 
+        //dbpedia - kaggle
+        runForDatasetCombination(dbpedia, "kaggle", experimentID, thresh, blockerID, ruleID, redo, conductedExp);
+
         //kaggle
         // for(int i = 1; i <=4; i++){
         //     runForDatasetCombination(dbpedia, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
@@ -126,15 +151,15 @@ public class Experiment extends AbstractExperiment{
 
     public static void main(String[] args) throws Exception {
 
-        double[] threshs = new double[]{0.9};
+        double[] threshs = new double[]{0.7, 0.8, 0.875, 0.9};
         int experimentID = 1;
 
-        int blockerID = 9;
+        int blockerID = 11;
 
-        for(int ruleID = 1; ruleID <= 1; ruleID++){
-            for(int threshID = 0; threshID < threshs.length; threshID++){
-                Experiment.runForDatasetCombination("dbpedia", "forbes", experimentID, threshs[threshID], blockerID, ruleID, true, getConductedExperiments());
-            }
+        for(int ruleID = 7; ruleID <= 27; ruleID++){
+            //for(int threshID = 0; threshID < threshs.length; threshID++){
+                Experiment.runForDatasetCombination("dbpedia", "dw", experimentID, 0.85, threshs, blockerID, ruleID, true, getConductedExperiments());
+            //}
         }
 
         
