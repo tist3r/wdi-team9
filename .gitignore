@@ -12,3 +12,7 @@ data/output/aggregatedKaggle/*
 .vscode
 .ipynb_checkpoints
 target/*
+report/*
+!report/thesis-ref.bib
+!report/thesis.tex
+!report/thesis.pdf
