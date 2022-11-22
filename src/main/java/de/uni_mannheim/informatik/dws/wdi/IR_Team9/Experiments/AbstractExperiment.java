@@ -52,6 +52,14 @@ public abstract class AbstractExperiment {
     static final MatchingEvaluator<Company, Attribute> evaluator = new MatchingEvaluator<Company, Attribute>();
     static final MatchingEngine<Company,Attribute> engine = new MatchingEngine<>();
 
+    
+    static FusibleHashedDataSet<Company, Attribute> ds1cached = null;
+    static String ds1Namecached = null;
+
+    static FusibleHashedDataSet<Company, Attribute> ds2cached = null;
+    static String ds2Namecached = null;
+
+    
     boolean addedMatchingRule = false;
     boolean addedBlocker = false;
 
@@ -87,6 +95,9 @@ public abstract class AbstractExperiment {
 
     LocalDateTime timeStarted;
     int maxNumComparisons;
+
+    boolean isDS1cached = false;
+    boolean isDS2cached = false;
     
 
     public AbstractExperiment(String ds1Name, String ds2Name, int experimentID, double matchingThresh) throws Exception{
@@ -127,19 +138,58 @@ public abstract class AbstractExperiment {
      * Experiment Setup
      */
     void loadData(String ds1Name, String ds2Name) throws Exception{
-        // loading data
-        logger.info("*\tLoading datasets\t*");
-        this.ds1 = new FusibleHashedDataSet<>();
-        cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
+        //ds1
+        //check cache
+        if(!isCached(1, ds1Name)){
+            //clear cache
+            clearCache(1);
+
+            // loading data
+            logger.info("*\tLoading datasets\t*");
+            this.ds1 = new FusibleHashedDataSet<>();
+            cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
+        }else{
+            this.useCachedDS(1);
+            logger.info("Using cleared cache for ds1 ...");
+        }
 
 
-        this.ds2 = new FusibleHashedDataSet<>();
-        cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
+        //ds2
+        if(!isCached(2, ds2Name)){
+            //clear cache
+            clearCache(2);
+
+            // loading data
+            logger.info("*\tLoading datasets\t*");
+            this.ds2 = new FusibleHashedDataSet<>();
+            cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
+        }else{
+            this.useCachedDS(2);
+            logger.info("Using cleared cache for ds1 ...");
+        }
+
+
         this.loadedDatasets = true;
-
         this.maxNumComparisons = this.ds1.size() * this.ds2.size();
         logger.info(String.format("Max number of comparisons would be %d", this.maxNumComparisons));
     }
+
+
+    static void clearCache(int position){
+        if(position == 1 ){ ds1cached = null; ds1Namecached = null;}
+        else{ds2cached = null; ds2Namecached = null;}
+    }
+
+    void useCachedDS(int position){
+        if(position == 1){
+            this.ds1 = ds1cached;
+            clearCache(1);
+        }else{
+            this.ds2 = ds2cached;
+            clearCache(2);
+        }
+    }
+
 
     void initializeExperiment(){
         this.loadTrainTestData();
@@ -288,12 +338,41 @@ public abstract class AbstractExperiment {
                 }
             }
 
+
+            this.cacheDatasets();
+
             return correspondences;
 
         }else{
             throw new BuildException("Blocker or Matching Rule not initialized.");
         }
     }
+
+    /**
+     * caches the datasets from the current experiment.
+     */
+    private void cacheDatasets() {
+        ds1cached = ds1;
+        ds1 = null;
+        ds1Namecached = ds1Name;
+        
+        ds2cached = ds2;
+        ds2 = null;
+        ds2Namecached = ds2Name;
+    }
+
+    /**
+     * checks cache.
+     */
+
+     private static boolean isCached(int position, String dsName){
+        switch(position){
+            case 1: return ds1Namecached.matches(dsName);
+            case 2: return ds2Namecached.matches(dsName);
+            default: return false;
+        }
+     }
+
 
     void loadTrainTestData(){
         try{
