@@ -593,16 +593,28 @@ public class MATCHING_RULES {
     public static MatchingRule<Company, Attribute> getMR27(double thresh){
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
-            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f),0.3); //three a bit more robust to typos than 4
-            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f),0.2); //typos
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(
+                3,
+                true, 
+                0.4f, 
+                true, 
+                0.5f, 
+                3, 
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3),0.3); //three a bit more robust to typos than 4
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.4f),0.3); //typos
             rule.addComparator(new LCSComparator(
-                LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG,
+                LongestCommonSubsequenceSimilarity.NormalizationFlag.MIN,
                 0.3f,
                 true,
                 0.5f,
+                AbstractT9Comparator.BOOST_FUNCTIONS.SQRT,
+                4),0.2); //Order
+            rule.addComparator(new RogueTokenComparator(
+                0.3f, 
+                true, 
+                0.5f, 
                 AbstractT9Comparator.BOOST_FUNCTIONS.X3,
-                2),0.2); //Order
-            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, AbstractT9Comparator.BOOST_FUNCTIONS.X3,2),0.3); //remediating the removal of frequent tokens
+                4),0.2); //remediating the removal of frequent tokens
         }catch(Exception e){
             e.printStackTrace();
             System.exit(0);

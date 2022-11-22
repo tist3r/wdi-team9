@@ -96,10 +96,7 @@ public abstract class AbstractExperiment {
     LocalDateTime timeStarted;
     int maxNumComparisons;
 
-    boolean isDS1cached = false;
-    boolean isDS2cached = false;
-    
-
+ 
     public AbstractExperiment(String ds1Name, String ds2Name, int experimentID, double matchingThresh) throws Exception{
         this.ds1Name = ds1Name;
         this.ds2Name = ds2Name;
@@ -150,7 +147,7 @@ public abstract class AbstractExperiment {
             cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
         }else{
             this.useCachedDS(1);
-            logger.info("Using cleared cache for ds1 ...");
+            logger.info("Using cache for ds1 ...");
         }
 
 
@@ -165,7 +162,7 @@ public abstract class AbstractExperiment {
             cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
         }else{
             this.useCachedDS(2);
-            logger.info("Using cleared cache for ds1 ...");
+            logger.info("Using cache for ds2 ...");
         }
 
 
@@ -367,8 +364,8 @@ public abstract class AbstractExperiment {
 
      private static boolean isCached(int position, String dsName){
         switch(position){
-            case 1: return ds1Namecached.matches(dsName);
-            case 2: return ds2Namecached.matches(dsName);
+            case 1: return ds1Namecached != null && ds1Namecached.matches(dsName);
+            case 2: return ds2Namecached != null && ds2Namecached.matches(dsName);
             default: return false;
         }
      }
