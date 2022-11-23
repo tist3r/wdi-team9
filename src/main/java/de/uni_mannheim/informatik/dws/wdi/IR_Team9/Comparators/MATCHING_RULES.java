@@ -1,5 +1,8 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.LongestCommonSubsequenceSimilarity.NormalizationFlag;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.algorithms.RuleLearner;
@@ -14,6 +17,8 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
     public static int NUM_MATCHING_RULES = 27;
+
+    public static final List<Integer> WEKA_RULE_IDS = Arrays.asList(7,8,10,11,12,13,16,20,22,24,25,26);
 
     public static String mr1Description;
     public static String mr2Description;
