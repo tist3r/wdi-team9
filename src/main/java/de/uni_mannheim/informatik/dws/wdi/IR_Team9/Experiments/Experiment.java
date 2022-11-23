@@ -5,8 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,6 +18,7 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class Experiment extends AbstractExperiment{
@@ -152,14 +155,20 @@ public class Experiment extends AbstractExperiment{
     public static void main(String[] args) throws Exception {
 
         double[] threshs = new double[]{0.7, 0.8, 0.875, 0.9};
+        List<Double> t_ = new ArrayList<>(Arrays.asList(0.8, 0.875, 0.9));
         int experimentID = 1;
 
         int blockerID = 11;
 
-        for(int ruleID = 7; ruleID <= 27; ruleID++){
-            //for(int threshID = 0; threshID < threshs.length; threshID++){
-                Experiment.runForDatasetCombination("dbpedia", "dw", experimentID, 0.85, threshs, blockerID, ruleID, true, getConductedExperiments());
-            //}
+        for(int ruleID = 1; ruleID <= 27; ruleID++){
+            int rID = ruleID;
+
+            if(MATCHING_RULES.WEKA_RULE_IDS.contains(rID)){
+
+                t_.forEach(thresh -> Experiment.runForDatasetCombination("dbpedia", "dw", experimentID, thresh, threshs, blockerID, rID, true, getConductedExperiments()));
+
+                //ruleID = (ruleID == 1) ? 6 : ruleID;
+            }
         }
 
         

@@ -11,10 +11,19 @@
 \usepackage{amssymb}
 \usepackage{wasysym}
 
+\usepackage[hyphens]{url}
+
 \usepackage{ntheorem}
 
 % \usepackage{paralist}
 \usepackage{tabularx}
+
+
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{pdflscape}
+\usepackage{afterpage}
+\usepackage{rotating}
+\usepackage{makecell}
 
 % this packaes are useful for nice algorithms
 \usepackage{algorithm}
@@ -25,6 +34,10 @@
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
 
+%table spacing
+\newcolumntype{b}{X}
+\newcolumntype{s}{>{\hsize=.3\hsize}X}
+\newcolumntype{m}{>{\hsize=.5\hsize}X}
 
 % its always useful to have some shortcuts (some are specific for algorithms
 % if you do not like your formating you can change it here (instead of scanning through the whole text)
@@ -107,19 +120,55 @@
 
 \chapter{Phase I - Data Translation}
 \label{cha:data-translation}
-
-
-
-If you cite something, do it in the following way. 
-\begin{itemize}
-	\item Conference Proceedings: This problem is typically addressed by approaches for selecting the optimal matcher based on the nature of the matching task and the known characteristics of the different matching systems. Such an approach is described in \cite{mochol08matcher}.
-	\item Journal Article: S-Match, described in \cite{giunchiglia2008semanticmatching}, employs sound and complete reasoning procedures. Nevertheless, the underlying semantic is restricted to propositional logic due to the fact that ontologies are interpreted as tree-like structures.
-	\item Book: According to Euzenat and Shvaiko \cite{euzenat07matcherbook}, we define a correspondence as follows.
-\end{itemize}
-These are some randomly chosen examples from other works. Take a look at the end of this thesis so see how the bibliography is included.
-
  
 \section{Use Case \& Data Profiling}
+The goal of the project is to aggregate company information from several sources. To this end we used the suggestions from the project into slides as a foundation for our use case. We also included an additional source and amended the dbpedia query to extract further relevant information. Thus, the relevent entity will be a company.
+We relied on 4 different datasources which are profiled in Table \ref{tab:dataset-overview}
+
+\begin{table}[]
+	%TODO dbpedia query
+	\label{tab:dataset-overview}
+	\small
+	\centering
+	\begin{tabularx}{\textwidth}{mmsssb}
+		Dataset   & Source(*)                                                       & Format                & \#E\textsuperscript{1}       & \#A \textsuperscript{2} & List Of Attributes                                                                                                                                                          \\\hline
+		kaggle    & \url{kaggle.com/kaleab1/companies}                        & csv                  & 7.1M                 & 11               & ID, name, domain, year founded (MV 50\%), industry, size range, locality   (MV 35\%), country (MV 33\%), linkedin url, current employee estimate, total   employee estimate \\
+		forbes    & \url{kaggle.com/ash316/forbes-top-2000-companies}         & csv                 & 2.000                & 9                & Company, Country, Sales, Profits, Assets,   Market Value, Sector, Industry                                                                                                  \\
+		dataworld (dw)&
+		\url{data.world/youngx62/worlds-largest-companies-by-revenue} & csv                  & 1.924                & 10               & Global Rank, Company, Sales, Profits, Assets, Market Value, Country,   Continent, Latitude, Longitude                                                                       \\
+		dbpedia   & Query provided in Appendix                                      & json   &  3.986                &                  & Name, industry\_label, domain,   founding\_year, ceos, no\_emp (MV 33\%), country (MV 93\%), location (MV 76\%),   revenue (MV 47\%), income (MV 66\%), assets (MV 70\%)    \\
+	\end{tabularx}
+\caption[Dataset Overview]%
+{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", \textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes}
+
+\end{table}
+
+
+\begin{table}[]
+	\begin{tabular}{llll}
+		Class Name   & Attribute   Name            & Attribute Type & Contained in DS... \\\hline
+		Company      & name                        & String         & Kaggle, Forbes,   dbpedia, dw              \\
+		Company      & domain                      & String         & Kaggle, dbpedia                            \\
+		Company & Year founded                & Integer        & Kaggle, dbpedia                            \\
+		Company      & Industry                    & String/List    & Kaggle, Forbes, dbpedia                    \\
+		Company      & Size\_range                 & Category       & Kaggle (can also be   derived for dbpedia) \\
+		Company      & locality                    & String         & Kaggle, dbpedia                            \\
+		Company      & Country                     & String         & Kaggle, Forbes, dw,   dbpedia              \\
+		Company      & Linkedin url                & String         & Kaggle                                     \\
+		Company      & Current   employee estimate & Integer        & Kaggle, dbpedia                            \\
+		Company      & Total employee   estimate   & String         & Kaggle                                     \\
+		Company      & Sales                       & Integer        & Forbes, dw, dbpedia                        \\
+		Company      & Profits                     & Integer        & Forbes, dw, dbpedia                        \\
+		Company      & Assets                      & Integer        & Forbes, dw, dbpedia                        \\
+		Company      & Market Value                & Integer        & Forbes, dw, dbpedia                        \\
+		Company      & sector                      & String         & Forbes                                     \\
+		Company      & Global Rank                 & Integer        & Dw                                         \\
+		Company      & Latitude                    & Decimal        & dw                                         \\
+		Company      & Longitude                   & Decimal        & Dw                                         \\
+		Company      & ceos                        & list           & Dbpedia                                   
+	\end{tabular}
+\end{table}
+
 
 
 \section{Consolidated Schema \& Transformations}
@@ -198,7 +247,8 @@ We also faced a second challenge concerning dataset sizes which will be outlined
 
 \subsection{Evaluation}
 
-We evaluated local and global matching strategies. 
+We evaluated local and global matching strategies. In table XXX the best matching rule for each threshold is presented.
+
 
 
 
@@ -241,6 +291,17 @@ Ontology & M(edian) & G(ood) & E(vil) & results & $\Delta$-M & $\Delta$-G & $\De
 \label{tab:confonly}
 \end{center}
 \end{table}
+
+
+
+If you cite something, do it in the following way. 
+\begin{itemize}
+	\item Conference Proceedings: This problem is typically addressed by approaches for selecting the optimal matcher based on the nature of the matching task and the known characteristics of the different matching systems. Such an approach is described in \cite{mochol08matcher}.
+	\item Journal Article: S-Match, described in \cite{giunchiglia2008semanticmatching}, employs sound and complete reasoning procedures. Nevertheless, the underlying semantic is restricted to propositional logic due to the fact that ontologies are interpreted as tree-like structures.
+	\item Book: According to Euzenat and Shvaiko \cite{euzenat07matcherbook}, we define a correspondence as follows.
+\end{itemize}
+These are some randomly chosen examples from other works. Take a look at the end of this thesis so see how the bibliography is included.
+
 
 
 \bibliographystyle{plain}

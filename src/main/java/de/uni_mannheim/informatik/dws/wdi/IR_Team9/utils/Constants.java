@@ -28,6 +28,8 @@ public class Constants {
     private static final String dataworldPath = "data/input/dataworld_ts.xml";
     private static final String kagglePath = "data/input/companies_shorted_results.xml";
     private static final String kaggleInputPath = "data/input/kaggle.xml";
+    private static final String kaggleFilteredInputPath = "data/input/kaggle_filtered.xml";
+
 
 
     private static final String gsFolder = "data/goldstandard/";
@@ -44,6 +46,7 @@ public class Constants {
      /**
      * Returns the input folder path of the specified dataset.
      * Possible keys are dbpedia, dw, forbes, and kaggle.
+     * use "kaggle_f" for the filtered kaggle file.
      * KAGGLE_ORIGINAL can be specified but will be problematic during processing.
      * @dsName dataset name
      */
@@ -57,6 +60,7 @@ public class Constants {
             //case "kaggle_a_3": return getKaggleAggregatedRedXMLPath(3);
             //case "kaggle_a_4": return getKaggleAggregatedRedXMLPath(4);
             case "kaggle": return kaggleInputPath;
+            case "kaggle_f": return kaggleFilteredInputPath;
             case "KAGGLE_ORIGINAL": return kagglePath;
             default: throw new KeyException("Invalid Key. Use either dbpedia, dw, forbes, or kaggle.");
         }

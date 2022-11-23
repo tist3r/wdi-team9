@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -15,6 +16,8 @@ import java.nio.file.Paths;
 import java.security.KeyException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
@@ -412,8 +415,69 @@ public class KaggleUtils {
     }
 
 
+    static Set<String> getNamesToKeep() throws IOException{
+        //read csv file and get the names to keep
+        Set<String> namesInCsv = new HashSet<>();
 
-    public static void main(String[] args) {
+        try(CSVReader r = new CSVReader(Files.newBufferedReader(Paths.get("data/input/kaggle_csv/kaggle_filtered.csv"), StandardCharsets.UTF_8))){
+            //skip header line
+            r.readNext();
+            
+            String[] line;
+            while((line = r.readNext()) != null){
+                namesInCsv.add(line[2]);
+            }
+
+            System.out.println(namesInCsv.size());
+
+        }
+
+       
+        return namesInCsv;
+    }
+
+    static void filterKaggleByName(Set<String> names) throws IOException{
+        try(BufferedReader r = Files.newBufferedReader(Paths.get("data/input/companies_shorted_results.xml"), StandardCharsets.UTF_8)){
+            try(BufferedWriter w = Files.newBufferedWriter(Paths.get("data/input/kaggle_filtered.xml"))){
+                w.write(r.readLine());//first line
+                w.write(r.readLine()); //root tag
+
+
+
+                StringBuffer currentCompany = new StringBuffer();
+                String line;
+
+                Pattern p = Pattern.compile(".*<Name>(.*)</Name>.*");
+                Matcher m;
+                
+                while((line = r.readLine()) != null){
+                    currentCompany.append(line+"\n");
+
+                    
+                    m = p.matcher(line);
+                    if(m.matches()&&names.contains(m.group(1))){
+                        //System.out.println(m.group(1));
+                        //write current buffer
+                        w.write(currentCompany.toString());
+                    
+                        while((line = r.readLine()).contains("</Company>")){
+                            w.write(line+"\n");
+                        }
+
+                        //write line and refresh stringbuffer
+                        w.write(line+"\n");
+                        currentCompany.delete(0, currentCompany.length());
+                    }
+                }
+
+                w.write("</Companies>");
+            }
+        }
+    }
+
+
+
+    public static void main(String[] args) throws Exception {
         // Integer lineLimit = 1000000;
 
         // splitXML(FILENAME, "data/input/test/", "kaggle", lineLimit);
@@ -424,14 +488,14 @@ public class KaggleUtils {
 
         //combineReducedKaggleXMLs(4);
 
-        try{
-            writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.75, 0.5, 0.8, 0.15, false));
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        
-        
+        // try{
+        //     writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.75, 0.5, 0.8, 0.15, false));
+        // }catch(Exception e){
+        //     e.printStackTrace();
+        // }
 
+        //getNamesToKeep();
+        filterKaggleByName(getNamesToKeep());
     }
 
 }
