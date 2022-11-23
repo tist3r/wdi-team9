@@ -91,8 +91,6 @@
 \tableofcontents
 \newpage
 
-\listofalgorithms
-
 \listoffigures
 
 \listoftables
@@ -158,23 +156,25 @@ After running several identity resolutions the evaluation logs were analyzed and
 
 \section{Matching Rules}
 \label{sec:matching-rules}
+
+\subsection{General Setup}
 The company name was the sole variable we could rely on during the identity resolution. To this end, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented a plethora of different matching rules, therefore we limit ourselves to the top 10 based on their F1-scores.
 %TODO why these comparators - maybe put with challenges?
 Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). We also implemented post-processing capabilities. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function above a threshold of 0.8 and penalized below. %TODO might be necessary to outline this a little bit more, which type of functions and why those
 
 
 
-\begin{table}[]
+\begin{table}[b]
 	\label{table:comparators}
 	
-	\begin{tabular}{lllcc}
-		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   \\
-		ID & Similarity   measure       & Parameters           & \multicolumn{1}{l}{PWL\textsuperscript{1}} & \multicolumn{1}{l}{Rm FT\textsuperscript{2}} \\
-		1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)                     \\
-		2  & Jaccard on tokens          &                      & *                       & (\checked)                       \\
-		3  & Levensthein                &                      & \checked & (\checked)                       \\
-		4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       \\
-		5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -                        
+	\begin{tabular}{lllccc}
+		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   & \\
+		ID & Similarity   measure       & Parameters           & \multicolumn{1}{l}{PWL\textsuperscript{1}} & \multicolumn{1}{l}{Rm FT\textsuperscript{2}} & Focus\\
+		1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)                     & Overlap\\
+		2  & Jaccard on tokens          &                      & *                       & (\checked)                       &Overlap\\
+		3  & Levensthein                &                      & \checked & (\checked)                       &Typos / Edit-distance\\
+		4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       & Order\\
+		5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -  & Overlap                      
 	\end{tabular}
 
 \caption[Comparator Overview]%
@@ -182,20 +182,41 @@ Every comparator had options to include certain pre- and post-processing steps. 
 
 \end{table}
 
+\subsection{Major Challenge - Named Entity Matching}
+
+As a first challenge in our project we had to find out that company names are inherently difficult to match. We found ourselves facing similar challenges as the Dutch Central Bank \footnote{https://medium.com/dnb-data-science-hub/company-name-matching-6a6330710334}. %TODO make proper bibliographic reference
+As with named entities in general every data source has a different level of detail, different data quality, and use of abbreviations among others. Regarding this, our matching rules had to cater to the following challenges:
+\begin{enumerate}
+	\item \textbf{Company Name:} In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell). While all these names refer to the same entity, our matching rules evolved to address this.
+	\item \textbf{Data Quality:} We had to cope with general data quality issues which are represented for example by typos.
+	\item \textbf{Frequent tokens:} There are several tokens that have a higher frequency in company names. These include for example legal entity descriptors (limited, incorporated, ...), industy descriptors (bank, motors, pharmaceuticals, ...) and stop words (the, and, of ...). These may let names seem more similar than they actually are (General Motors vs. Hyundai Motors). We analyzed frequent tokens across our datasets and provided the matching rules with the option to remove frequent tokens.
+	\item \textbf{Token order:} Company names of different companies might be composed of similar tokens in a different order. Token-based similarity metrics alone would classify such names as similar altough they are not (Commercial National Financial vs. National Financial Group). This means that token order matters.
+\end{enumerate}
+
+We adressed these challenges by combining comparators with different strengths in matching rules which we systematically evaluated at different final mathching thresholds. We also implemented some new similarity metrics to cater to our needs (Comparator 4 and 5).
+We also faced a second challenge concerning dataset sizes which will be outlined in \ref{sec:blockers}.
+
+\subsection{Evaluation}
+
+We evaluated local and global matching strategies. 
+
+
 
 
 \section{Blockers}
 \label{sec:blockers}
 
-We used three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented: \begin{enumerate}
+We used three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options: \begin{enumerate}
 	\item First letter of the company name.
-	\item Qgrams and first letter of the company name. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computaionally efficient. %TODO run without first letter
+	\item Qgrams and first letter of the company name. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient. %TODO run without first letter
 	\item N starting characters of each company name token.
 \end{enumerate}
 
+Especially the last blocker was born out of our second challenge, the large dataset size of the kaggle dataset.
+
 
 \section{Analysis of Errors}
-\label{sec:evil}
+\label{sec:errors}
 
 
 \chapter{Phase III - Data Fusion}
