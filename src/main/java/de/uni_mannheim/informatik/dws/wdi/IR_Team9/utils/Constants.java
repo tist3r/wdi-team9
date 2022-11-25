@@ -21,7 +21,9 @@ public class Constants {
 
     private static String kaggleBasePath = "data/input/test/";
     private static String blockerBasePath = "data/output/blockers/";
-    private static Integer maxKaggleId = getMaxKaggleID();
+    
+    @Deprecated
+    private static Integer maxKaggleId = 1; 
 
     private static final String dbpediaPath = "data/input/dbpedia.xml";
     private static final String forbesPath = "data/input/Forbes_results.xml";
@@ -40,7 +42,7 @@ public class Constants {
     /**
      * Collection that can be used to check valid DS names or to loop over them.
      */
-    public static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "kaggle"}));
+    public static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "kaggle", "kaggle_f"}));
 
 
      /**
@@ -310,20 +312,20 @@ public class Constants {
     /**
      * @deprecated Method that was used during the processing of large kaggle file.
      */
-    @Deprecated
-    public static Integer getMaxKaggleID(){
-        //thanks to: https://www.baeldung.com/java-list-directory-files
+    // @Deprecated
+    // public static Integer getMaxKaggleID(){
+    //     //thanks to: https://www.baeldung.com/java-list-directory-files
         
-        Integer maxID = Stream.of(new File(kaggleBasePath).listFiles())
-            .filter(file -> !file.isDirectory())
-            .map(File::getName)
-            .map(filename -> filename.replaceAll("[^0-9]", ""))
-            .map(d -> Integer.parseInt(d))
-            .max(Integer::compare).orElseThrow(NoSuchElementException::new);
+    //     Integer maxID = Stream.of(new File(kaggleBasePath).listFiles())
+    //         .filter(file -> !file.isDirectory())
+    //         .map(File::getName)
+    //         .map(filename -> filename.replaceAll("[^0-9]", ""))
+    //         .map(d -> Integer.parseInt(d))
+    //         .max(Integer::compare).orElseThrow(NoSuchElementException::new);
 
-        //System.out.println(maxID);
-        return maxID;
-    }
+    //     //System.out.println(maxID);
+    //     return maxID;
+    // }
 
         /**
      * @deprecated use getDatasetPath(String dsName) instead.

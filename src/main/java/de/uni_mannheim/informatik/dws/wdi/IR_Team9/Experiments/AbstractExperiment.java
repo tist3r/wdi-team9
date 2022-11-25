@@ -230,6 +230,7 @@ public abstract class AbstractExperiment {
         String experimentID;
 
         for(Double thresh : this.threshs){
+            logger.info("Evaluating for thresh " + thresh.toString());
             this.matchingThresh = thresh;
             correspondences = correspondences.where(c -> c.getSimilarityScore() >= this.matchingThresh);
             this.noCorrespondences = correspondences.size();
@@ -242,7 +243,7 @@ public abstract class AbstractExperiment {
 
             this.evaluateMatching(correspondences, "All", experimentID);
 
-        
+            logger.info("Evaluating global matching");
             //get top 1 global correspondences
             MaximumBipartiteMatchingAlgorithm<Company,Attribute> maxWeight = new MaximumBipartiteMatchingAlgorithm<>(correspondences);
             maxWeight.run();
@@ -334,6 +335,7 @@ public abstract class AbstractExperiment {
                     logger.warn("Could not write ML model to file for experiment " + this.toString());
                 }
             }
+            logger.info("Finished experiment");
 
 
             this.cacheDatasets();
@@ -390,7 +392,7 @@ public abstract class AbstractExperiment {
 
 
     void evaluateMatching(Processable<Correspondence<Company, Attribute>> correspondences, String flag, String experimentID){
-        
+        logger.info("evaluating gold standard");
         try{
             //Evaluate Train data
             this.perfTrain = evaluator.evaluateMatching(correspondences, this.gsTrain);
@@ -412,18 +414,19 @@ public abstract class AbstractExperiment {
         }
 
 
-        try{
-            CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
+        // try{
+        //     logger.info("Writing group size dist");
+        //     CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
 
-            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
+        //     cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
 
-            logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
-            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
+        //     logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
+        //     cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
 
-        }catch(IOException e){
-            logger.warn("Could not evaluate correspondences ...");
-            e.printStackTrace();
-        }
+        // }catch(IOException e){
+        //     logger.warn("Could not evaluate correspondences ...");
+        //     e.printStackTrace();
+        // }
         
     }
 

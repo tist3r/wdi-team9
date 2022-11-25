@@ -1,14 +1,10 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Sandbox;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,10 +14,6 @@ import org.slf4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.BLOCKERS;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyByNameGenerator;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorLevenshtein;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments.Experiment;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
@@ -31,8 +23,6 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.MultiSimCorrespondence;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
-import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
-import de.uni_mannheim.informatik.dws.winter.matching.rules.LinearCombinationMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
@@ -163,9 +153,9 @@ public class GoldStandardIntegration{
 
 
     private static void kaggleIntegration(String otherDsName) throws Exception{
-        int[] rules = new int[]{1,2,9};
+        int[] rules = new int[]{1,2,21};
         //String[] kaggleSets = Constants.getAggregateKagglePartitionedDSNames();
-        String kagglePath = Constants.getDatasetPath("_kaggle");
+        String kagglePath = Constants.getDatasetPath("kaggle_f");
 
         String id;
         
@@ -179,20 +169,23 @@ public class GoldStandardIntegration{
                 Experiment.runForDatasetCombination(
                     otherDsName,
                     //kaggleSets[set],
-                    "_kaggle",
+                    "kaggle_f",
                     100, 
-                    0.2, 
-                    9, 
+                    0.2,
+                    new double[]{0.5},
+                    10, 
                     rules[rule], 
-                    true, 
+                    false, 
                     Experiment.getConductedExperiments());
 
-                id = Experiment.getID(otherDsName, "_kaggle", rules[rule], 9, 0.2);
+                id = Experiment.getID(otherDsName, "kaggle_f", rules[rule], 10, 0.2);
 
                 //write top k correspondences
                 try{
+
+                    logger.info("Making top k corresponcences");
                     MultiSimCorrespondence.writeTopKCorrespondences(
-                        Constants.getExperimentCompanyCorrPath(otherDsName, "_kaggle", id),
+                        Constants.getExperimentCompanyCorrPath(otherDsName, "kaggle_f", id),
                         Constants.getSortedCorrespondencesPath(id, true),
                         10000,
                         true,
@@ -208,8 +201,8 @@ public class GoldStandardIntegration{
             //combine top k correspondences
             MultiSimCorrespondence.makeCombinedCorrespondenceFile(
                 toBeCombined,
-                Constants.getCombinedMultiSimFilePath(otherDsName, "_kaggle",
-                "t1"),
+                Constants.getCombinedMultiSimFilePath(otherDsName, "kaggle_f",
+                ""),
                 true);
 
         //}
@@ -285,6 +278,7 @@ public class GoldStandardIntegration{
         String[] dsNames = new String[] {"dbpedia", "forbes", "dw"};
         for(String dsName : dsNames){
             kaggleIntegration(dsName);
+            break;
         }
 
         //testPartitions();
