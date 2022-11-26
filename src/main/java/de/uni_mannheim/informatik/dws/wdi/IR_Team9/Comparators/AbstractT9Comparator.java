@@ -1,9 +1,11 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Preprocessing.StringPreprocessing;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.Comparator;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.comparators.ComparatorLogger;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
+import de.uni_mannheim.informatik.dws.winter.similarity.string.JaccardOnNGramsSimilarity;
 
 /**
  * Class that implements common Comparator logic.
@@ -13,6 +15,10 @@ public abstract class AbstractT9Comparator implements Comparator<Company, Attrib
 
     //preprocessing flags
     boolean rmFrequentTokens = false;
+    boolean includeURLifExists = false;
+    double urlWeight = 0.3;
+    static JaccardOnNGramsSimilarity URLsim = new JaccardOnNGramsSimilarity(3);
+
 
     //postprocessing flags
     float dropToZeroThresh = 0;
@@ -54,6 +60,15 @@ public abstract class AbstractT9Comparator implements Comparator<Company, Attrib
             this.comparisonLog.setPostprocessedSimilarity(Double.toString(postProcessedSimilarity));
 		}
     }
+
+
+    void setIncludeURL(boolean include){
+        this.includeURLifExists = include;
+    }
+
+    void setURLWeight(double weight){
+        this.urlWeight = weight;
+    }
     
     /**
      * Returns the postprocessed similarity - in this case 0 below a preset threshold.
@@ -65,6 +80,18 @@ public abstract class AbstractT9Comparator implements Comparator<Company, Attrib
             return 0d;
         }
             
+        return sim;
+    }
+
+    public double includeURLsim(double sim, Company c1, Company c2){
+        if(this.includeURLifExists){
+            if(c1.getUrl() != null && c2.getUrl() != null){
+                double urlSim = URLsim.calculate(StringPreprocessing.getURLRoot(c1.getUrl()), StringPreprocessing.getURLRoot(c2.getUrl()));
+
+                sim = (1-urlWeight)*sim + urlWeight*urlSim;
+            }
+        }
+
         return sim;
     }
     
