@@ -24,6 +24,7 @@
 \usepackage{afterpage}
 \usepackage{rotating}
 \usepackage{makecell}
+\usepackage{hyperref}
 
 % this packaes are useful for nice algorithms
 \usepackage{algorithm}
@@ -36,6 +37,7 @@
 
 %table spacing
 \newcolumntype{b}{X}
+\newcolumntype{n}{>{\hsize=1.2\hsize}X}
 \newcolumntype{s}{>{\hsize=.3\hsize}X}
 \newcolumntype{m}{>{\hsize=.5\hsize}X}
 
@@ -123,30 +125,33 @@
  
 \section{Use Case \& Data Profiling}
 The goal of the project is to aggregate company information from several sources. To this end we used the suggestions from the project into slides as a foundation for our use case. We also included an additional source and amended the dbpedia query to extract further relevant information. Thus, the relevent entity will be a company.
-We relied on 4 different datasources which are profiled in Table \ref{tab:dataset-overview}
+We relied on 4 different datasources which are profiled in Table \ref{tab:dataset-overview}. In order to being able to process the kaggle dataset, we had to filter it down. To this end, we used the "size range" attribute and only kept the categories "10001+", "5001 - 10000", "1001 - 5000", "501 - 1000", "201 - 500", "51 - 200". This is a valid approach since the forbes dataset contains data about the 2000 largest companies in the world, and the dataworld (dw) dataset is also called "largest companies", containing only companies of a certain size.
 
-\begin{table}[]
+\begin{table}[b]
 	%TODO dbpedia query
 	\label{tab:dataset-overview}
 	\small
 	\centering
-	\begin{tabularx}{\textwidth}{mmsssb}
-		Dataset   & Source(*)                                                       & Format                & \#E\textsuperscript{1}       & \#A \textsuperscript{2} & List Of Attributes                                                                                                                                                          \\\hline
-		kaggle    & \url{kaggle.com/kaleab1/companies}                        & csv                  & 7.1M                 & 11               & ID, name, domain, year founded (MV 50\%), industry, size range, locality   (MV 35\%), country (MV 33\%), linkedin url, current employee estimate, total   employee estimate \\
-		forbes    & \url{kaggle.com/ash316/forbes-top-2000-companies}         & csv                 & 2.000                & 9                & Company, Country, Sales, Profits, Assets,   Market Value, Sector, Industry                                                                                                  \\
-		dataworld (dw)&
-		\url{data.world/youngx62/worlds-largest-companies-by-revenue} & csv                  & 1.924                & 10               & Global Rank, Company, Sales, Profits, Assets, Market Value, Country,   Continent, Latitude, Longitude                                                                       \\
-		dbpedia   & Query provided in Appendix                                      & json   &  3.986                &                  & Name, industry\_label, domain,   founding\_year, ceos, no\_emp (MV 33\%), country (MV 93\%), location (MV 76\%),   revenue (MV 47\%), income (MV 66\%), assets (MV 70\%)    \\
+	\begin{tabularx}{\textwidth}{mscccn}
+		Dataset   & Source                                                       & Format                & \#E\textsuperscript{1}       & \#A \textsuperscript{2} & List Of Attributes                                                                                                                                                          \\\hline
+		&&&&&\\
+		kaggle    & \href{https://www.kaggle.com/kaleab1/companies}{link to dataset}                        & csv                  & \makecell[ct]{7.1M\\(491.830\textsuperscript{3})}                & 11               & ID, name, domain, year founded (MV), industry, size range, locality   (MV), country (MV), linkedin url, current employee estimate, total   employee estimate \\
+		forbes    &\href{https://www.kaggle.com/ash316/forbes-top-2000-companies}{link to dataset}          & csv                 & 2.000                & 9                & Company, Country, Sales, Profits, Assets,   Market Value, Sector, Industry                                                                                                  \\
+		dataworld (dw)& \href{https://www.data.world/youngx62/worlds-largest-companies-by-revenue}{link to dataset} & csv                  & 1.924                & 10               & Global Rank, Company, Sales, Profits, Assets, Market Value, Country,   Continent, Latitude, Longitude                                                                       \\
+		dbpedia   & Query provided in Appendix                                      & json   &  3.986                &         11         & Name, industry\_label, domain,   founding\_year, ceos, no\_emp (MV), country (MV), location (MV),   revenue (MV), income (MV), assets (MV)    \\
 	\end{tabularx}
 \caption[Dataset Overview]%
-{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", \textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes}
+{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", * For hyperlinks pls refer,\textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes, \textsuperscript{3} Number of filtered companies from the original dataset might be smaller than this number, because the final XML was extracted from the previous XML by mathching the filtered names (company with the same name might exist also in excluded category).}
 
 \end{table}
 
-
+%TODO normalize case
 \begin{table}[]
-	\begin{tabular}{llll}
+	\small
+	\label{tab:attribute-mapping}
+	\begin{tabularx}{\textwidth}{mlmn}
 		Class Name   & Attribute   Name            & Attribute Type & Contained in DS... \\\hline
+		&&&\\
 		Company      & name                        & String         & Kaggle, Forbes,   dbpedia, dw              \\
 		Company      & domain                      & String         & Kaggle, dbpedia                            \\
 		Company & Year founded                & Integer        & Kaggle, dbpedia                            \\
@@ -166,12 +171,20 @@ We relied on 4 different datasources which are profiled in Table \ref{tab:datase
 		Company      & Latitude                    & Decimal        & dw                                         \\
 		Company      & Longitude                   & Decimal        & Dw                                         \\
 		Company      & ceos                        & list           & Dbpedia                                   
-	\end{tabular}
+	\end{tabularx}
+\caption{Attribute Mapping}
 \end{table}
 
 
 
 \section{Consolidated Schema \& Transformations}
+
+The consolidated schema was created by hand. The following transformations were applied to the input datasets:\begin{enumerate}
+	\item Monetary values were normalized to the same base.
+	\item The \textit{dbpedia} dataset came with currency information. The intention was to use this information via a mapping table to convert all monetary values to USD. However, it turend out that there was a huge amount of currencies involved and it was not clear of which data the exchange rate should be retrieved. Therefore the currency was kept as an additional attribute.
+	\item A unique ID was generated for each record that was mapped to the target schema.
+	\item ...
+\end{enumerate} 
 
 
 \chapter{Phase II - Identity Resolution}
@@ -180,34 +193,30 @@ We relied on 4 different datasources which are profiled in Table \ref{tab:datase
 \section{Gold Standard}
 \label{sec:gold-standard-IR}
 
-In order to create the gold standard we ran initial identity resolutions with cheap matching rules. With a threshold of 0.3 we used three different matching rules: \begin{itemize}
-	\item Jaccard-3-Grams on company names (with frequent tokens removed)
-	\item Levensthein Similarity on company names (with frequent tokens removed)
-	\item a combined matching rule of the above (50/50) 
+In order to create the gold standard we ran initial identity resolutions with two cheap and a more complex matching rule. With a threshold of 0.2 we used three different matching rules: \begin{enumerate}
+	\item Jaccard-3-Grams on company names (with frequent tokens removed) (MR1)
+	\item Levensthein Similarity on company names (with frequent tokens removed) (MR2)
+	\item A combination of 1, 2, Longest Common Subsequence, and a token-based similarity (MR27)
 	%TODO !! --> maybe use something different, add rule IDs?
-\end{itemize}
+\end{enumerate}
 %TODO add file references?? File Gold Standard integration.
 %TODO global matching
 %TODO source for string matching https://ebookcentral.proquest.com/lib/unimannheim-ebooks/reader.action?docID=945451
-The results were then combined into one file which for each individual correspondence outlined the similarity calculated by every similarity measure as well as the company names.
-
-We then labeled the matches into matching record pairs, corner-case matches and non-matches, and non-matches. 
-Correspondences were labeld as certain matches if at least one of the similarity scores had a high matching threshold $>$ 0.95 and an actual match was present.
-Correspondences were labeled as fuzzy if the similarity measures did not agree on a rating which was indicated by the average similarity, i.e. one similarity measure had a high certainty while the other one had a low certainty.
-Correspondecnes with low average similarity were labeled as non-matches after verifying that they indeed did not match.
+The results were then combined into one file which for each individual correspondence outlined the similarity calculated by every similarity measure as well as the company names. Furthermore, an average of the three similarities was calculated. We then labeled the matches into matching record pairs, corner-case matches and non-matches, and non-matches.
+Therefore, the correspondences were sorted by the average similarity. A high value indicated that all matching rules consider this correspondence a match. Correspondences were labeld as certain matches if the similarity scores had a high matching threshold $>$ 0.9 and an actual match was present. Non-matches in this area were labeled as corner cases. For $0.9 > avg. sim. > 0.7$ mathces were labeled as corner-cases. Afterwards the correspondences with the lowest avg. sim. were reviewed and labeled as non-matches or corner-case mathches. Then, the correspondences were in turn sorted by each individual similarity measure score and non-categorized correspondences were labeld as corner-cases above a threshold of 0.7.
 To achieve the distribution according to the rule of thumb outlined in the lecture, which states to include 20\% matching record matching pairs, 30\% corner-case matches and non-matches (fuzzy), and 50\% non-matching record pairs a random sample out of the labled correspondences was drawn.
 %TODO was their a problem to achieve this distribution?
 The data was then split into train and test set using a python script, with a test size of 0.25 and stratified on the gold standard category.
 
 %TODO Note on balance of gold standard, positives and negatives
 
-After running several identity resolutions the evaluation logs were analyzed and the gold standard was amended to cater to the identified false positive correspondences (according to the previous gold standard) by adding them to the gold standard, usually as corner-cases. 
+After running several identity resolutions the correspondences were analyzed. False positive mathches were then added to the gold standard as further corner cases.
 
 \section{Matching Rules}
 \label{sec:matching-rules}
 
 \subsection{General Setup}
-The company name was the sole variable we could rely on during the identity resolution. To this end, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented a plethora of different matching rules, therefore we limit ourselves to the top 10 based on their F1-scores.
+The company name was the sole variable we could rely on during the identity resolution across all datasets. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented a plethora of different matching rules, therefore we limit ourselves to the top 10 based on their F1-scores.
 %TODO why these comparators - maybe put with challenges?
 Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). We also implemented post-processing capabilities. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function above a threshold of 0.8 and penalized below. %TODO might be necessary to outline this a little bit more, which type of functions and why those
 
@@ -233,24 +242,23 @@ Every comparator had options to include certain pre- and post-processing steps. 
 
 \subsection{Major Challenge - Named Entity Matching}
 
-As a first challenge in our project we had to find out that company names are inherently difficult to match. We found ourselves facing similar challenges as the Dutch Central Bank \footnote{https://medium.com/dnb-data-science-hub/company-name-matching-6a6330710334}. %TODO make proper bibliographic reference
+A challenge in our project has been the matching of company names due to their "noisyness". We found ourselves facing similar challenges as the Dutch Central Bank \footnote{https://medium.com/dnb-data-science-hub/company-name-matching-6a6330710334}. %TODO make proper bibliographic reference
 As with named entities in general every data source has a different level of detail, different data quality, and use of abbreviations among others. Regarding this, our matching rules had to cater to the following challenges:
 \begin{enumerate}
-	\item \textbf{Company Name:} In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell). While all these names refer to the same entity, our matching rules evolved to address this.
+	\item \textbf{Company Name:} In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell).
 	\item \textbf{Data Quality:} We had to cope with general data quality issues which are represented for example by typos.
 	\item \textbf{Frequent tokens:} There are several tokens that have a higher frequency in company names. These include for example legal entity descriptors (limited, incorporated, ...), industy descriptors (bank, motors, pharmaceuticals, ...) and stop words (the, and, of ...). These may let names seem more similar than they actually are (General Motors vs. Hyundai Motors). We analyzed frequent tokens across our datasets and provided the matching rules with the option to remove frequent tokens.
 	\item \textbf{Token order:} Company names of different companies might be composed of similar tokens in a different order. Token-based similarity metrics alone would classify such names as similar altough they are not (Commercial National Financial vs. National Financial Group). This means that token order matters.
 \end{enumerate}
 
 We adressed these challenges by combining comparators with different strengths in matching rules which we systematically evaluated at different final mathching thresholds. We also implemented some new similarity metrics to cater to our needs (Comparator 4 and 5).
-We also faced a second challenge concerning dataset sizes which will be outlined in \ref{sec:blockers}.
 
 \subsection{Evaluation}
 
 We evaluated local and global matching strategies. In table XXX the best matching rule for each threshold is presented.
 
 
-
+%TODO parir completeness
 
 
 \section{Blockers}
