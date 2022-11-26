@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyBlockingKeyByNameGenerator;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameUrlComparator;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.UrlNameComparator;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
@@ -40,7 +40,7 @@ public class duplicate_detection_dbpedia {
         LinearCombinationMatchingRule<Company, Attribute> matchingRule = new LinearCombinationMatchingRule<>(0.85);
 
         //add comparators (name and url)
-        matchingRule.addComparator(new CompanyNameUrlComparator(0.95, 0.05, true, true), 0.7);
+        //matchingRule.addComparator(new UrlNameComparator(0.95, 0.05, true, true), 0.7);
         matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3), 0.3);
 
         // create a blocker (blocking strategy)
