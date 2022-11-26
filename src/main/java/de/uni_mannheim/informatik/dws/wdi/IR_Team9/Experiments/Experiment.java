@@ -156,13 +156,13 @@ public class Experiment extends AbstractExperiment{
     static void runMultThreshExperimentForWekas(List<Double> t_){
         int experimentID = 1;
 
-        int blockerID = 11;
+        int blockerID = 10;
 
-        for(int ruleID = 1; ruleID <= 27; ruleID++){
+        for(int ruleID = 10; ruleID <= 11; ruleID++){
             int rID = ruleID;
 
             if(MATCHING_RULES.WEKA_RULE_IDS.contains(rID)){
-                t_.forEach(thresh -> Experiment.runForDatasetCombination("dbpedia", "dw", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
+                t_.forEach(thresh -> Experiment.runForDatasetCombination("dbpedia", "kaggle_f", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
             }
         }
     }
@@ -170,19 +170,23 @@ public class Experiment extends AbstractExperiment{
 
     public static void main(String[] args) throws Exception {
 
+       
+
         double[] threshs = new double[]{0.7, 0.8, 0.875, 0.9};
         List<Double> t_ = new ArrayList<>(Arrays.asList(0.8, 0.875, 0.9));
         int experimentID = 1;
 
-        int blockerID = 10;
+        runMultThreshExperimentForWekas(t_);
 
-        for(int ruleID = 22; ruleID <= 27; ruleID++){
-            int rID = ruleID;
+        // int blockerID = 10;
 
-            Experiment.runForDatasetCombination("dbpedia", "kaggle_f", experimentID, 0.85, threshs, blockerID, rID, true, getConductedExperiments());
+        // for(int ruleID = 9; ruleID <= 17; ruleID++){
+        //     int rID = ruleID;
 
-            ruleID = ruleID == 9 ? 18 : ruleID;
-        }
+        //     Experiment.runForDatasetCombination("dw", "kaggle_f", experimentID, 0.85, threshs, blockerID, rID, true, getConductedExperiments());
+
+        //     ruleID = ruleID == 6 ? 18 : ruleID;
+        // }
 
         
         // for(int blockerID = 1; blockerID <= BLOCKERS.NUM_BLOCKERS; blockerID++){ //blockerID

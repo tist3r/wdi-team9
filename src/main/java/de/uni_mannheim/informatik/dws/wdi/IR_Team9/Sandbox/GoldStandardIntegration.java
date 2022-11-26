@@ -275,10 +275,9 @@ public class GoldStandardIntegration{
          * -Kaggle_2599908 (4)
          */
 
-        String[] dsNames = new String[] {"dbpedia", "forbes", "dw"};
+        String[] dsNames = new String[] {"forbes", "dw"};
         for(String dsName : dsNames){
             kaggleIntegration(dsName);
-            break;
         }
 
         //testPartitions();
