@@ -1,5 +1,8 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.LongestCommonSubsequenceSimilarity.NormalizationFlag;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.algorithms.RuleLearner;
@@ -13,7 +16,9 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 27;
+    public static int NUM_MATCHING_RULES = 28;
+
+    public static final List<Integer> WEKA_RULE_IDS = Arrays.asList(7,8,10,11,12,13,16,20,22,24,25,26);
 
     public static String mr1Description;
     public static String mr2Description;
@@ -75,6 +80,7 @@ public class MATCHING_RULES {
                 case 25: return getMR25(thresh, ds1, ds2, gsTrain);
                 case 26: return getMR26(thresh, ds1, ds2, gsTrain);
                 case 27: return getMR27(thresh);
+                case 28: return getMR28(thresh);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
@@ -593,16 +599,48 @@ public class MATCHING_RULES {
     public static MatchingRule<Company, Attribute> getMR27(double thresh){
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
-            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.5f),0.3); //three a bit more robust to typos than 4
-            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.5f),0.2); //typos
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(
+                3,
+                true, 
+                0.4f, 
+                true, 
+                0.5f, 
+                3, 
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3),0.3); //three a bit more robust to typos than 4
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.4f),0.3); //typos
             rule.addComparator(new LCSComparator(
-                LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG,
+                LongestCommonSubsequenceSimilarity.NormalizationFlag.MIN,
                 0.3f,
                 true,
                 0.5f,
+                AbstractT9Comparator.BOOST_FUNCTIONS.SQRT,
+                4),0.2); //Order
+            rule.addComparator(new RogueTokenComparator(
+                0.3f, 
+                true, 
+                0.5f, 
                 AbstractT9Comparator.BOOST_FUNCTIONS.X3,
-                2),0.2); //Order
-            rule.addComparator(new RogueTokenComparator(0.3f, true, 0.7f, AbstractT9Comparator.BOOST_FUNCTIONS.X3,2),0.3); //remediating the removal of frequent tokens
+                4),0.2); //remediating the removal of frequent tokens
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+
+    public static MatchingRule<Company, Attribute> getMR28(double thresh){
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.3);
+            rule.addComparator(new UrlNameComparator(3, true), 0.4);
+            rule.addComparator(new RogueTokenComparator(
+                0.3f, 
+                true, 
+                0.5f, 
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3,
+                4),0.3); //remediating the removal of frequent tokens
         }catch(Exception e){
             e.printStackTrace();
             System.exit(0);

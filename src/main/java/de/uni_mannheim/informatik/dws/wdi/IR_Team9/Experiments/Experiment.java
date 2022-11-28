@@ -5,8 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,6 +18,7 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
+import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class Experiment extends AbstractExperiment{
@@ -62,7 +65,7 @@ public class Experiment extends AbstractExperiment{
         int ruleID,
         boolean redo,
         Set<String> conductedExp){
-            runForDatasetCombination(ds1Name, ds2Name, experimentID, thresh, null, blockerID, ruleID, redo, conductedExp);
+            runForDatasetCombination(ds1Name, ds2Name, experimentID, thresh, new double[]{}, blockerID, ruleID, redo, conductedExp);
         }
 
 
@@ -105,7 +108,8 @@ public class Experiment extends AbstractExperiment{
                     bufferedWriter.write(getID(ds1Name, ds2Name, ruleID, blockerID, thresh)+LocalDateTime.now());
                     bufferedWriter.write("\n");
                 }catch(Exception e){
-                    logger.warn("unexpected exception when writing OOM error log" + e.getMessage()); 
+                    logger.warn("unexpected exception when writing OOM error log");
+                    e.printStackTrace();
                 }
             }
             catch(Exception e){
@@ -146,20 +150,42 @@ public class Experiment extends AbstractExperiment{
         //     runForDatasetCombination(dw, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
         //     runForDatasetCombination(forbes, Constants.getAggregateKagglePartitionedDSNamesByID(i), experimentID, thresh, blockerID, ruleID, redo, conductedExp);
         // }
-    }   
+    }
+    
+    
+    static void runMultThreshExperimentForWekas(List<Double> t_){
+        int experimentID = 1;
+
+        int blockerID = 10;
+
+        for(int ruleID = 10; ruleID <= 11; ruleID++){
+            int rID = ruleID;
+
+            if(MATCHING_RULES.WEKA_RULE_IDS.contains(rID)){
+                t_.forEach(thresh -> Experiment.runForDatasetCombination("dbpedia", "kaggle_f", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
+            }
+        }
+    }
 
 
     public static void main(String[] args) throws Exception {
 
+       
+
         double[] threshs = new double[]{0.7, 0.8, 0.875, 0.9};
+        List<Double> t_ = new ArrayList<>(Arrays.asList(0.8, 0.875, 0.9));
         int experimentID = 1;
 
-        int blockerID = 11;
+        // runMultThreshExperimentForWekas(t_);
 
-        for(int ruleID = 7; ruleID <= 27; ruleID++){
-            //for(int threshID = 0; threshID < threshs.length; threshID++){
-                Experiment.runForDatasetCombination("dbpedia", "dw", experimentID, 0.85, threshs, blockerID, ruleID, true, getConductedExperiments());
-            //}
+        int blockerID = 10;
+
+        for(int ruleID = 28; ruleID <= 28; ruleID++){
+            int rID = ruleID;
+
+            Experiment.runForDatasetCombination("dbpedia", "kaggle_f", experimentID, 0.85, threshs, blockerID, rID, true, getConductedExperiments());
+
+            ruleID = ruleID == 6 ? 18 : ruleID;
         }
 
         

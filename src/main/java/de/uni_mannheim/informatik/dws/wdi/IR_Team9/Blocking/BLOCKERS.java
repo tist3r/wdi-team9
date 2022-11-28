@@ -2,13 +2,14 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
+import de.uni_mannheim.informatik.dws.winter.matching.blockers.NoBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.SortedNeighbourhoodBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class BLOCKERS {
 
-    public static int NUM_BLOCKERS = 14;
+    public static int NUM_BLOCKERS = 17;
 
     public static String blocker1Description;
     public static String blocker2Description;
@@ -43,6 +44,9 @@ public class BLOCKERS {
 
             case 13: return getBlocker13();
             case 14: return getBlocker14();
+            case 15: return getBlocker15();
+            case 16: return getBlocker16();
+            case 17: return getBlocker17();
 
             default: throw new IndexOutOfBoundsException(String.format("Blocker with id %d does not exist, max is %d", id, NUM_BLOCKERS));
         }
@@ -131,4 +135,21 @@ public class BLOCKERS {
 
         return new SortedNeighbourhoodBlocker<>(new CompanyQgramBlocking(3, false), 40);
     }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker15(){
+        //blocker5Description = "Sorted neigborhoodblocker with 3 gram key and w=20.";
+
+        return new SortedNeighbourhoodBlocker<>(new CompanyQgramBlocking(3, false), 60);
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker16(){
+        //blocker5Description = "Sorted neigborhoodblocker with 3 gram key and w=20.";
+
+        return new SortedNeighbourhoodBlocker<>(new CompanyQgramBlocking(3, false), 100);
+    }
+
+    public static Blocker<Company, Attribute, Company, Attribute> getBlocker17(){
+        return new NoBlocker<>();
+    }
+
 }

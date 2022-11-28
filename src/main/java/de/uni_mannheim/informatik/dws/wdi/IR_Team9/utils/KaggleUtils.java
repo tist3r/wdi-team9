@@ -2,11 +2,14 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -14,9 +17,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyException;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Blocking.CompanyQgramBlocking;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.CompanyNameComparatorJaccardNgram;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
@@ -208,41 +215,41 @@ public class KaggleUtils {
     }
 
 
-    public static void reduceKaggleXMLs(int startID, int endID) throws Exception{
-        //check bounds for loop
-        if(endID > Constants.getMaxKaggleID()){
-            endID = Constants.getMaxKaggleID();
-        }
+    // public static void reduceKaggleXMLs(int startID, int endID) throws Exception{
+    //     //check bounds for loop
+    //     if(endID > Constants.getMaxKaggleID()){
+    //         endID = Constants.getMaxKaggleID();
+    //     }
 
-        if(startID < 1){
-            startID = 1;
-        }
+    //     if(startID < 1){
+    //         startID = 1;
+    //     }
 
-        //Load all but Kaggle Datasets into one Dataset
-        HashedDataSet<Company, Attribute> allCompanies = new HashedDataSet<>();
-		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.RECORD_PATH, allCompanies);
-		new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.RECORD_PATH, allCompanies);
-        new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dw")), Constants.RECORD_PATH, allCompanies);
+    //     //Load all but Kaggle Datasets into one Dataset
+    //     HashedDataSet<Company, Attribute> allCompanies = new HashedDataSet<>();
+	// 	new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dbpedia")), Constants.RECORD_PATH, allCompanies);
+	// 	new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("forbes")), Constants.RECORD_PATH, allCompanies);
+    //     new CompanyXMLReader().loadFromXML(new File(Constants.getDatasetPath("dw")), Constants.RECORD_PATH, allCompanies);
 
 
-        //Run a basic similarity function and only keep Kaggle entries that have at least 40% match
-        HashedDataSet<Company, Attribute> kaggle;
-        CompanyXMLReader cr = new CompanyXMLReader();
+    //     //Run a basic similarity function and only keep Kaggle entries that have at least 40% match
+    //     HashedDataSet<Company, Attribute> kaggle;
+    //     CompanyXMLReader cr = new CompanyXMLReader();
 		
 
         
         
-        String toPath;
-        for(int i = startID; i <= endID; i++){
-            System.out.println("[INFO ] Reducing file " + Constants.getDatasetPath("kaggle", i));
+    //     String toPath;
+    //     for(int i = startID; i <= endID; i++){
+    //         System.out.println("[INFO ] Reducing file " + Constants.getDatasetPath("kaggle", i));
 
-            kaggle = new HashedDataSet<>();
-            cr.loadFromXML(new File(Constants.getDatasetPath("kaggle", i)), Constants.RECORD_PATH, kaggle);
+    //         kaggle = new HashedDataSet<>();
+    //         cr.loadFromXML(new File(Constants.getDatasetPath("kaggle", i)), Constants.RECORD_PATH, kaggle);
 
-            toPath = String.format("data/output/reducedKaggleSet/kaggle_%d_red.xml", i);
-            runBasicIR(allCompanies, kaggle, toPath);
-        }
-    }
+    //         toPath = String.format("data/output/reducedKaggleSet/kaggle_%d_red.xml", i);
+    //         runBasicIR(allCompanies, kaggle, toPath);
+    //     }
+    // }
 
     /**
      * Aggregates reduced kaggle files into larger partitions.
@@ -412,8 +419,138 @@ public class KaggleUtils {
     }
 
 
+    static Set<String> getNamesToKeep() throws IOException{
+        //read csv file and get the names to keep
+        Set<String> namesInCsv = new HashSet<>();
 
-    public static void main(String[] args) {
+        try(CSVReader r = new CSVReader(Files.newBufferedReader(Paths.get("data/input/kaggle_csv/kaggle_filtered.csv"), StandardCharsets.UTF_8))){
+            //skip header line
+            r.readNext();
+            
+            String[] line;
+            while((line = r.readNext()) != null){
+                namesInCsv.add(line[2]);
+            }
+
+            System.out.println(namesInCsv.size());
+
+        }
+
+       
+        return namesInCsv;
+    }
+
+    static void filterKaggleByName(Set<String> names) throws IOException{
+        try(BufferedReader r = Files.newBufferedReader(Paths.get("data/input/companies_shorted_results.xml"), StandardCharsets.UTF_8)){
+            try(BufferedWriter w = Files.newBufferedWriter(Paths.get("data/input/kaggle_filtered.xml"),StandardCharsets.UTF_8)){
+                w.write(r.readLine());//first line
+                w.write(r.readLine()); //root tag
+
+
+                int noMatches = 0;
+                StringBuffer currentCompany = new StringBuffer();
+                String line;
+
+                Pattern p = Pattern.compile(".*<Name>(.*)</Name>.*");
+                Matcher m;
+                
+                while((line = r.readLine()) != null){
+                    currentCompany.append(line+"\n");
+
+                    
+                    m = p.matcher(line);
+                    if(m.matches() && names.contains(m.group(1))){
+
+                        noMatches++;
+                        if(noMatches%10000 == 0){
+                            System.out.println(noMatches);
+                        }
+                        //System.out.println(m.group(1));
+                        //write current buffer
+                        w.write(currentCompany.toString());
+                    
+                        while(!(line = r.readLine()).contains("</Company>")){
+                            w.write(line+"\n");
+                        }
+
+                        //write line and refresh stringbuffer
+                        w.write(line+"\n");
+                        currentCompany.delete(0, currentCompany.length());
+                    }
+
+                    if(line.contains("</Company>")){currentCompany.delete(0, currentCompany.length());}
+
+
+                }
+
+                w.write("</Companies>");
+            }
+        }
+    }
+
+    
+    /**
+     * checks if theere are any ids in the gold standard that are no longer in the dataset
+     */
+    public static Set<String> getKaggleIDs() throws IOException{
+        Set<String> ids = new HashSet<>();
+        try(BufferedReader r = Files.newBufferedReader(Paths.get("data/input/kaggle_filtered.xml"), StandardCharsets.UTF_8)){
+            String line;
+            while((line = r.readLine()) != null){
+                Pattern p = Pattern.compile(".*<ID>(.*)</ID>.*");
+                Matcher m;
+
+                m = p.matcher(line);
+                if(m.matches()){
+                    ids.add(m.group(1));
+                }
+                
+            }
+        }
+
+        return ids;
+    }
+
+    public static void filterGS(Set<String> toKeep)throws IOException, KeyException{
+        try(CSVReader r = new CSVReader(Files.newBufferedReader(Paths.get("data/goldstandard/archive_and_analysis/gs_dbpedia_kaggle_cat.csv"), StandardCharsets.UTF_8), ';')){
+            try(CSVWriter w = new CSVWriter(Files.newBufferedWriter(Paths.get("data/goldstandard/archive_and_analysis/gs_dbpedia_kaggle_f_cat.csv"),StandardCharsets.UTF_8), ';')){
+                String[] line;
+
+                while((line = r.readNext())!= null){
+                    if(toKeep.contains(line[1])){
+                        w.writeNext(line);
+                    }
+                }
+            }
+        }
+        
+    }
+
+    public static Set<String> getIDsInGS() throws IOException, KeyException{
+        Set<String> ids = new HashSet<>();
+        try(CSVReader r = new CSVReader(Files.newBufferedReader(Paths.get(Constants.getTrainData("dbpedia", "kaggle")), StandardCharsets.UTF_8))){
+            String[] line;
+
+            while((line = r.readNext()) != null){
+                ids.add(line[1]);
+            }
+        }
+
+        return ids;
+    }
+
+    public static void getObsoleteIDs(Set<String> s1, Set<String> s2){
+        s1.removeAll(s2);
+
+        for(String s: s1){
+            System.out.println(s);
+        }
+
+        System.out.println(s1.size());
+    }
+
+
+    public static void main(String[] args) throws Exception {
         // Integer lineLimit = 1000000;
 
         // splitXML(FILENAME, "data/input/test/", "kaggle", lineLimit);
@@ -424,14 +561,16 @@ public class KaggleUtils {
 
         //combineReducedKaggleXMLs(4);
 
-        try{
-            writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.75, 0.5, 0.8, 0.15, false));
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        
-        
+        // try{
+        //     writeIDsToKeepToFile(keepPercentageOrAboveThresh(0.75, 0.5, 0.8, 0.15, false));
+        // }catch(Exception e){
+        //     e.printStackTrace();
+        // }
 
+        //getNamesToKeep();
+        //filterKaggleByName(getNamesToKeep());
+
+        filterGS(getKaggleIDs());
     }
 
 }

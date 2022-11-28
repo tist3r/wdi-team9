@@ -52,6 +52,14 @@ public abstract class AbstractExperiment {
     static final MatchingEvaluator<Company, Attribute> evaluator = new MatchingEvaluator<Company, Attribute>();
     static final MatchingEngine<Company,Attribute> engine = new MatchingEngine<>();
 
+    
+    static FusibleHashedDataSet<Company, Attribute> ds1cached = null;
+    static String ds1Namecached = null;
+
+    static FusibleHashedDataSet<Company, Attribute> ds2cached = null;
+    static String ds2Namecached = null;
+
+    
     boolean addedMatchingRule = false;
     boolean addedBlocker = false;
 
@@ -87,8 +95,8 @@ public abstract class AbstractExperiment {
 
     LocalDateTime timeStarted;
     int maxNumComparisons;
-    
 
+ 
     public AbstractExperiment(String ds1Name, String ds2Name, int experimentID, double matchingThresh) throws Exception{
         this.ds1Name = ds1Name;
         this.ds2Name = ds2Name;
@@ -127,19 +135,58 @@ public abstract class AbstractExperiment {
      * Experiment Setup
      */
     void loadData(String ds1Name, String ds2Name) throws Exception{
-        // loading data
-        logger.info("*\tLoading datasets\t*");
-        this.ds1 = new FusibleHashedDataSet<>();
-        cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
+        //ds1
+        //check cache
+        if(!isCached(1, ds1Name)){
+            //clear cache
+            clearCache(1);
+
+            // loading data
+            logger.info("*\tLoading datasets\t*");
+            this.ds1 = new FusibleHashedDataSet<>();
+            cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
+        }else{
+            this.useCachedDS(1);
+            logger.info("Using cache for ds1 ...");
+        }
 
 
-        this.ds2 = new FusibleHashedDataSet<>();
-        cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
+        //ds2
+        if(!isCached(2, ds2Name)){
+            //clear cache
+            clearCache(2);
+
+            // loading data
+            logger.info("*\tLoading datasets\t*");
+            this.ds2 = new FusibleHashedDataSet<>();
+            cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
+        }else{
+            this.useCachedDS(2);
+            logger.info("Using cache for ds2 ...");
+        }
+
+
         this.loadedDatasets = true;
-
         this.maxNumComparisons = this.ds1.size() * this.ds2.size();
         logger.info(String.format("Max number of comparisons would be %d", this.maxNumComparisons));
     }
+
+
+    static void clearCache(int position){
+        if(position == 1 ){ ds1cached = null; ds1Namecached = null;}
+        else{ds2cached = null; ds2Namecached = null;}
+    }
+
+    void useCachedDS(int position){
+        if(position == 1){
+            this.ds1 = ds1cached;
+            clearCache(1);
+        }else{
+            this.ds2 = ds2cached;
+            clearCache(2);
+        }
+    }
+
 
     void initializeExperiment(){
         this.loadTrainTestData();
@@ -183,6 +230,7 @@ public abstract class AbstractExperiment {
         String experimentID;
 
         for(Double thresh : this.threshs){
+            logger.info("Evaluating for thresh " + thresh.toString());
             this.matchingThresh = thresh;
             correspondences = correspondences.where(c -> c.getSimilarityScore() >= this.matchingThresh);
             this.noCorrespondences = correspondences.size();
@@ -195,7 +243,7 @@ public abstract class AbstractExperiment {
 
             this.evaluateMatching(correspondences, "All", experimentID);
 
-        
+            logger.info("Evaluating global matching");
             //get top 1 global correspondences
             MaximumBipartiteMatchingAlgorithm<Company,Attribute> maxWeight = new MaximumBipartiteMatchingAlgorithm<>(correspondences);
             maxWeight.run();
@@ -287,6 +335,10 @@ public abstract class AbstractExperiment {
                     logger.warn("Could not write ML model to file for experiment " + this.toString());
                 }
             }
+            logger.info("Finished experiment");
+
+
+            this.cacheDatasets();
 
             return correspondences;
 
@@ -294,6 +346,32 @@ public abstract class AbstractExperiment {
             throw new BuildException("Blocker or Matching Rule not initialized.");
         }
     }
+
+    /**
+     * caches the datasets from the current experiment.
+     */
+    private void cacheDatasets() {
+        ds1cached = ds1;
+        ds1 = null;
+        ds1Namecached = ds1Name;
+        
+        ds2cached = ds2;
+        ds2 = null;
+        ds2Namecached = ds2Name;
+    }
+
+    /**
+     * checks cache.
+     */
+
+     private static boolean isCached(int position, String dsName){
+        switch(position){
+            case 1: return ds1Namecached != null && ds1Namecached.matches(dsName);
+            case 2: return ds2Namecached != null && ds2Namecached.matches(dsName);
+            default: return false;
+        }
+     }
+
 
     void loadTrainTestData(){
         try{
@@ -314,7 +392,7 @@ public abstract class AbstractExperiment {
 
 
     void evaluateMatching(Processable<Correspondence<Company, Attribute>> correspondences, String flag, String experimentID){
-        
+        logger.info("evaluating gold standard");
         try{
             //Evaluate Train data
             this.perfTrain = evaluator.evaluateMatching(correspondences, this.gsTrain);
@@ -336,18 +414,19 @@ public abstract class AbstractExperiment {
         }
 
 
-        try{
-            CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
+        // try{
+        //     logger.info("Writing group size dist");
+        //     CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
 
-            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
+        //     cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
 
-            logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
-            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
+        //     logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
+        //     cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
 
-        }catch(IOException e){
-            logger.warn("Could not evaluate correspondences ...");
-            e.printStackTrace();
-        }
+        // }catch(IOException e){
+        //     logger.warn("Could not evaluate correspondences ...");
+        //     e.printStackTrace();
+        // }
         
     }
 

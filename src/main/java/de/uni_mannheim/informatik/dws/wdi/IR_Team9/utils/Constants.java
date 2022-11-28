@@ -21,13 +21,17 @@ public class Constants {
 
     private static String kaggleBasePath = "data/input/test/";
     private static String blockerBasePath = "data/output/blockers/";
-    private static Integer maxKaggleId = getMaxKaggleID();
+    
+    @Deprecated
+    private static Integer maxKaggleId = 1; 
 
     private static final String dbpediaPath = "data/input/dbpedia.xml";
     private static final String forbesPath = "data/input/Forbes_results.xml";
     private static final String dataworldPath = "data/input/dataworld_ts.xml";
     private static final String kagglePath = "data/input/companies_shorted_results.xml";
     private static final String kaggleInputPath = "data/input/kaggle.xml";
+    private static final String kaggleFilteredInputPath = "data/input/kaggle_filtered.xml";
+
 
 
     private static final String gsFolder = "data/goldstandard/";
@@ -38,12 +42,13 @@ public class Constants {
     /**
      * Collection that can be used to check valid DS names or to loop over them.
      */
-    public static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "kaggle"}));
+    public static final HashSet<String> validDsNames = new HashSet<>(Arrays.asList(new String[] {"dbpedia", "dw", "forbes", "kaggle", "kaggle_f"}));
 
 
      /**
      * Returns the input folder path of the specified dataset.
      * Possible keys are dbpedia, dw, forbes, and kaggle.
+     * use "kaggle_f" for the filtered kaggle file.
      * KAGGLE_ORIGINAL can be specified but will be problematic during processing.
      * @dsName dataset name
      */
@@ -57,6 +62,7 @@ public class Constants {
             //case "kaggle_a_3": return getKaggleAggregatedRedXMLPath(3);
             //case "kaggle_a_4": return getKaggleAggregatedRedXMLPath(4);
             case "kaggle": return kaggleInputPath;
+            case "kaggle_f": return kaggleFilteredInputPath;
             case "KAGGLE_ORIGINAL": return kagglePath;
             default: throw new KeyException("Invalid Key. Use either dbpedia, dw, forbes, or kaggle.");
         }
@@ -306,20 +312,20 @@ public class Constants {
     /**
      * @deprecated Method that was used during the processing of large kaggle file.
      */
-    @Deprecated
-    public static Integer getMaxKaggleID(){
-        //thanks to: https://www.baeldung.com/java-list-directory-files
+    // @Deprecated
+    // public static Integer getMaxKaggleID(){
+    //     //thanks to: https://www.baeldung.com/java-list-directory-files
         
-        Integer maxID = Stream.of(new File(kaggleBasePath).listFiles())
-            .filter(file -> !file.isDirectory())
-            .map(File::getName)
-            .map(filename -> filename.replaceAll("[^0-9]", ""))
-            .map(d -> Integer.parseInt(d))
-            .max(Integer::compare).orElseThrow(NoSuchElementException::new);
+    //     Integer maxID = Stream.of(new File(kaggleBasePath).listFiles())
+    //         .filter(file -> !file.isDirectory())
+    //         .map(File::getName)
+    //         .map(filename -> filename.replaceAll("[^0-9]", ""))
+    //         .map(d -> Integer.parseInt(d))
+    //         .max(Integer::compare).orElseThrow(NoSuchElementException::new);
 
-        //System.out.println(maxID);
-        return maxID;
-    }
+    //     //System.out.println(maxID);
+    //     return maxID;
+    // }
 
         /**
      * @deprecated use getDatasetPath(String dsName) instead.

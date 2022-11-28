@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringPreprocessing {
 
@@ -16,7 +18,7 @@ public class StringPreprocessing {
         "corporation", "corp", "communications", "technologies",
         "holdings", "chemical", "motor", "motors", "the", "co",
         "pharmaceutical", "pharmaceuticals", "ltd", "limited", 
-        "sa", "ag"
+        "sa", "ag", "sociedad anonima", "aktiengesellschaft"
     };
 
     private static String[] _FREQUENT_TOKENS_2 = {
@@ -184,17 +186,22 @@ public class StringPreprocessing {
 
 
     //Url methods
-    public static String normalizeURL(String url){
-        if (url == null){return "";} //cater for empty urls
+    public static String getURLRoot(String url){
+        // Pattern p = Pattern.compile("((http(s)?://)?www\\.)((\\p{IsWord}|-)*)(\\.\\p{Alpha}){1,2}(/.*)");
+        Pattern p = Pattern.compile("(http(s)?://)(www\\.)?((\\p{IsWord}|-)*).*");
 
-        url = url.replaceAll("((http|https)://)?(www.)?", "");
-        return url.replaceAll("(\\.[a-z]*/?)", "").toLowerCase();
+        Matcher m = p.matcher(url);
+        if(m.matches()){
+            return m.group(4);
+        }
+
+        return "";
     }
 
     
     // public static void main(String[] args) {
-    //     String token = "www.mydays.com";
-    //     System.out.println(normalizeURL(token));
+    //     String token = "https://www.regular-expressions.info/dot.html#:~:text=In%20regular%20expressions%2C%20the%20dot,exception%20are%20line%20break%20characters.";
+    //     System.out.println(getURLRoot(token));
     // }
     
 }
