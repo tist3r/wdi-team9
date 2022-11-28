@@ -3,14 +3,11 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators;
 import java.util.Arrays;
 import java.util.List;
 
-import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.LongestCommonSubsequenceSimilarity.NormalizationFlag;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.matching.algorithms.RuleLearner;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.LinearCombinationMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
-import de.uni_mannheim.informatik.dws.winter.model.DataSet;
-import de.uni_mannheim.informatik.dws.winter.model.FusibleHashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;

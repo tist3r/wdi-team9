@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.uni_mannheim.informatik.dws.winter.model.AbstractRecord;
-import de.uni_mannheim.informatik.dws.winter.model.Fusible;
-import de.uni_mannheim.informatik.dws.winter.model.Matchable;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.utils.StringUtils;
 

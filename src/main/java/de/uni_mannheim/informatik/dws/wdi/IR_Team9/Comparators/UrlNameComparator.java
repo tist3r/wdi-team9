@@ -4,7 +4,6 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
-import weka.core.pmml.jaxbbindings.True;
 
 public class UrlNameComparator extends CompanyNameComparatorJaccardNgram{
 
