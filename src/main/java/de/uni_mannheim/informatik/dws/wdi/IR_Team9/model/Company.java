@@ -1,11 +1,15 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.model;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uni_mannheim.informatik.dws.winter.model.AbstractRecord;
 import de.uni_mannheim.informatik.dws.winter.model.Fusible;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
+import de.uni_mannheim.informatik.dws.winter.utils.StringUtils;
 
 public class Company extends AbstractRecord<Attribute>{
 
@@ -32,8 +36,8 @@ public class Company extends AbstractRecord<Attribute>{
     */ 
 
     protected String id;
-	protected String provenance;
-
+    private Map<Attribute, Collection<String>> provenance = new HashMap<>();
+    private Collection<String> recordProvenance;
 
     private String name;
     private String url;
@@ -60,25 +64,38 @@ public class Company extends AbstractRecord<Attribute>{
     private List<String> ceos;
 
 
+    
     //Constructor
     public Company(String identifier, String provenance) {
-		id = identifier;
-		this.provenance = provenance;
+		super(identifier, provenance);
+
 	}
 
+    public void setRecordProvenance(Collection<String> provenance) {
+		recordProvenance = provenance;
+	}
 
+	public Collection<String> getRecordProvenance() {
+		return recordProvenance;
+	}
+
+	public void setAttributeProvenance(Attribute attribute,
+			Collection<String> provenance) {
+		this.provenance.put(attribute, provenance);
+	}
+
+	public Collection<String> getAttributeProvenance(String attribute) {
+		return provenance.get(attribute);
+	}
 
     //Getters and Setters
-
+  
 	@Override
 	public String getIdentifier() {
 		return id;
 	}
 
-	@Override
-	public String getProvenance() {
-		return provenance;
-	}
+	
 
 
     public String getId() {
@@ -88,10 +105,8 @@ public class Company extends AbstractRecord<Attribute>{
     public void setId(String id) {
         this.id = id;
     }
-    public void setProvenance(String provenance) {
-        this.provenance = provenance;
-    }
-
+   
+    
     public String getName() {
         //System.out.println(this.getId());
         //if(this.name == null){System.out.println(this.getId());}
@@ -304,6 +319,7 @@ public class Company extends AbstractRecord<Attribute>{
 
     public static final Attribute NAME = new Attribute("Name");
 	public static final Attribute URL = new Attribute("URL");
+	public static final Attribute COUNTRY = new Attribute("COUNTRY");
 
     @Override
 	public boolean hasValue(Attribute attribute) {
@@ -311,9 +327,22 @@ public class Company extends AbstractRecord<Attribute>{
 			return this.getName() != null && !this.getName().isEmpty();
 		else if(attribute==URL)
 			return this.getUrl() != null && !this.getUrl().isEmpty();
+		else if(attribute==COUNTRY)
+			return this.getCountry() != null && !this.getCountry().isEmpty();
 		else
 			return false;
 	}
+
+    public String getMergedAttributeProvenance(Attribute attribute) {
+		Collection<String> prov = provenance.get(attribute);
+
+		if (prov != null) {
+			return StringUtils.join(prov, "+");
+		} else {
+			return "";
+		}
+	}
+
 
 
     
