@@ -158,11 +158,15 @@ public class Experiment extends AbstractExperiment{
 
         int blockerID = 10;
 
-        for(int ruleID = 10; ruleID <= 11; ruleID++){
+        for(int ruleID = 1; ruleID <= 27; ruleID++){
+    
             int rID = ruleID;
 
             if(MATCHING_RULES.WEKA_RULE_IDS.contains(rID)){
-                t_.forEach(thresh -> Experiment.runForDatasetCombination("dbpedia", "kaggle_f", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
+                t_.forEach(thresh -> Experiment.runForDatasetCombination("forbes", "kaggle_f", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
+                //t_.forEach(thresh -> Experiment.runForDatasetCombination("dw", "kaggle_f", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
+                //t_.forEach(thresh -> Experiment.runForDatasetCombination("forbes", "kaggle_f", experimentID, thresh, blockerID, rID, true, getConductedExperiments()));
+      
             }
         }
     }
@@ -173,20 +177,23 @@ public class Experiment extends AbstractExperiment{
        
 
         double[] threshs = new double[]{0.7, 0.8, 0.875, 0.9};
-        List<Double> t_ = new ArrayList<>(Arrays.asList(0.8, 0.875, 0.9));
+        List<Double> t_ = new ArrayList<>(Arrays.asList(0.8,0.9));
         int experimentID = 1;
 
-        // runMultThreshExperimentForWekas(t_);
+        runMultThreshExperimentForWekas(t_);
 
-        int blockerID = 10;
+        // int blockerID = 10;
 
-        for(int ruleID = 28; ruleID <= 28; ruleID++){
-            int rID = ruleID;
+        // for(int ruleID = 5; ruleID <= 27; ruleID++){
+        //     int rID = ruleID;
 
-            Experiment.runForDatasetCombination("dbpedia", "kaggle_f", experimentID, 0.85, threshs, blockerID, rID, true, getConductedExperiments());
+        //     if(MATCHING_RULES.WEKA_RULE_IDS.contains(ruleID)){continue;}
 
-            ruleID = ruleID == 6 ? 18 : ruleID;
-        }
+        //     Experiment.runForDatasetCombination("forbes", "kaggle_f", experimentID, 0.85, threshs, blockerID, rID, true, getConductedExperiments());
+        //     //Experiment.runForDatasetCombination("forbes", "kaggle_f", experimentID, 0.85, threshs, blockerID, rID, true, getConductedExperiments());
+
+        //     //ruleID = ruleID == 6 ? 18 : ruleID;
+        // }
 
         
         // for(int blockerID = 1; blockerID <= BLOCKERS.NUM_BLOCKERS; blockerID++){ //blockerID

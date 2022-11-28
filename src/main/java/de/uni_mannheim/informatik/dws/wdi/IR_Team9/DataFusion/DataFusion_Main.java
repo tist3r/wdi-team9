@@ -13,6 +13,7 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.NameFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 import de.uni_mannheim.informatik.dws.winter.datafusion.CorrespondenceSet;
 import de.uni_mannheim.informatik.dws.winter.datafusion.DataFusionEngine;
 import de.uni_mannheim.informatik.dws.winter.datafusion.DataFusionEvaluator;
@@ -33,16 +34,16 @@ public class DataFusion_Main {
 	public static void main(String[] args) throws Exception {
 		
 		FusibleDataSet<Company, Attribute> ds1 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/dataworld_ts.xm1"), "/companies/company", ds1);
+		new CompanyXMLReader().loadFromXML (new File("data/input/dataworld_ts.xm1"), Constants.RECORD_PATH, ds1);
 		ds1.printDataSetDensityReport();
 		FusibleDataSet<Company, Attribute> ds2 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/dbpedia.xm1"), "/companies/company", ds2);
+		new CompanyXMLReader().loadFromXML (new File("data/input/dbpedia.xm1"), Constants.RECORD_PATH, ds2);
 		ds2.printDataSetDensityReport();
 		FusibleDataSet<Company, Attribute> ds3 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/Forbes_results.xm1"), "/companies/company", ds3);
+		new CompanyXMLReader().loadFromXML (new File("data/input/Forbes_results.xm1"), Constants.RECORD_PATH, ds3);
 		ds3.printDataSetDensityReport();
 		FusibleDataSet<Company, Attribute> ds4 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xm1"), "/companies/company", ds3);
+		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xm1"), Constants.RECORD_PATH, ds3);
 		ds3.printDataSetDensityReport();
 		
 		

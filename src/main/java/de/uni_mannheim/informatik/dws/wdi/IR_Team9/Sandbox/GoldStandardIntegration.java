@@ -21,10 +21,12 @@ import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenc
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.Constants;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.utils.MultiSimCorrespondence;
+import de.uni_mannheim.informatik.dws.winter.datafusion.CorrespondenceSet;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.Blocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.MatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
+import de.uni_mannheim.informatik.dws.winter.model.FusibleHashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.HashedDataSet;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.model.io.CSVCorrespondenceFormatter;
@@ -275,12 +277,13 @@ public class GoldStandardIntegration{
          * -Kaggle_2599908 (4)
          */
 
-        String[] dsNames = new String[] {"forbes", "dw"};
-        for(String dsName : dsNames){
-            kaggleIntegration(dsName);
-        }
+        // String[] dsNames = new String[] {"forbes", "dw"};
+        // for(String dsName : dsNames){
+        //     kaggleIntegration(dsName);
+        // }
 
         //testPartitions();
+
         
 
 

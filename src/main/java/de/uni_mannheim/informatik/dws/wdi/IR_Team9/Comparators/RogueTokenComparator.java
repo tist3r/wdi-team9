@@ -69,12 +69,16 @@ public class RogueTokenComparator extends AbstractT9Comparator{
 
 
    public static void main(String[] args) {
-        String s1 = "Kobe Steel";
-        String s2 = "Kobe Financial";
+        String s1 = "Royal Dutch Shell";
+        String s2 = "Shell";
 
         RogueTokenSimilarity sim = new RogueTokenSimilarity();
 
-        System.out.println(sim.calculate(s1, s2));
+        double s = sim.calculate(s1, s2);
+        
+        s = s + Math.pow(s-0.5,3)/2*2;
+
+        System.out.println(s);
    }
 
 

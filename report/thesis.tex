@@ -25,6 +25,7 @@
 \usepackage{rotating}
 \usepackage{makecell}
 \usepackage{hyperref}
+\usepackage{arydshln}
 
 % this packaes are useful for nice algorithms
 \usepackage{algorithm}
@@ -210,21 +211,25 @@ The data was then split into train and test set using a python script, with a te
 
 %TODO Note on balance of gold standard, positives and negatives
 
-After running several identity resolutions the correspondences were analyzed. False positive mathches were then added to the gold standard as further corner cases.
+After running several identity resolutions the correspondences were analyzed. False positive matches were then added to the gold standard as further corner cases. Moreover, the group size distribution was analyzed. Large groups indicated false postitive matches or duplicates. These were reviewed and in part added to the gold standard as corner-cases, trying to keep the number of non-matches below 70\%.
 
 \section{Matching Rules}
 \label{sec:matching-rules}
 
 \subsection{General Setup}
 %TODO more clearly dist. pre and post processing
-The company name was the sole variable we could rely on during the identity resolution across all datasets. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented a plethora of different matching rules, therefore we limit ourselves to the top 10 based on their F1-scores.
+The company name was the sole variable we could rely on during the identity resolution across all datasets. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented 27 different matching rules%
+\footnote{Please refer to the class Comparators.MATCHING\_RULES.java for an overview of the concrete combination of comparators, weights, pre- and postprocessing.}%
+, but limit the evaluation to the best and worst performing based on their F1-scores.
 %TODO why these comparators - maybe put with challenges?
-Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). We also implemented post-processing capabilities. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function above a threshold of 0.8 and penalized below. %TODO might be necessary to outline this a little bit more, which type of functions and why those
+Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). Optionally, frequent tokens (FTs) could be removed. Moreover, different optional post-processing capabilities were implemented. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function%
+\footnote{To review the "boosting" functions please refer to Comparators.AbstractT9Comparator.java [double boost(double)]}%
+ above a threshold of 0.8 and penalized below. The idea behind this is that if a similarity measure reaches a certain threshold a match becomes more likely although the score might be below the final matching threshold. To increase the probability for this match to be included the similarity should be increased. Conversly, if the similarity is below a certain threshold a match becomes more unlikely and the similarity score should be further penalized to have a higher impact on the final score. For example consider C5 for "Royal Dutch Shell" and "Shell" with a similarity of 0.67. One might say that this consitutes a high enough similarity for this comparator to be considered a match. Thus, one could set a boosting threshold of e.g. 0.6 meaning that $(sim - 0.6)^3/2*boostFactor$\footnote{This example considers the X3 boost function.} would be added on top of the similarity. The boosting functions are designed to have a small impact close to the threshold and a bigger impact further away. 
 An IR was conducted for each dataset against the \textit{kaggle} dataset, because it has the largest amount of entities and is thus likely to yield a sufficient amount of correspondences as required.
 
 
 \begin{table}[b]
-	\label{table:comparators}
+	
 	
 	\begin{tabular}{lllccc}
 		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   & \\
@@ -238,6 +243,7 @@ An IR was conducted for each dataset against the \textit{kaggle} dataset, becaus
 
 \caption[Comparator Overview]%
 {Comparator Overview \small\medspace\medspace \textsuperscript{1}Lowercasing and removal of punctuation and whitespaces -  latter not removed for token-based similarity metrics, \textsuperscript{2}Removal of frequent tokens, * Preprocessing done by pre-implemented similarity measure, \checked \space used in comparator, (\checked) optional}
+\label{table:comparators}
 
 \end{table}
 
@@ -271,24 +277,25 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 
 \begin{table}[]
 	\small
-	\begin{tabular}{lrccccrl}
-		DS Comb + Thresh                 & MR          & B\textsuperscript{$\star$}          & P             & R             & F1            & \#Corr        & Time           \\\hline
-		dbpedia+kaggle\_f(0,9)           & 21          & S          & 1,00          & 0,83          & 0,91          & 3830          & 14:53          \\
-		dbpedia+kaggle\_f(0,875)         & 27          & S          & 0,94          & 0,91          & 0,93          & 6208          & 16:56          \\
-		dbpedia+kaggle\_f(0,85)          & 21          & S          & 0,97          & 0,93          & 0,95          & 5677          & 14:53          \\
-		\textit{dbpedia+kaggle\_f(0,85)} & \textit{2}  & \textit{S} & \textit{1,00} & \textit{0,46} & \textit{0,63} & \textit{2549} & \textit{05:10} \\
-		dbpedia+kaggle\_f(0,85)          & 21          & SNB(20)    & 1,00          & 0,21          & 0,35          & 839           & 00:48          \\
-		dbpedia+kaggle\_f(0,85)          & 21          & SNB(100)   & 1,00          & 0,50          & 0,67          & 2292          & 03:57          \\
-		dw+kaggle\_f(0,9)                & 5           & S          & 0,83          & 0,77          & 0,80          & 5193          & 03:20          \\
-		dw+kaggle\_f(0,875)              & 5           & S          & 0,81          & 0,81          & 0,81          & 5711          & 03:20          \\
-		dw+kaggle\_f(0,85)               & 27          & S          & 0,81          & 0,90          & 0,85          & 4553          & 04:32          \\
-		\textit{dw+kaggle\_f(0,85)}      & \textit{15} & \textit{S} & \textit{1,00} & \textit{0,13} & \textit{0,23} & \textit{1575} & \textit{04:27} \\
-		forbes+kaggle\_f(0,9)            & 5           & S          & 0,95          & 0,91          & 0,93          & 5569          & 04:08          \\
-		forbes+kaggle\_f(0,875)          & 21          & S          & 0,94          & 0,91          & 0,92          & 3289          & 06:46          \\
-		forbes+kaggle\_f(0,85)           & 26          & S          & 0,91          & 0,91          & 0,91          & 6119          & 07:39          \\
-		\textit{forbes+kaggle\_f(0,85)}  & \textit{15} & \textit{S} & \textit{0,86} & \textit{0,09} & \textit{0,16} & \textit{1651} & \textit{04:16}
+	\begin{tabular}{lrcrrrrc}
+		DS Comb + Thresh                 & \multicolumn{1}{c}{MR} & B\textsuperscript{$\star$}          & \multicolumn{1}{c}{P} & \multicolumn{1}{c}{R} & \multicolumn{1}{c}{F1} & \multicolumn{1}{c}{\#Corr} & Time           \\\hline
+		dbpedia+kaggle\_f(0,9)           & 21                     & S          & 1,00                  & 0,83                  & 0,91                   & 3830                       & 14:53          \\
+		dbpedia+kaggle\_f(0,875)         & 27                     & S          & 0,94                  & 0,91                  & 0,93                   & 6208                       & 16:56          \\
+		dbpedia+kaggle\_f(0,85)          & 21                     & S          & 0,97                  & 0,93                  & 0,95                   & 5677                       & 14:53          \\
+		\textit{dbpedia+kaggle\_f(0,85)} & \textit{2}             & \textit{S} & \textit{1,00}         & \textit{0,46}         & \textit{0,63}          & \textit{2549}              & \textit{05:10} \\
+		dbpedia+kaggle\_f(0,85)          & 21                     & SNB(20)    & 1,00                  & 0,21                  & 0,35                   & 839                        & 00:48          \\
+		dbpedia+kaggle\_f(0,85)          & 21                     & SNB(100)   & 1,00                  & 0,50                  & 0,67                   & 2292                       & 03:57          \\
+		dbpedia+kaggle\_f(0,85)          & 21                     & S (3g)     & 0,98                  & 0,91                  & 0,95                   & 4966                       & 18:40          \\\hdashline
+		dw+kaggle\_f(0,9)                & 5                      & S          & 0,83                  & 0,77                  & 0,80                   & 5193                       & 03:20          \\
+		dw+kaggle\_f(0,875)              & 5                      & S          & 0,81                  & 0,81                  & 0,81                   & 5711                       & 03:20          \\
+		dw+kaggle\_f(0,85)      & 27           & S & 0,81        & 0,90         & 0,85          & 4553             & 04:32 \\
+		\textit{dw+kaggle\_f(0,85) }              & \textit{15}                   & \textit{S}         & \textit{1,00 }                 & \textit{0,13 }                 & \textit{0,23   }                & \textit{1575}                       & \textit{04:27}          \\\hdashline
+		forbes+kaggle\_f(0,9)            & 5                      & S          & 0,95                  & 0,91                  & 0,93                   & 5569                       & 04:08          \\
+		forbes+kaggle\_f(0,875)          & 21                     & S          & 0,94                  & 0,91                  & 0,92                   & 3289                       & 06:46          \\
+		forbes+kaggle\_f(0,85)  & 26          & S & 0,91         & 0,91         & 0,91          & 6119              & 07:39 \\
+		\textit{forbes+kaggle\_f(0,85)  }         & \textit{15}                     & \textit{S}          & \textit{0,86}                  &\textit{0,09}                 &\textit{0,16}                   & \textit{1651}                       & \textit{04:16}       
 	\end{tabular}
-\caption[Matching Rule Performance Overview (Excerpt)]{Matching Rule Performance Overview (Excerpt) \medspace\small Italic rows refer to the worst MR. \textsuperscript{$\star$}S (Standard Blocker), SNB(n) (Sorted Neighborhood Blocker). The exerpt shown here for S uses first three letters of each name token each as key.}
+\caption[Matching Rule Performance Overview (Excerpt)]{Matching Rule Performance Overview (Excerpt) \medspace\small Italic rows refer to the worst MR. \textsuperscript{$\star$}S (Standard Blocker) - 3 first letters of each token, S(3g) - 3grams, SNB(n) (Sorted Neighborhood Blocker).}
 \label{tab:mr-performance}
 
 \end{table}
@@ -299,14 +306,29 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 \section{Blockers}
 \label{sec:blockers}
 
-We used three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options: \begin{enumerate}
+We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options: \begin{enumerate}
 	\item First letter of the company name.
-	\item Qgrams and first letter of the company name. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient.
+	\item Qgrams. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient.
 	\item N starting characters of each company name token.
 \end{enumerate}
 
-Especially the last key generator was born out of the challenge to tackle the previously unfiltered kaggle file. Although we were able to reduce the dataset size significantly by filtering, we were still not able to evaluate a "No Blocker".
-The standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice, however we also evaluated the other key generators. Using the Sorted Neighborhood Blocker in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100.
+Especially the last key generator was born out of the challenge to tackle the previously unfiltered kaggle file. Although we were able to reduce the dataset size significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" although we increased the JVM Heap Space to 10 GB.
+The standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice in terms of efficiency, however we also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that in certain blocks more than 100 blocked elements were present. The first 3 letters of each token generated fewer blocked pairs while still bringing potential pairs together. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
+
+The group size distribution shows several groups with many participants, which is not ideal for data fusion. An example from \textit{forbes} is Forbes1081 (First Financial Holding). Containing two FTs, this company matched with many companies that had a first in their name, due to the simple matching rule.
+
+\begin{table}[]
+	\centering
+	\begin{tabular}{lllllllll}
+		& \multicolumn{1}{c}{2}    & \multicolumn{1}{c}{3}   & \multicolumn{1}{c}{4}   & \multicolumn{1}{c}{5}   & \multicolumn{1}{c}{6-10}   & \multicolumn{1}{c}{11-20} & \multicolumn{1}{c}{21-30} & \multicolumn{1}{c}{30+}   \\\hline
+		21\_10\_85\_dbpedia\_kaggle\_f & \multicolumn{1}{r}{1323} & \multicolumn{1}{r}{547} & \multicolumn{1}{r}{241} & \multicolumn{1}{r}{135} & \multicolumn{1}{r}{186}    & \multicolumn{1}{r}{26}    & \multicolumn{1}{r}{2}     & \multicolumn{1}{r}{0}     \\
+		27\_10\_85\_dw\_kaggle\_f      & \multicolumn{1}{r}{625}  & \multicolumn{1}{r}{331} & \multicolumn{1}{r}{194} & \multicolumn{1}{r}{115} & \multicolumn{1}{r}{190}    & \multicolumn{1}{r}{60}    & \multicolumn{1}{r}{6}     & \multicolumn{1}{r}{2}     \\
+		5\_10\_90\_forbes\_kaggle\_f   & \multicolumn{1}{r}{678}  & \multicolumn{1}{r}{324} & \multicolumn{1}{r}{178} & \multicolumn{1}{r}{96}  & \multicolumn{1}{r}{178}    & \multicolumn{1}{r}{77}    & \multicolumn{1}{r}{17}    & \multicolumn{1}{r}{15}    \\\hline
+		(Cumulative \%)& \multicolumn{4}{c}{86,3\%}                                                                             & \multicolumn{1}{c}{10,0\%} & \multicolumn{1}{c}{2,9\%} & \multicolumn{1}{c}{0,5\%} & \multicolumn{1}{c}{0,3\%} \\                    
+	\end{tabular}
+\caption[Group Size Distribution]{Group Size Distribution}
+\label{tab:group-size-dist}
+\end{table}
 
 
 \section{Analysis of Errors}

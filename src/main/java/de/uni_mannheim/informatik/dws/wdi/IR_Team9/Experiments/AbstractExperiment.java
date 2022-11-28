@@ -414,19 +414,19 @@ public abstract class AbstractExperiment {
         }
 
 
-        // try{
-        //     logger.info("Writing group size dist");
-        //     CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
+        try{
+            logger.info("Writing group size dist");
+            CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
 
-        //     cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
+            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
 
-        //     logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
-        //     cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
+            logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
+            cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
 
-        // }catch(IOException e){
-        //     logger.warn("Could not evaluate correspondences ...");
-        //     e.printStackTrace();
-        // }
+        }catch(IOException e){
+            logger.warn("Could not evaluate correspondences ...");
+            e.printStackTrace();
+        }
         
     }
 
