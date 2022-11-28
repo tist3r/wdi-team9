@@ -216,10 +216,11 @@ After running several identity resolutions the correspondences were analyzed. Fa
 \label{sec:matching-rules}
 
 \subsection{General Setup}
+%TODO more clearly dist. pre and post processing
 The company name was the sole variable we could rely on during the identity resolution across all datasets. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented a plethora of different matching rules, therefore we limit ourselves to the top 10 based on their F1-scores.
 %TODO why these comparators - maybe put with challenges?
 Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). We also implemented post-processing capabilities. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function above a threshold of 0.8 and penalized below. %TODO might be necessary to outline this a little bit more, which type of functions and why those
-
+An IR was conducted for each dataset against the \textit{kaggle} dataset, because it has the largest amount of entities and is thus likely to yield a sufficient amount of correspondences as required.
 
 
 \begin{table}[b]
@@ -255,8 +256,42 @@ We adressed these challenges by combining comparators with different strengths i
 
 \subsection{Evaluation}
 
-We evaluated local and global matching strategies. In table XXX the best matching rule for each threshold is presented.
+We evaluated local matching strategies at the thresholds 0.7, 0.8, 0.85, 0.875, and 0.9. While the precision of the matching rules usually increased with higher thresholds, the recall usually decreased%
+\footnote{While the sample from table \ref{tab:mr-performance} does not reflect this trend, it was clearly visible in the over 400 experiments we conducted.}.%
+This is intuitive since the easy matches have high similarity scores, while more ambigous matches although having a highish similarity, fall behind the easy matches and are thus excluded at higher thresholds. The trade-off then depends on the use-case at hand. Considering F1-Scores, the matching threshold of 0.85 usually outperformed the other thresholds.
 
+In general the F1-Scores of the \textit{dw - kaggle\_f} IRs fell behind the other IRs. At the threshold of 0.9 the simple MR5 outperformed other more complex matching rules across all datasets. This is in line with the above argumentation. Table \ref{tab:mr-performance} outlines the results for the top matching rules at 3 thresholds, as well as the worst matching rule at the 0.85 threshold.
+
+MR21(LC), MR26 (pruned-tree), MR27 (LC) all combine 4 similarity measures with different strenghts and pre/post-processing options. They rely on a combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o FT, as well as a LCS (C4) and RogueN on Tokens (C5). The latter two are also penalized or boosted based on a threshold.
+
+MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequent tokens. As described earlier, this is the most successfull matching rule at a threshold of 0.9. MR15 (the worst at the threshold 0.85) is a combination of MR5 with additionally considering Jaccard-on-Tokens(C2) with FT included. While the intuition was to capture the excluded frequent tokens fromt the other metrics with this similarity metric the problem is that the Jaccard-on-Tokens penalizes missing/non-overlapping tokens too strongly considering the few tokens in company names. This also led to the implementation of C5 which is a little bit more relaxed in this regard.
+
+
+
+
+\begin{table}[]
+	\small
+	\begin{tabular}{lrccccrl}
+		DS Comb + Thresh                 & MR          & B\textsuperscript{$\star$}          & P             & R             & F1            & \#Corr        & Time           \\\hline
+		dbpedia+kaggle\_f(0,9)           & 21          & S          & 1,00          & 0,83          & 0,91          & 3830          & 14:53          \\
+		dbpedia+kaggle\_f(0,875)         & 27          & S          & 0,94          & 0,91          & 0,93          & 6208          & 16:56          \\
+		dbpedia+kaggle\_f(0,85)          & 21          & S          & 0,97          & 0,93          & 0,95          & 5677          & 14:53          \\
+		\textit{dbpedia+kaggle\_f(0,85)} & \textit{2}  & \textit{S} & \textit{1,00} & \textit{0,46} & \textit{0,63} & \textit{2549} & \textit{05:10} \\
+		dbpedia+kaggle\_f(0,85)          & 21          & SNB(20)    & 1,00          & 0,21          & 0,35          & 839           & 00:48          \\
+		dbpedia+kaggle\_f(0,85)          & 21          & SNB(100)   & 1,00          & 0,50          & 0,67          & 2292          & 03:57          \\
+		dw+kaggle\_f(0,9)                & 5           & S          & 0,83          & 0,77          & 0,80          & 5193          & 03:20          \\
+		dw+kaggle\_f(0,875)              & 5           & S          & 0,81          & 0,81          & 0,81          & 5711          & 03:20          \\
+		dw+kaggle\_f(0,85)               & 27          & S          & 0,81          & 0,90          & 0,85          & 4553          & 04:32          \\
+		\textit{dw+kaggle\_f(0,85)}      & \textit{15} & \textit{S} & \textit{1,00} & \textit{0,13} & \textit{0,23} & \textit{1575} & \textit{04:27} \\
+		forbes+kaggle\_f(0,9)            & 5           & S          & 0,95          & 0,91          & 0,93          & 5569          & 04:08          \\
+		forbes+kaggle\_f(0,875)          & 21          & S          & 0,94          & 0,91          & 0,92          & 3289          & 06:46          \\
+		forbes+kaggle\_f(0,85)           & 26          & S          & 0,91          & 0,91          & 0,91          & 6119          & 07:39          \\
+		\textit{forbes+kaggle\_f(0,85)}  & \textit{15} & \textit{S} & \textit{0,86} & \textit{0,09} & \textit{0,16} & \textit{1651} & \textit{04:16}
+	\end{tabular}
+\caption[Matching Rule Performance Overview (Excerpt)]{Matching Rule Performance Overview (Excerpt) \medspace\small Italic rows refer to the worst MR. \textsuperscript{$\star$}S (Standard Blocker), SNB(n) (Sorted Neighborhood Blocker). The exerpt shown here for S uses first three letters of each name token each as key.}
+\label{tab:mr-performance}
+
+\end{table}
 
 %TODO parir completeness
 
@@ -266,17 +301,22 @@ We evaluated local and global matching strategies. In table XXX the best matchin
 
 We used three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options: \begin{enumerate}
 	\item First letter of the company name.
-	\item Qgrams and first letter of the company name. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient. %TODO run without first letter
+	\item Qgrams and first letter of the company name. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient.
 	\item N starting characters of each company name token.
 \end{enumerate}
 
-Especially the last blocker was born out of our second challenge, the large dataset size of the kaggle dataset.
+Especially the last key generator was born out of the challenge to tackle the previously unfiltered kaggle file. Although we were able to reduce the dataset size significantly by filtering, we were still not able to evaluate a "No Blocker".
+The standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice, however we also evaluated the other key generators. Using the Sorted Neighborhood Blocker in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100.
 
 
 \section{Analysis of Errors}
 \label{sec:errors}
+%TODO include challenges here
+\textbf{dbpedia - kaggle\_f (MR21|0.85). } One error already presents one problem we had to face. "Ams AG" and "ams technologies ag" had a similarity of 0.90. "Technologies" and "ag" are considered as FTs, giving them a lower weight in this MR. However, in this case it would have been the distinctive difference. "Community Health Systems" and "community council health systems" (0.853) barely made it into the correspondence set, however the high token overlap explains why. "Telecommunication Company of Iran","telecommunication company of iran - tci" (0.82) was missed because "telecommunication, company, of" are considered FT and two comparators thus did not work well. The LCS comparator however boosted the similarity again. "Gulf Bank of Kuwait" and "gulfbank-kuwait" were missed because two tokens could not be split.
 
+\textbf{dw - kaggle\_f (MR27|0.85). } One more problem we faced was with subsidiaries or divisions of companies. Those usually have the same tokens in their names. For example, "Wells Fargo", "wells fargo insurance services" (0.96) was a match although they refer to different entities. The high similarity is due to the fact that "insurance, services" are considered FT. Another good example is "Thermo Fisher Scientific", "thermo fisher scientific singapore" (0.91). On the other hand, "Devon Energy","devon bank"(0.85) again suffer from FT removal.
 
+\textbf{Summary. }While the removal of FT oftentimes was useful (e.g. "Telus Corporation","telus") it could be seen that it raised new problems by creating non-matching correspondences (e.g "Ams AG", "ams technologies ag"). We tried to remediate this by including more comparators that still considered FTs but were less sensible to them. LCS is able to "skip" them, and RogueToken does not penalize the company name with missing FT as much as JaccardToken. In general it could be seen that we were able to achieve reasonable results with this. The "subsidiary" problem could be partly addressed by having a country table and identifying tokens that refer to countries and giving them a stronger weight.
 \chapter{Phase III - Data Fusion}
 \label{cha:data-fusion}
 
