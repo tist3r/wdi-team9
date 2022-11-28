@@ -112,7 +112,7 @@ public class DataFusion_Main {
 		// load the gold standard
 		logger.info("*\tEvaluating results\t*");
 		DataSet<Company, Attribute> gs = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML(new File("data/goldstandard/gold.xml"), "/companies/company", gs);
+		new CompanyXMLReader().loadFromXML(new File("data/goldstandard/gold.xml"), Constants.RECORD_PATH, gs);
 		
 		for(Company m : gs.get()) {
 			logger.info(String.format("gs: %s", m.getIdentifier()));
