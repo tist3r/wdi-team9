@@ -18,7 +18,7 @@ public class StringPreprocessing {
         "corporation", "corp", "communications", "technologies",
         "holdings", "chemical", "motor", "motors", "the", "co",
         "pharmaceutical", "pharmaceuticals", "ltd", "limited", 
-        "sa", "ag"
+        "sa", "ag", "sociedad anonima", "aktiengesellschaft"
     };
 
     private static String[] _FREQUENT_TOKENS_2 = {
