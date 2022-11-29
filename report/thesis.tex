@@ -4,6 +4,11 @@
 \documentclass[11pt,titlepage,oneside,openany]{book}
 \usepackage{times}
 
+\usepackage{titlesec}
+\titleformat{\chapter}[display]   
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}   
+\titlespacing*{\chapter}{0pt}{-50pt}{40pt}
+
 
 \usepackage{graphicx}
 \usepackage{latexsym}
@@ -20,7 +25,7 @@
 
 
 \usepackage[table,xcdraw]{xcolor}
-\usepackage{pdflscape}
+\usepackage{lscape}
 \usepackage{afterpage}
 \usepackage{rotating}
 \usepackage{makecell}
@@ -38,10 +43,17 @@
 
 %table spacing
 \newcolumntype{b}{X}
-\newcolumntype{n}{>{\hsize=1.2\hsize}X}
+\newcolumntype{n}{>{\hsize=2.2\hsize}X}
 \newcolumntype{s}{>{\hsize=.3\hsize}X}
 \newcolumntype{m}{>{\hsize=.5\hsize}X}
 
+
+%\newcommand{\mychapter}[2]{
+%	\setcounter{chapter}{#1}
+%	\setcounter{section}{0}
+%	\chapter{#2}
+%	%\addcontentsline{toc}{chapter}{#2}
+%}
 % its always useful to have some shortcuts (some are specific for algorithms
 % if you do not like your formating you can change it here (instead of scanning through the whole text)
 \renewcommand{\algorithmiccomment}[1]{\ensuremath{\rhd} \textit{#1}}
@@ -80,6 +92,7 @@
 
 
 \begin{document}
+
 
 \pagenumbering{roman}
 % lets go for the title page, something like this should be okay
@@ -123,34 +136,42 @@
 
 \chapter{Phase I - Data Translation}
 \label{cha:data-translation}
- 
-\section{Use Case \& Data Profiling}
-The goal of the project is to aggregate company information from several sources. To this end we used the suggestions from the project into slides as a foundation for our use case. We also included an additional source and amended the dbpedia query to extract further relevant information. Thus, the relevent entity will be a company.
-We relied on 4 different datasources which are profiled in Table \ref{tab:dataset-overview}. In order to being able to process the kaggle dataset, we had to filter it down. To this end, we used the "size range" attribute and only kept the categories "10001+", "5001 - 10000", "1001 - 5000", "501 - 1000", "201 - 500", "51 - 200". This is a valid approach since the forbes dataset contains data about the 2000 largest companies in the world, and the dataworld (dw) dataset is also called "largest companies", containing only companies of a certain size.
 
-\begin{table}[b]
+ 
+
+\section{Use Case \& Data Profiling}
+
+\begin{table}[!htbp]
 	%TODO dbpedia query
-	\label{tab:dataset-overview}
+	
 	\small
-	\centering
 	\begin{tabularx}{\textwidth}{mscccn}
 		Dataset   & Source                                                       & Format                & \#E\textsuperscript{1}       & \#A \textsuperscript{2} & List Of Attributes                                                                                                                                                          \\\hline
 		&&&&&\\
-		kaggle    & \href{https://www.kaggle.com/kaleab1/companies}{link to dataset}                        & csv                  & \makecell[ct]{7.1M\\(491.830\textsuperscript{3})}                & 11               & ID, name, domain, year founded (MV), industry, size range, locality   (MV), country (MV), linkedin url, current employee estimate, total   employee estimate \\
+		kaggle (kaggle\_f)    & \href{https://www.kaggle.com/kaleab1/companies}{link to dataset}                        & csv                  & \makecell[ct]{7.1M\\(491.830\textsuperscript{3})}                & 11               & ID, name, domain, year founded (MV), industry, size range, locality   (MV), country (MV), linkedin url, current employee estimate, total   employee estimate \\
 		forbes    &\href{https://www.kaggle.com/ash316/forbes-top-2000-companies}{link to dataset}          & csv                 & 2.000                & 9                & Company, Country, Sales, Profits, Assets,   Market Value, Sector, Industry                                                                                                  \\
 		dataworld (dw)& \href{https://www.data.world/youngx62/worlds-largest-companies-by-revenue}{link to dataset} & csv                  & 1.924                & 10               & Global Rank, Company, Sales, Profits, Assets, Market Value, Country,   Continent, Latitude, Longitude                                                                       \\
 		dbpedia   & Query provided in Appendix                                      & json   &  3.986                &         11         & Name, industry\_label, domain,   founding\_year, ceos, no\_emp (MV), country (MV), location (MV),   revenue (MV), income (MV), assets (MV)    \\
 	\end{tabularx}
-\caption[Dataset Overview]%
-{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", * For hyperlinks pls refer,\textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes, \textsuperscript{3} Number of filtered companies from the original dataset might be smaller than this number, because the final XML was extracted from the previous XML by mathching the filtered names (company with the same name might exist also in excluded category).}
-
+	\caption[Dataset Overview]%
+	{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", * For hyperlinks pls refer,\textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes, \textsuperscript{3} Number of filtered companies from the original dataset might be smaller than this number, because the final XML was extracted from the previous XML by mathching the filtered names (company with the same name might exist also in excluded category).}
+	\label{tab:dataset-overview}
+	
 \end{table}
 
+
+The goal of the project is to aggregate company information from several sources. To this end we used the suggestions from the project into slides as a foundation for our use case. We also included an additional source and amended the dbpedia query to extract further relevant information. Thus, the relevent entity will be a company.
+We relied on 4 different datasources which are profiled in Table \ref{tab:dataset-overview}. In order to being able to process the kaggle dataset, we had to filter it down. To this end, we used the "size range" attribute and only kept the categories "10001+", "5001 - 10000", "1001 - 5000", "501 - 1000", "201 - 500", "51 - 200". This is a valid approach since the forbes dataset contains data about the 2000 largest companies in the world, and the dataworld (dw) dataset is also called "largest companies", containing only companies of a certain size.
+
+
+
+
+
 %TODO normalize case
-\begin{table}[]
+\begin{table}[t]
 	\small
 	\label{tab:attribute-mapping}
-	\begin{tabularx}{\textwidth}{mlmn}
+	\begin{tabularx}{\textwidth}{llll}
 		Class Name   & Attribute   Name            & Attribute Type & Contained in DS... \\\hline
 		&&&\\
 		Company      & name                        & String         & Kaggle, Forbes,   dbpedia, dw              \\
@@ -228,7 +249,7 @@ Every comparator had options to include certain pre- and post-processing steps. 
 An IR was conducted for each dataset against the \textit{kaggle} dataset, because it has the largest amount of entities and is thus likely to yield a sufficient amount of correspondences as required.
 
 
-\begin{table}[b]
+\begin{table}[t]
 	
 	
 	\begin{tabular}{lllccc}
@@ -339,9 +360,15 @@ The group size distribution shows several groups with many participants, which i
 \textbf{dw - kaggle\_f (MR27|0.85). } One more problem we faced was with subsidiaries or divisions of companies. Those usually have the same tokens in their names. For example, "Wells Fargo", "wells fargo insurance services" (0.96) was a match although they refer to different entities. The high similarity is due to the fact that "insurance, services" are considered FT. Another good example is "Thermo Fisher Scientific", "thermo fisher scientific singapore" (0.91). On the other hand, "Devon Energy","devon bank"(0.85) again suffer from FT removal.
 
 \textbf{Summary. }While the removal of FT oftentimes was useful (e.g. "Telus Corporation","telus") it could be seen that it raised new problems by creating non-matching correspondences (e.g "Ams AG", "ams technologies ag"). We tried to remediate this by including more comparators that still considered FTs but were less sensible to them. LCS is able to "skip" them, and RogueToken does not penalize the company name with missing FT as much as JaccardToken. In general it could be seen that we were able to achieve reasonable results with this. The "subsidiary" problem could be partly addressed by having a country table and identifying tokens that refer to countries and giving them a stronger weight.
+
+
+
 \chapter{Phase III - Data Fusion}
 \label{cha:data-fusion}
 
+
+
+\chapter{Summary}
 
 %TODO Style Table
 \begin{table}[h]

@@ -33,7 +33,7 @@ public class Company extends AbstractRecord<Attribute>{
 	</Company>
     */ 
 
-    protected String id;
+    //protected String id;
     private Map<Attribute, Collection<String>> provenance = new HashMap<>();
     private Collection<String> recordProvenance;
 
@@ -90,7 +90,7 @@ public class Company extends AbstractRecord<Attribute>{
   
 	@Override
 	public String getIdentifier() {
-		return id;
+		return this.id;
 	}
 
 	

@@ -155,7 +155,7 @@ public class Experiment extends AbstractExperiment{
 
         int blockerID = 10;
 
-        for(int ruleID = 1; ruleID <= 27; ruleID++){
+        for(int ruleID = 17; ruleID <= 27; ruleID++){
     
             int rID = ruleID;
 

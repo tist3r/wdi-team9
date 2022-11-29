@@ -142,7 +142,9 @@ public abstract class AbstractExperiment {
             // loading data
             logger.info("*\tLoading datasets\t*");
             this.ds1 = new FusibleHashedDataSet<>();
-            cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, ds1);
+            cr.loadFromXML(new File(Constants.getDatasetPath(ds1Name)), Constants.RECORD_PATH, this.ds1);
+
+            System.out.println(this.ds1.size());
         }else{
             this.useCachedDS(1);
             logger.info("Using cache for ds1 ...");
@@ -157,7 +159,8 @@ public abstract class AbstractExperiment {
             // loading data
             logger.info("*\tLoading datasets\t*");
             this.ds2 = new FusibleHashedDataSet<>();
-            cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, ds2);
+            cr.loadFromXML(new File(Constants.getDatasetPath(ds2Name)), Constants.RECORD_PATH, this.ds2);
+            System.out.println(this.ds2.size());
         }else{
             this.useCachedDS(2);
             logger.info("Using cache for ds2 ...");

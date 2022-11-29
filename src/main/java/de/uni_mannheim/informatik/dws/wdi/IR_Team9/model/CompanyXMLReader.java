@@ -19,6 +19,9 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> imp
     @Override
     public Company createModelFromElement(Node node, String provenanceInfo) {
 
+        if(getValueFromChildElement(node, "ID") == null){
+            System.out.println(getValueFromChildElement(node, "Name"));
+        }
         
         String id = getValueFromChildElement(node, "ID");
 
@@ -98,7 +101,7 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> imp
         company.setCeos(getListFromChildElement(node, "CEOs"));
 
 
-
+        //System.out.println(company.toString());
         return company;
     }
 
