@@ -69,41 +69,14 @@ public class DataFusion_Main {
 		// load correspondences
 		logger.info("*\tLoading correspondences\t*");
 		CorrespondenceSet<Company, Attribute> correspondences = new CorrespondenceSet<>();
-		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/dbpedia_kaggle_f_corr_w_names_top1.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/dbpedia_kaggle_f_corr_w_names.csv"),ds2, ds4);
 		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/eval_testAll.csv"),ds2, ds2);
-		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/eval_testTop1.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/eval_train.csv"),ds2, ds4);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/dbpedia_dw_corr_w_names_top1.csv"),ds2, ds1);
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/dbpedia_dw_corr_w_names.csv"),ds2, ds1);
 		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/dbpedia_dw_corr.csv"),ds2, ds1);
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/eval_testAll.csv"),ds2, ds1);
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/eval_testTop1.csv"),ds2, ds1);
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/eval_train.csv"),ds2, ds1);
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/group_size_dist_All.csv"),ds2, ds1);
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/group_size_dist_Top1.csv"),ds2, ds1);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/dbpedia_kaggle_f_corr_w_names_top1.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/dbpedia_kaggle_f_corr_w_names.csv"),ds2, ds4);
 		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/eval_testAll.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/eval_testTop1.csv"),ds2, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/eval_train.csv"),ds2, ds4);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/dw_kaggle_f_corr_w_names_top1.csv"),ds1, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/dw_kaggle_f_corr_w_names.csv"),ds1, ds4);
 		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/dw_kaggle_f_corr.csv"),ds1, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/eval_testAll.csv"),ds1, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/eval_testTop1.csv"),ds1, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/eval_train.csv"),ds1, ds4);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/eval_testAll.csv"),ds3, ds4); 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/eval_testTop1.csv"),ds3, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/eval_train.csv"),ds3, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/forbes_kaggle_f_corr_w_names_top1.csv"),ds3, ds4);
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/forbes_kaggle_f_corr_w_names.csv"),ds3, ds4);
 		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/forbes_kaggle_f_corr.csv"),ds3, ds4);
 		
 		// write group size distribution
