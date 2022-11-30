@@ -13,21 +13,9 @@ import de.uni_mannheim.informatik.dws.winter.model.MatchingGoldStandard;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 
 public class MATCHING_RULES {
-    public static int NUM_MATCHING_RULES = 28;
+    public static int NUM_MATCHING_RULES = 29;
 
     public static final List<Integer> WEKA_RULE_IDS = Arrays.asList(7,8,10,11,12,13,16,20,22,24,25,26);
-
-    public static String mr1Description;
-    public static String mr2Description;
-    public static String mr3Description;
-    public static String mr4Description;
-    public static String mr5Description;
-    public static String mr6Description;
-    public static String mr7Description;
-    public static String mr8Description;
-    public static String mr9Description;
-    public static String mr10Description;
-
 
     /**
      * 
@@ -78,6 +66,8 @@ public class MATCHING_RULES {
                 case 26: return getMR26(thresh, ds1, ds2, gsTrain);
                 case 27: return getMR27(thresh);
                 case 28: return getMR28(thresh);
+                case 29: return getMR28(thresh);
+                case 30: return getMR28(thresh);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
@@ -89,8 +79,6 @@ public class MATCHING_RULES {
      * @return
      */
     public static MatchingRule<Company, Attribute> getMR1(double thresh){
-        mr1Description = "basic matching rule with 3-gram jaccard, without frequent tokens.";
-
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true), 1);
@@ -103,8 +91,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR2(double thresh){
-        mr2Description = "basic matching rule with 3-gram jaccard.";
-
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorJaccardNgram(3, false), 1);
@@ -117,8 +103,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR3(double thresh){
-        mr3Description = "basic matching rule with levensthein similarity, frequent tokens removed.";
-
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorLevenshtein(true), 1);
@@ -131,8 +115,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR4(double thresh){
-        mr4Description = "basic matching rule with levensthein similarity, frequent tokens not removed.";
-
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorLevenshtein(true), 1);
@@ -145,7 +127,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR5(double thresh, double jaccardWeight){
-        mr5Description = "basic matching rule with levensthein similarity and jaccard 3-grams, frequent tokens removed.";
         double levWeight = 1-jaccardWeight;
 
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
@@ -161,8 +142,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR6(double thresh){
-        mr6Description = "basic matching rule with levensthein similarity and jaccard 3-grams, frequent tokens removed. also Jaccard token with frequent tokens present.";
-
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorLevenshtein(true), 1d/3);
@@ -177,8 +156,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR7(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
-        mr7Description = "Weka logistic regression matching rule with postprocessing parameters";
-
         String options[] = new String[] { "-S" };
 		String modelType = "SimpleLogistic"; // use a logistic regression
         WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
@@ -203,8 +180,6 @@ public class MATCHING_RULES {
 
 
     public static MatchingRule<Company, Attribute> getMR8(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
-        mr8Description = "Weka tree matching rule with postprocessing parameters";
-
         // create a matching rule & provide classifier, options
         String tree = "J48"; // new instance of tree
         String options[] = new String[1];
@@ -231,8 +206,6 @@ public class MATCHING_RULES {
 
 
     public static MatchingRule<Company, Attribute> getMR9(double thresh){
-        mr9Description = "Linear Comb Matching rule removing frequent tokens for not token based, and leaving them for token based jaccard";
-
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
         try{
             rule.addComparator(new CompanyNameComparatorLevenshtein(true), 1d/3);
@@ -247,8 +220,6 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR10(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
-        mr10Description = "Weka logistic regression matching rule with postprocessing parameters and fewer comparators";
-
         String options[] = new String[] { "-S" };
 		String modelType = "SimpleLogistic"; // use a logistic regression
         WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, modelType, options);
@@ -632,6 +603,76 @@ public class MATCHING_RULES {
         try{
             rule.addComparator(new CompanyNameComparatorLevenshtein(true), 0.3);
             rule.addComparator(new UrlNameComparator(3, true), 0.4);
+            rule.addComparator(new RogueTokenComparator(
+                0.3f, 
+                true, 
+                0.5f, 
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3,
+                4),0.3); //remediating the removal of frequent tokens
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR29(double thresh){
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(
+                3,
+                true, 
+                0.4f, 
+                true, 
+                0.5f, 
+                3, 
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3),0.2); //three a bit more robust to typos than 4
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(
+                    3,
+                    false, 
+                    0.4f, 
+                    true, 
+                    0.5f, 
+                    6, 
+                    AbstractT9Comparator.BOOST_FUNCTIONS.X3),0.15); //three a bit more robust to typos than 4
+            rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.4f),0.25); //typos
+            rule.addComparator(new LCSComparator(
+                LongestCommonSubsequenceSimilarity.NormalizationFlag.MIN,
+                0.3f,
+                true,
+                0.5f,
+                AbstractT9Comparator.BOOST_FUNCTIONS.SQRT,
+                4),0.2); //Order
+            rule.addComparator(new RogueTokenComparator(
+                0.3f, 
+                true, 
+                0.5f, 
+                AbstractT9Comparator.BOOST_FUNCTIONS.X3,
+                4),0.2); //remediating the removal of frequent tokens
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        return rule;
+    }
+
+        /**
+     * @param thresh final matching threshold
+     * @return
+     */
+    public static MatchingRule<Company, Attribute> getMR30(double thresh){
+        LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+        try{
+            rule.addComparator(new CompanyNameComparatorJaccardNgram(3, false), 0.4);
+            rule.addComparator(new LCSComparator(
+                LongestCommonSubsequenceSimilarity.NormalizationFlag.MIN,
+                0.3f,
+                true,
+                0.5f,
+                AbstractT9Comparator.BOOST_FUNCTIONS.SQRT,
+                4),0.3); //Order
             rule.addComparator(new RogueTokenComparator(
                 0.3f, 
                 true, 

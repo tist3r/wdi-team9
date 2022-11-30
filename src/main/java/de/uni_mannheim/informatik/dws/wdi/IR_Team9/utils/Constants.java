@@ -18,6 +18,7 @@ public class Constants {
     private static final Logger logger = WinterLogManager.activateLogger("default");
 
     public static final String RECORD_PATH = "/Companies/Company";
+    public static final String EXPERIMENT_PATH = "data/output/experiments";
 
     private static String kaggleBasePath = "data/input/test/";
     private static String blockerBasePath = "data/output/blockers/";

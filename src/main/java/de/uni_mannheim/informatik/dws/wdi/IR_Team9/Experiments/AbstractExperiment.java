@@ -3,6 +3,7 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.security.KeyException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Sandbox.EvaluateAgainstNewGs;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
@@ -95,6 +97,25 @@ public abstract class AbstractExperiment {
     int maxNumComparisons;
 
  
+    public AbstractExperiment(String ds1Name, String ds2Name, int blockerID, int mrID, String thresh) throws Exception{
+        this.ds1Name = ds1Name;
+        this.ds2Name = ds2Name;
+        this.BLOCKER_ID = blockerID;
+        this.MATCHING_RULE_ID = mrID;
+        
+        switch(thresh){
+            case("7"):this.matchingThresh = 0.7;break;
+            case("8"):this.matchingThresh = 0.8;break;
+            case("85"):this.matchingThresh = 0.85;break;
+            case("87"):this.matchingThresh = 0.875;break;
+            case("9"):this.matchingThresh = 0.9;break;
+            default: this.matchingThresh = 0.11;break;
+        }
+
+        this.loadData(ds1Name, ds2Name);
+        this.loadTrainTestData();
+    }
+
     public AbstractExperiment(String ds1Name, String ds2Name, int experimentID, double matchingThresh) throws Exception{
         this.ds1Name = ds1Name;
         this.ds2Name = ds2Name;
@@ -351,7 +372,7 @@ public abstract class AbstractExperiment {
     /**
      * caches the datasets from the current experiment.
      */
-    private void cacheDatasets() {
+    protected void cacheDatasets() {
         ds1cached = ds1;
         ds1 = null;
         ds1Namecached = ds1Name;
@@ -392,6 +413,12 @@ public abstract class AbstractExperiment {
     }
 
 
+    /**
+     * Flagg All for local mathching startegy, anything else for evaluating global matching strategy
+     * @param correspondences
+     * @param flag
+     * @param experimentID
+     */
     void evaluateMatching(Processable<Correspondence<Company, Attribute>> correspondences, String flag, String experimentID){
         logger.info("evaluating gold standard");
         try{
@@ -431,6 +458,14 @@ public abstract class AbstractExperiment {
         
     }
 
+    public static void reevaluateMatching(String ds1Name, String ds2Name, String eID, int blockerID, int mrID, String thresh) throws Exception{
+        Experiment e = new Experiment(ds1Name, ds2Name,blockerID,mrID,thresh);
+        Processable<Correspondence<Company, Attribute>> corr = EvaluateAgainstNewGs.loadCorrespondences(Paths.get(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, eID)));
+        e.evaluateMatching(corr, "All", eID);
+        ExperimentWriter.appendToExperimentCSV(e, "data/output/experiments/reevaluated_log.csv");
+        e.cacheDatasets();
+    }
+
     void evaluateBlocker(){
         //reduction ration + blocker info
         this.reductionRatio = this.blocker.getReductionRatio();
@@ -455,7 +490,12 @@ public abstract class AbstractExperiment {
     }
 
     String getDurationString(){
-        return DurationFormatUtils.formatDurationHMS(Duration.between(start, end).toMillis());
+        try{
+            return DurationFormatUtils.formatDurationHMS(Duration.between(start, end).toMillis());
+        }catch(Exception e){
+            return "";
+        }
+        
     }
 
     public String toString(){
