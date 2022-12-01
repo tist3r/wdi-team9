@@ -120,8 +120,6 @@
 \tableofcontents
 \newpage
 
-\listoffigures
-
 \listoftables
 
 % evntuelly you might add something like this
@@ -202,11 +200,13 @@ We relied on 4 different datasources which are profiled in Table \ref{tab:datase
 \section{Consolidated Schema \& Transformations}
 
 The consolidated schema was created by hand. The following transformations were applied to the input datasets:\begin{enumerate}
-	\item Monetary values were normalized to the same base.
-	\item The \textit{dbpedia} dataset came with currency information. The intention was to use this information via a mapping table to convert all monetary values to USD. However, it turend out that there was a huge amount of currencies involved and it was not clear of which data the exchange rate should be retrieved. Therefore the currency was kept as an additional attribute.
+	\item Monetary values were normalized to the same base (1s).
+	\item For forbes, and dw USD was added as the currency. For dbpedia the currency was parsed from the datatype annotation. Since the \textit{dbpedia} dataset came with currency information we intended to use this information via a mapping table to convert all monetary values to USD. However, it turned out that there was a huge amount of currencies involved and it was not clear from which date the exchange rate should be retrieved. Therefore the currency was kept as an additional attribute.
 	\item A unique ID was generated for each record that was mapped to the target schema.
-	\item ...
+	\item Missing values in dw were partly encoded as \#N/A which confused the parse\_number function. An if clause was implemented that checked for "\#" and in these cases did not put a value, and otherwise the original value.
+	\item For dbpedia the pipe concatenated fields ceos and industry were tokenized and only distinct values transfered to the respective list node.
 \end{enumerate} 
+
 
 
 \chapter{Phase II - Identity Resolution}
