@@ -1,0 +1,82 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:element name="Companies">
+<xs:complexType>
+<xs:sequence>
+	<xs:element name="Company">
+		<xs:complexType>
+			<xs:sequence>
+			<xs:element name="ID" type="xs:string"/>
+				<xs:element name="Name" type="xs:string"/>
+				<xs:element name="Domain" type="xs:string" minOccurs="0"/>
+				<xs:element name="Industries" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Industry" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Year_founded" type="xs:int" minOccurs="0"/>
+				<xs:element name="Size_range" type="xs:string" minOccurs="0"/>
+				<xs:element name="Locality" type="xs:string" minOccurs="0"/>
+				<xs:element name="Country" type="xs:string" minOccurs="0"/>
+				<xs:element name="Linkedin_url" type="xs:string" minOccurs="0"/>
+				<xs:element name="Current_employee_est" type="xs:int" minOccurs="0"/>
+				<xs:element name="Total_employee_est" type="xs:int" minOccurs="0"/>
+				<xs:element name="Sales" minOccurs="0">
+				
+					<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Amount" type="xs:float"/>
+								<xs:element name="Currency" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="Profits" minOccurs="0">
+				
+					<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Amount" type="xs:float"/>
+								<xs:element name="Currency" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+				</xs:element>
+				
+			<xs:element name="Assets" minOccurs="0">
+				
+					<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Amount" type="xs:float"/>
+								<xs:element name="Currency" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="Market_Value" minOccurs="0">
+				
+					<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Amount" type="xs:float"/>
+								<xs:element name="Currency" type="xs:string"/>
+							</xs:sequence>
+						</xs:complexType>
+				</xs:element>				
+				
+				<xs:element name="Sector" type="xs:string" minOccurs="0"/>
+				<xs:element name="Global_rank" type="xs:string" minOccurs="0"/>
+				<xs:element name="Latitude" type="xs:float" minOccurs="0"/>
+				<xs:element name="Longitude" type="xs:float" minOccurs="0"/>
+				<xs:element name="CEOs" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CEO" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>

@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edited with Altova MapForce 2023 -->
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="22">
+	<resources/>
+	<component name="defaultmap" uid="1" editable="1" blackbox="0">
+		<properties SelectedLanguage="builtin"/>
+		<structure>
+			<children>
+				<component name="multiply" library="core" uid="9" kind="5" growable="1" growablebasename="value">
+					<sources>
+						<datapoint pos="0" key="52"/>
+						<datapoint pos="1" key="3"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="53"/>
+					</targets>
+					<view ltx="564" lty="15" rbx="632" rby="63"/>
+				</component>
+				<component name="multiply" library="core" uid="10" kind="5" growable="1" growablebasename="value">
+					<sources>
+						<datapoint pos="0" key="54"/>
+						<datapoint pos="1" key="4"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="55"/>
+					</targets>
+					<view ltx="507" lty="101" rbx="575" rby="149"/>
+				</component>
+				<component name="multiply" library="core" uid="11" kind="5" growable="1" growablebasename="value">
+					<sources>
+						<datapoint pos="0" key="56"/>
+						<datapoint pos="1" key="2"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="57"/>
+					</targets>
+					<view ltx="474" lty="198" rbx="542" rby="246"/>
+				</component>
+				<component name="constant" library="core" uid="13" kind="2">
+					<targets>
+						<datapoint pos="0" key="1"/>
+					</targets>
+					<view ltx="426" lty="15" rbx="511" rby="30"/>
+					<data>
+						<constant value="1000000000" datatype="decimal"/>
+					</data>
+				</component>
+				<component name="empty" library="lang" uid="16" kind="5">
+					<sources>
+						<datapoint pos="0" key="7"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="8"/>
+					</targets>
+					<view ltx="277" lty="517" rbx="340" rby="551"/>
+				</component>
+				<component name="if-else" library="core" uid="17" kind="4">
+					<sources>
+						<datapoint pos="0" key="10"/>
+						<datapoint/>
+						<datapoint pos="2" key="17"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="18"/>
+					</targets>
+					<view ltx="426" lty="519" rbx="514" rby="582"/>
+				</component>
+				<component name="empty" library="lang" uid="18" kind="5">
+					<sources>
+						<datapoint pos="0" key="11"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="12"/>
+					</targets>
+					<view ltx="277" lty="554" rbx="340" rby="588"/>
+				</component>
+				<component name="empty" library="lang" uid="19" kind="5">
+					<sources>
+						<datapoint pos="0" key="13"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="14"/>
+					</targets>
+					<view ltx="277" lty="604" rbx="340" rby="638"/>
+				</component>
+				<component name="empty" library="lang" uid="20" kind="5">
+					<sources>
+						<datapoint pos="0" key="15"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="16"/>
+					</targets>
+					<view ltx="277" lty="664" rbx="340" rby="698"/>
+				</component>
+				<component name="if-else" library="core" uid="21" kind="4">
+					<sources>
+						<datapoint pos="0" key="21"/>
+						<datapoint/>
+						<datapoint pos="2" key="22"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="20"/>
+					</targets>
+					<view ltx="416" lty="604" rbx="504" rby="667"/>
+				</component>
+				<component name="if-else" library="core" uid="22" kind="4">
+					<sources>
+						<datapoint pos="0" key="24"/>
+						<datapoint/>
+						<datapoint pos="2" key="25"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="23"/>
+					</targets>
+					<view ltx="609" lty="675" rbx="697" rby="738"/>
+				</component>
+				<component name="if-else" library="core" uid="23" kind="4">
+					<sources>
+						<datapoint pos="0" key="27"/>
+						<datapoint/>
+						<datapoint pos="2" key="28"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="26"/>
+					</targets>
+					<view ltx="585" lty="768" rbx="673" rby="831"/>
+				</component>
+				<component name="multiply" library="core" uid="12" kind="5" growable="1" growablebasename="value">
+					<sources>
+						<datapoint pos="0" key="58"/>
+						<datapoint pos="1" key="5"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="59"/>
+					</targets>
+					<view ltx="654" lty="324" rbx="722" rby="372"/>
+				</component>
+				<component name="constant" library="core" uid="26" kind="2">
+					<targets>
+						<datapoint pos="0" key="29"/>
+					</targets>
+					<view ltx="306" lty="-90" rbx="341" rby="-75"/>
+					<data>
+						<constant value="1" datatype="decimal"/>
+					</data>
+				</component>
+				<component name="constant" library="core" uid="27" kind="2">
+					<targets>
+						<datapoint pos="0" key="34"/>
+					</targets>
+					<view ltx="524" lty="-90" rbx="611" rby="-75"/>
+					<data>
+						<constant value="dataworld_" datatype="string"/>
+					</data>
+				</component>
+				<component name="auto-number" library="core" uid="29" kind="5">
+					<sources>
+						<datapoint/>
+						<datapoint pos="1" key="30"/>
+						<datapoint/>
+						<datapoint/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="31"/>
+					</targets>
+					<view ltx="369" lty="-90" rbx="490" rby="-13"/>
+				</component>
+				<component name="concat" library="core" uid="28" kind="5" growable="1" growablebasename="value">
+					<sources>
+						<datapoint pos="0" key="35"/>
+						<datapoint pos="1" key="32"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="33"/>
+					</targets>
+					<view ltx="654" lty="-78" rbx="722" rby="-30"/>
+				</component>
+				<component name="constant" library="core" uid="14" kind="2">
+					<targets>
+						<datapoint pos="0" key="6"/>
+					</targets>
+					<view ltx="194" lty="785" rbx="268" rby="800"/>
+					<data>
+						<constant value="usDollar" datatype="string"/>
+					</data>
+				</component>
+				<component name="company-schema-definition" library="xml" uid="3" kind="14">
+					<properties XSLTDefaultOutput="1"/>
+					<view ltx="906" rbx="1325" rby="512"/>
+					<data>
+						<root>
+							<header>
+								<namespaces>
+									<namespace/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="1" expanded="1">
+								<entry name="document" ns="1" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="Companies" expanded="1">
+										<entry name="Company" inpkey="60" expanded="1">
+											<entry name="ID" inpkey="61"/>
+											<entry name="Name" inpkey="62"/>
+											<entry name="Country" inpkey="63"/>
+											<entry name="Sales" expanded="1">
+												<entry name="Amount" inpkey="64"/>
+												<entry name="Currency" inpkey="19"/>
+											</entry>
+											<entry name="Profits" expanded="1">
+												<entry name="Amount" inpkey="65"/>
+												<entry name="Currency" inpkey="66"/>
+											</entry>
+											<entry name="Assets" expanded="1">
+												<entry name="Amount" inpkey="67"/>
+												<entry name="Currency" inpkey="68"/>
+											</entry>
+											<entry name="Market_Value" expanded="1">
+												<entry name="Amount" inpkey="69"/>
+												<entry name="Currency" inpkey="70"/>
+											</entry>
+											<entry name="Global_rank" inpkey="71"/>
+											<entry name="Latitude" inpkey="45"/>
+											<entry name="Longitude" inpkey="72"/>
+										</entry>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="..\..\schema_mapping\company-schema-definition.xsd" instanceroot="{}Companies" outputinstance="..\..\schema_mapping\company-schema-definition.xml"/>
+					</data>
+				</component>
+				<component name="parse-number" library="core" uid="5" kind="5">
+					<sources>
+						<datapoint pos="0" key="73"/>
+						<datapoint/>
+						<datapoint/>
+						<datapoint/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="43"/>
+					</targets>
+					<view ltx="324" lty="269" rbx="470" rby="346"/>
+				</component>
+				<component name="contains" library="core" uid="31" kind="5">
+					<sources>
+						<datapoint pos="0" key="37"/>
+						<datapoint pos="1" key="38"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="39"/>
+					</targets>
+					<view ltx="-2" lty="570" rbx="78" rby="618"/>
+				</component>
+				<component name="if-else" library="core" uid="33" kind="4">
+					<sources>
+						<datapoint pos="0" key="40"/>
+						<datapoint/>
+						<datapoint pos="2" key="41"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="42"/>
+					</targets>
+					<view ltx="126" lty="500" rbx="214" rby="563"/>
+				</component>
+				<component name="contains" library="core" uid="34" kind="5">
+					<sources>
+						<datapoint pos="0" key="50"/>
+						<datapoint pos="1" key="49"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="46"/>
+					</targets>
+					<view ltx="15" lty="704" rbx="95" rby="752"/>
+				</component>
+				<component name="largestCompanies" library="text" uid="2" kind="16">
+					<properties SaveRelativePaths="0"/>
+					<view ltx="-110" lty="15" rbx="192" rby="457"/>
+					<data>
+						<root>
+							<header>
+								<namespaces>
+									<namespace/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="1" expanded="1">
+								<entry name="document" ns="1" expanded="1">
+									<entry name="Rows" outkey="74" expanded="1">
+										<entry name="Global Rank" outkey="75"/>
+										<entry name="Company" outkey="76"/>
+										<entry name="Sales ($billion)" outkey="9"/>
+										<entry name="Profits ($billion)" outkey="77"/>
+										<entry name="Assets ($billion)" outkey="78"/>
+										<entry name="Market Value ($billion)" outkey="79"/>
+										<entry name="Country" outkey="80"/>
+										<entry name="Latitude" outkey="44"/>
+										<entry name="Longitude" outkey="81"/>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<text type="csv" encoding="1000" byteorder="1" byteordermark="0" inputinstance="C:\Users\schmi\OneDrive - mail.uni-mannheim.de\Studium\MSc Wifo\HWS 22\WDI\Project\companies\data\largest_companies.csv">
+							<settings separator="," quote="&quot;" firstrownames="true" removeempty="true">
+								<names root="largest_companies" block="Rows">
+									<field0 name="Global Rank" type="integer"/>
+									<field1 name="Company" type="string"/>
+									<field2 name="Sales ($billion)" type="decimal"/>
+									<field3 name="Profits ($billion)" type="decimal"/>
+									<field4 name="Assets ($billion)" type="decimal"/>
+									<field5 name="Market Value ($billion)" type="decimal"/>
+									<field6 name="Country" type="string"/>
+									<field7 name="Continent" type="string"/>
+									<field8 name="Latitude" type="string"/>
+									<field9 name="Longitude" type="string"/>
+								</names>
+							</settings>
+						</text>
+					</data>
+				</component>
+				<component name="constant" library="core" uid="32" kind="2">
+					<targets>
+						<datapoint pos="0" key="36"/>
+					</targets>
+					<view ltx="-30" lty="675" rbx="14" rby="690"/>
+					<data>
+						<constant value="#" datatype="string"/>
+					</data>
+				</component>
+				<component name="parse-number" library="core" uid="7" kind="5">
+					<sources>
+						<datapoint pos="0" key="82"/>
+						<datapoint/>
+						<datapoint/>
+						<datapoint/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="83"/>
+					</targets>
+					<view ltx="445" lty="418" rbx="591" rby="495"/>
+				</component>
+				<component name="if-else" library="core" uid="35" kind="4">
+					<sources>
+						<datapoint pos="0" key="47"/>
+						<datapoint/>
+						<datapoint pos="2" key="48"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="51"/>
+					</targets>
+					<view ltx="143" lty="634" rbx="231" rby="697"/>
+				</component>
+			</children>
+			<graph directed="1">
+				<edges/>
+				<vertices>
+					<vertex vertexkey="1">
+						<edges>
+							<edge vertexkey="2"/>
+							<edge vertexkey="3"/>
+							<edge vertexkey="4"/>
+							<edge vertexkey="5"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="9">
+						<edges>
+							<edge vertexkey="7"/>
+							<edge vertexkey="52"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="8">
+						<edges>
+							<edge vertexkey="10"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="77">
+						<edges>
+							<edge vertexkey="11"/>
+							<edge vertexkey="54"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="78">
+						<edges>
+							<edge vertexkey="13"/>
+							<edge vertexkey="56"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="79">
+						<edges>
+							<edge vertexkey="15"/>
+							<edge vertexkey="58"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="6">
+						<edges>
+							<edge vertexkey="17"/>
+							<edge vertexkey="22"/>
+							<edge vertexkey="25"/>
+							<edge vertexkey="28"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="18">
+						<edges>
+							<edge vertexkey="19"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="12">
+						<edges>
+							<edge vertexkey="21"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="14">
+						<edges>
+							<edge vertexkey="24"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="16">
+						<edges>
+							<edge vertexkey="27"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="29">
+						<edges>
+							<edge vertexkey="30"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="31">
+						<edges>
+							<edge vertexkey="32"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="34">
+						<edges>
+							<edge vertexkey="35"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="44">
+						<edges>
+							<edge vertexkey="37"/>
+							<edge vertexkey="73"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="36">
+						<edges>
+							<edge vertexkey="38"/>
+							<edge vertexkey="49"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="39">
+						<edges>
+							<edge vertexkey="40"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="43">
+						<edges>
+							<edge vertexkey="41"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="42">
+						<edges>
+							<edge vertexkey="45"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="46">
+						<edges>
+							<edge vertexkey="47"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="83">
+						<edges>
+							<edge vertexkey="48"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="81">
+						<edges>
+							<edge vertexkey="50"/>
+							<edge vertexkey="82"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="74">
+						<edges>
+							<edge vertexkey="60"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="33">
+						<edges>
+							<edge vertexkey="61"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="76">
+						<edges>
+							<edge vertexkey="62"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="80">
+						<edges>
+							<edge vertexkey="63"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="53">
+						<edges>
+							<edge vertexkey="64"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="55">
+						<edges>
+							<edge vertexkey="65"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="20">
+						<edges>
+							<edge vertexkey="66"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="57">
+						<edges>
+							<edge vertexkey="67"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="23">
+						<edges>
+							<edge vertexkey="68"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="59">
+						<edges>
+							<edge vertexkey="69"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="26">
+						<edges>
+							<edge vertexkey="70"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="75">
+						<edges>
+							<edge vertexkey="71"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="51">
+						<edges>
+							<edge vertexkey="72"/>
+						</edges>
+					</vertex>
+				</vertices>
+			</graph>
+		</structure>
+	</component>
+</mapping>

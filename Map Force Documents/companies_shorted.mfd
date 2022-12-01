@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edited with Altova MapForce 2022r2 -->
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="22">
+	<resources/>
+	<component name="defaultmap" uid="1" editable="1" blackbox="0">
+		<properties SelectedLanguage="builtin"/>
+		<structure>
+			<children>
+				<component name="constant" library="core" uid="7" kind="2">
+					<targets>
+						<datapoint pos="0" key="11"/>
+					</targets>
+					<view ltx="320" lty="1" rbx="358" rby="17"/>
+					<data>
+						<constant value="1" datatype="decimal"/>
+					</data>
+				</component>
+				<component name="auto-number" library="core" uid="6" kind="5">
+					<sources>
+						<datapoint/>
+						<datapoint pos="1" key="12"/>
+						<datapoint/>
+						<datapoint/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="13"/>
+					</targets>
+					<view ltx="381" rbx="509" rby="85"/>
+				</component>
+				<component name="constant" library="core" uid="10" kind="2">
+					<targets>
+						<datapoint pos="0" key="14"/>
+					</targets>
+					<view ltx="485" lty="-38" rbx="561" rby="-22"/>
+					<data>
+						<constant value="Kaggle_" datatype="string"/>
+					</data>
+				</component>
+				<component name="concat" library="core" uid="9" kind="5" growable="1" growablebasename="value">
+					<sources>
+						<datapoint pos="0" key="15"/>
+						<datapoint pos="1" key="16"/>
+					</sources>
+					<targets>
+						<datapoint pos="0" key="17"/>
+					</targets>
+					<view ltx="574" lty="18" rbx="649" rby="72"/>
+				</component>
+				<component name="company-schema-definition" library="xml" uid="4" kind="14">
+					<properties XSLTTargetEncoding="UTF-8" XSLTDefaultOutput="1"/>
+					<view ltx="694" lty="73" rbx="994" rby="273"/>
+					<data>
+						<root>
+							<header>
+								<namespaces>
+									<namespace/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="1" expanded="1">
+								<entry name="document" ns="1" expanded="1" casttotargettypemode="cast-in-subtree">
+									<entry name="Companies" expanded="1">
+										<entry name="Company" inpkey="29" expanded="1">
+											<entry name="ID" inpkey="18"/>
+											<entry name="Name" inpkey="19"/>
+											<entry name="Domain" inpkey="20"/>
+											<entry name="Industries" expanded="1">
+												<entry name="Industry" inpkey="21"/>
+											</entry>
+											<entry name="Year_founded" inpkey="22"/>
+											<entry name="Size_range" inpkey="23"/>
+											<entry name="Locality" inpkey="24"/>
+											<entry name="Country" inpkey="25"/>
+											<entry name="Linkedin_url" inpkey="26"/>
+											<entry name="Current_employee_est" inpkey="27"/>
+											<entry name="Total_employee_est" inpkey="28"/>
+										</entry>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<document schema="company-schema-definition.xsd" instanceroot="{}Companies" outputinstance="company-schema-definition.xml"/>
+					</data>
+				</component>
+				<component name="companies_sorted" library="text" uid="3" kind="16">
+					<properties/>
+					<view rbx="271" rby="216"/>
+					<data>
+						<root>
+							<header>
+								<namespaces>
+									<namespace/>
+									<namespace uid="http://www.altova.com/mapforce"/>
+								</namespaces>
+							</header>
+							<entry name="FileInstance" ns="1" expanded="1">
+								<entry name="document" ns="1" expanded="1">
+									<entry name="Filas" expanded="1">
+										<entry name="Campo1" outkey="30"/>
+										<entry name="name" outkey="1"/>
+										<entry name="domain" outkey="2"/>
+										<entry name="year founded" outkey="3"/>
+										<entry name="industry" outkey="4"/>
+										<entry name="size range" outkey="5"/>
+										<entry name="locality" outkey="6"/>
+										<entry name="country" outkey="7"/>
+										<entry name="linkedin url" outkey="8"/>
+										<entry name="current employee estimate" outkey="9"/>
+										<entry name="total employee estimate" outkey="10"/>
+									</entry>
+								</entry>
+							</entry>
+						</root>
+						<text type="csv" encoding="1000" byteorder="1" byteordermark="0" inputinstance="companies_sorted.csv">
+							<settings separator="," quote="&quot;" firstrownames="true" removeempty="true">
+								<names root="companies_sorted" block="Filas">
+									<field0 name="Campo1" type="string"/>
+									<field1 name="name" type="string"/>
+									<field2 name="domain" type="string"/>
+									<field3 name="year founded" type="string"/>
+									<field4 name="industry" type="string"/>
+									<field5 name="size range" type="string"/>
+									<field6 name="locality" type="string"/>
+									<field7 name="country" type="string"/>
+									<field8 name="linkedin url" type="string"/>
+									<field9 name="current employee estimate" type="string"/>
+									<field10 name="total employee estimate" type="string"/>
+								</names>
+							</settings>
+						</text>
+					</data>
+				</component>
+			</children>
+			<graph directed="1">
+				<edges/>
+				<vertices>
+					<vertex vertexkey="11">
+						<edges>
+							<edge vertexkey="12"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="14">
+						<edges>
+							<edge vertexkey="15"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="13">
+						<edges>
+							<edge vertexkey="16"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="17">
+						<edges>
+							<edge vertexkey="18"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="1">
+						<edges>
+							<edge vertexkey="19"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="2">
+						<edges>
+							<edge vertexkey="20"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="4">
+						<edges>
+							<edge vertexkey="21"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="3">
+						<edges>
+							<edge vertexkey="22"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="5">
+						<edges>
+							<edge vertexkey="23"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="6">
+						<edges>
+							<edge vertexkey="24"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="7">
+						<edges>
+							<edge vertexkey="25"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="8">
+						<edges>
+							<edge vertexkey="26"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="9">
+						<edges>
+							<edge vertexkey="27"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="10">
+						<edges>
+							<edge vertexkey="28"/>
+						</edges>
+					</vertex>
+					<vertex vertexkey="30">
+						<edges>
+							<edge vertexkey="29"/>
+						</edges>
+					</vertex>
+				</vertices>
+			</graph>
+		</structure>
+	</component>
+</mapping>
