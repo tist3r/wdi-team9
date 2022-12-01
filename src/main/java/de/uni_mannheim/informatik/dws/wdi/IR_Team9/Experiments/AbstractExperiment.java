@@ -3,6 +3,9 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Experiments;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyException;
 import java.time.Duration;
@@ -559,15 +562,21 @@ public abstract class AbstractExperiment {
 
         Set<String> exp = new HashSet<String>();
 
-        try(CSVReader reader = new CSVReader(new FileReader(Constants.getExperimentLogPath()))){
-            List<String[]> lines = reader.readAll();
-
-            for(String[] line : lines){
-                exp.add(line[0]);
-            }
+        try(DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get(Constants.EXPERIMENT_PATH))){
+            ds.forEach(x -> exp.add(x.getFileName().toString()));
         }catch(IOException e){
             e.printStackTrace();
         }
+
+        // try(CSVReader reader = new CSVReader(new FileReader(Constants.EXPERIMENT_PATH))){
+        //     List<String[]> lines = reader.readAll();
+
+        //     for(String[] line : lines){
+        //         exp.add(line[0]);
+        //     }
+        // }catch(IOException e){
+        //     e.printStackTrace();
+        // }
 
         return exp;
     }

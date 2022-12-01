@@ -66,8 +66,8 @@ public class MATCHING_RULES {
                 case 26: return getMR26(thresh, ds1, ds2, gsTrain);
                 case 27: return getMR27(thresh);
                 case 28: return getMR28(thresh);
-                case 29: return getMR28(thresh);
-                case 30: return getMR28(thresh);
+                case 29: return getMR29(thresh);
+                case 30: return getMR30(thresh);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }

@@ -122,6 +122,10 @@ public class EvaluateAgainstNewGs {
         //parseExperiment(Paths.get("data/output/experiments/15_10_87_forbes_kaggle_f"));
 
         reevaluateCorrespondences("dbpedia", "kaggle_f");
+        reevaluateCorrespondences("forbes", "kaggle_f");
+
+        reevaluateCorrespondences("dw", "kaggle_f");
+
        
     }
 }
