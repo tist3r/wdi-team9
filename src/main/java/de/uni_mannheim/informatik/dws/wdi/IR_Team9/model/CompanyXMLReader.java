@@ -48,7 +48,7 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> imp
         try{
             company.setCurrEmpEst((double) Integer.parseInt(getValueFromChildElement(node, "Current_employee_est")));
         } catch (NumberFormatException e){
-            company.setCurrEmpEst((double) 0);
+            company.setCurrEmpEst(null);
         }
 
         try{
