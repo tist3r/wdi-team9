@@ -33,19 +33,23 @@ public class Company extends AbstractRecord<Attribute>{
 	</Company>
     */ 
 
-    //protected String id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//protected String id;
     private Map<Attribute, Collection<String>> provenance = new HashMap<>();
     private Collection<String> recordProvenance;
 
     private String name;
     private String url;
     private List<String> industries;
-    private Integer yearFounded;
+    private Double yearFounded;
     private String sizeRange;
     private String locality;
     private String country;
     private String linkedinUrl;
-    private Integer currEmpEst;
+    private Double currEmpEst;
     private Integer totalEmpEst;
     private Integer salesAmount;
     private String salesCurrency;
@@ -131,12 +135,12 @@ public class Company extends AbstractRecord<Attribute>{
         this.industries = industries;
     }
 
-    public Integer getYearFounded() {
+    public Double getYearFounded() {
         return this.yearFounded;
     }
 
-    public void setYearFounded(Integer yearFounded) {
-        this.yearFounded = yearFounded;
+    public void setYearFounded(double a) {
+        this.yearFounded = a;
     }
 
     public String getSizeRange() {
@@ -171,12 +175,12 @@ public class Company extends AbstractRecord<Attribute>{
         this.linkedinUrl = linkedinUrl;
     }
 
-    public Integer getCurrEmpEst() {
+    public Double getCurrEmpEst() {
         return this.currEmpEst;
     }
 
-    public void setCurrEmpEst(Integer currEmpEst) {
-        this.currEmpEst = currEmpEst;
+    public void setCurrEmpEst(Double double1) {
+        this.currEmpEst = (double) double1;
     }
 
     public Integer getTotalEmpEst() {
@@ -319,7 +323,11 @@ public class Company extends AbstractRecord<Attribute>{
 	public static final Attribute URL = new Attribute("URL");
 	public static final Attribute COUNTRY = new Attribute("COUNTRY");
 	public static final Attribute INDUSTRY = new Attribute("INDUSTRY");
-
+	public static final Attribute SALES_AMOUNT = new Attribute("SALES_AMOUNT");
+	public static final Attribute SALES_CURRENCY = new Attribute("SALES_CURRENCY");
+	public static final Attribute CURRENT_EMPLOYEES = new Attribute("CURRENT_EMPLOYEES");
+	public static final Attribute YEAR_FOUNDED = new Attribute("YEAR_FOUNDED");
+	
     @Override
 	public boolean hasValue(Attribute attribute) {
 		if(attribute==NAME)
