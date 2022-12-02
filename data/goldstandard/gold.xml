@@ -1,249 +1,422 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <companies>
-
-
-	<company>
-		<ID>dataworld_1</ID>
+	<Company>
+		<ID>Forbes1</ID>
 		<Name>ICBC</Name>
+		<Industries>
+			<Industry>Major Banks</Industry>
+		</Industries>
 		<Country>China</Country>
 		<Sales>
-			<Amount>134800000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>151400000000</Amount>
+			<Currency>USD</Currency>
 		</Sales>
 		<Profits>
-			<Amount>37800000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>42000000000</Amount>
+			<Currency>USD</Currency>
 		</Profits>
 		<Assets>
-			<Amount>2813500000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>3473200000000</Amount>
+			<Currency>USD</Currency>
 		</Assets>
 		<Market_Value>
-			<Amount>237300000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>229.8</Amount>
+			<Currency>USD</Currency>
 		</Market_Value>
+		<Sector>Financials</Sector>
 		<Global_rank>1</Global_rank>
-		<Latitude>35.86166</Latitude>
-		<Longitude>104.195397</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_2</ID>
+		<Year_founded>1986</Year_founded>
+		<Current_employee_est>495684</Current_employee_est>	
+	</Company>
+	<Company>
+		<ID>Forbes2</ID>
 		<Name>China Construction Bank</Name>
+		<Industries>
+			<Industry>Regional Banks</Industry>
+		</Industries>
+		<Country>China</Country>
+		<Sales>
+			<Amount>134200000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>35000000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>3016600000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>200.5</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Financials</Sector>
+		<Global_rank>2</Global_rank>
+		<Year_founded>1954</Year_founded>
+		<Current_employee_est>345971</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes3</ID>
+		<Name>Berkshire Hathaway</Name>
+		<Industries>
+			<Industry>Investment Services</Industry>
+		</Industries>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>222900000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>24100000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>620900000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>409.9</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Financials</Sector>
+		<Global_rank>3</Global_rank>
+		<Year_founded>1839</Year_founded>
+		<Current_employee_est>360000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes4</ID>
+		<Name>JPMorgan Chase</Name>
+		<Industries>
+			<Industry>Major Banks</Industry>
+		</Industries>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>102500000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>24200000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>2513000000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>306.6</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Financials</Sector>
+		<Global_rank>4</Global_rank>
+		<Year_founded>2000</Year_founded>
+		<Current_employee_est>255351</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes29</ID>
+		<Name>Volkswagen Group</Name>
+		<Industries>
+			<Industry>Auto &amp; Truck Manufacturers</Industry>
+		</Industries>
+		<Country>Germany</Country>
+		<Sales>
+			<Amount>240300000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>5700000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>458700000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>72.9</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Consumer Discretionary</Sector>
+		<Global_rank>29</Global_rank>
+		<Year_founded>1937</Year_founded>
+		<Current_employee_est>307342</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes6</ID>
+		<Name>Agricultural Bank of China</Name>
+		<Industries>
+			<Industry>Regional Banks</Industry>
+		</Industries>
+		<Country>China</Country>
+		<Sales>
+			<Amount>115700000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>27800000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>2816000000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>149.2</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Financials</Sector>
+		<Global_rank>6</Global_rank>
+		<Year_founded>1951</Year_founded>
+		<Current_employee_est>467631</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes7</ID>
+		<Name>Bank of America</Name>
+		<Industries>
+			<Industry>Major Banks</Industry>
+		</Industries>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>92200000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>16600000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>2196800000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>231.9</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Financials</Sector>
+		<Global_rank>7</Global_rank>
+		<Year_founded>1784</Year_founded>
+		<Current_employee_est>200000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes8</ID>
+		<Name>Bank of China</Name>
+		<Industries>
+			<Industry>Major Banks</Industry>
+		</Industries>
 		<Country>China</Country>
 		<Sales>
 			<Amount>113100000000</Amount>
-			<Currency>usDollar</Currency>
+			<Currency>USD</Currency>
 		</Sales>
 		<Profits>
-			<Amount>30600000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>24900000000</Amount>
+			<Currency>USD</Currency>
 		</Profits>
 		<Assets>
-			<Amount>2241000000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>2611500000000</Amount>
+			<Currency>USD</Currency>
 		</Assets>
 		<Market_Value>
-			<Amount>202000000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>141.3</Amount>
+			<Currency>USD</Currency>
 		</Market_Value>
-		<Global_rank>2</Global_rank>
-		<Latitude>35.86166</Latitude>
-		<Longitude>104.195397</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_3</ID>
-		<Name>JPMorgan Chase</Name>
-		<Country>USA</Country>
-		<Sales>
-			<Amount>108200000000</Amount>
-			<Currency>usDollar</Currency>
-		</Sales>
-		<Profits>
-			<Amount>21300000000</Amount>
-			<Currency>usDollar</Currency>
-		</Profits>
-		<Assets>
-			<Amount>2359100000000</Amount>
-			<Currency>usDollar</Currency>
-		</Assets>
-		<Market_Value>
-			<Amount>191400000000</Amount>
-			<Currency>usDollar</Currency>
-		</Market_Value>
-		<Global_rank>3</Global_rank>
-		<Latitude>37.09024</Latitude>
-		<Longitude>-95.712891</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_4</ID>
-		<Name>General Electric</Name>
-		<Country>USA</Country>
-		<Sales>
-			<Amount>147400000000</Amount>
-			<Currency>usDollar</Currency>
-		</Sales>
-		<Profits>
-			<Amount>13600000000</Amount>
-			<Currency>usDollar</Currency>
-		</Profits>
-		<Assets>
-			<Amount>685300000000</Amount>
-			<Currency>usDollar</Currency>
-		</Assets>
-		<Market_Value>
-			<Amount>243700000000</Amount>
-			<Currency>usDollar</Currency>
-		</Market_Value>
-		<Global_rank>4</Global_rank>
-		<Latitude>37.09024</Latitude>
-		<Longitude>-95.712891</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_5</ID>
-		<Name>Exxon Mobil</Name>
-		<Country>USA</Country>
-		<Sales>
-			<Amount>420700000000</Amount>
-			<Currency>usDollar</Currency>
-		</Sales>
-		<Profits>
-			<Amount>44900000000</Amount>
-			<Currency>usDollar</Currency>
-		</Profits>
-		<Assets>
-			<Amount>333800000000</Amount>
-			<Currency>usDollar</Currency>
-		</Assets>
-		<Market_Value>
-			<Amount>400400000000</Amount>
-			<Currency>usDollar</Currency>
-		</Market_Value>
-		<Global_rank>5</Global_rank>
-		<Latitude>37.09024</Latitude>
-		<Longitude>-95.712891</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_6</ID>
-		<Name>HSBC Holdings</Name>
-		<Country>UK</Country>
-		<Sales>
-			<Amount>104900000000</Amount>
-			<Currency>usDollar</Currency>
-		</Sales>
-		<Profits>
-			<Amount>14300000000</Amount>
-			<Currency>usDollar</Currency>
-		</Profits>
-		<Assets>
-			<Amount>2684100000000</Amount>
-			<Currency>usDollar</Currency>
-		</Assets>
-		<Market_Value>
-			<Amount>201300000000</Amount>
-			<Currency>usDollar</Currency>
-		</Market_Value>
-		<Global_rank>6</Global_rank>
-		<Latitude>55.378051</Latitude>
-		<Longitude>-3.435973</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_7</ID>
-		<Name>Royal Dutch Shell</Name>
-		<Country>The Netherlands</Country>
-		<Sales>
-			<Amount>467200000000</Amount>
-			<Currency>usDollar</Currency>
-		</Sales>
-		<Profits>
-			<Amount>26600000000</Amount>
-			<Currency>usDollar</Currency>
-		</Profits>
-		<Assets>
-			<Amount>360300000000</Amount>
-			<Currency>usDollar</Currency>
-		</Assets>
-		<Market_Value>
-			<Amount>213100000000</Amount>
-			<Currency>usDollar</Currency>
-		</Market_Value>
-		<Global_rank>7</Global_rank>
-		<Latitude>52.132633</Latitude>
-		<Longitude>5.291266</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_8</ID>
-		<Name>Agricultural Bank of China</Name>
-		<Country>China</Country>
-		<Sales>
-			<Amount>103000000000</Amount>
-			<Currency>usDollar</Currency>
-		</Sales>
-		<Profits>
-			<Amount>23000000000</Amount>
-			<Currency>usDollar</Currency>
-		</Profits>
-		<Assets>
-			<Amount>2124200000000</Amount>
-			<Currency>usDollar</Currency>
-		</Assets>
-		<Market_Value>
-			<Amount>150800000000</Amount>
-			<Currency>usDollar</Currency>
-		</Market_Value>
+		<Sector>Financials</Sector>
 		<Global_rank>8</Global_rank>
-		<Latitude>35.86166</Latitude>
-		<Longitude>104.195397</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_9</ID>
-		<Name>PetroChina</Name>
-		<Country>China</Country>
+		<Year_founded>1912</Year_founded>
+		<Current_employee_est>311000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes9</ID>
+		<Name>Apple</Name>
+		<Industries>
+			<Industry>Computer Hardware</Industry>
+		</Industries>
+		<Country>United States</Country>
 		<Sales>
-			<Amount>308900000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>217500000000</Amount>
+			<Currency>USD</Currency>
 		</Sales>
 		<Profits>
-			<Amount>18300000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>45200000000</Amount>
+			<Currency>USD</Currency>
 		</Profits>
 		<Assets>
-			<Amount>347800000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>331100000000</Amount>
+			<Currency>USD</Currency>
 		</Assets>
 		<Market_Value>
-			<Amount>261200000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>752</Amount>
+			<Currency>USD</Currency>
 		</Market_Value>
+		<Sector>Information Technology</Sector>
 		<Global_rank>9</Global_rank>
-		<Latitude>35.86166</Latitude>
-		<Longitude>104.195397</Longitude>
-	</company>
-	<company>
-		<ID>dataworld_10</ID>
-		<Name>Berkshire Hathaway</Name>
-		<Country>USA</Country>
+		<Year_founded>1976</Year_founded>
+		<Current_employee_est>154000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes10</ID>
+		<Name>Toyota Motor</Name>
+		<Industries>
+			<Industry>Auto &amp; Truck Manufacturers</Industry>
+		</Industries>
+		<Country>Japan</Country>
 		<Sales>
-			<Amount>162500000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>249900000000</Amount>
+			<Currency>USD</Currency>
 		</Sales>
 		<Profits>
-			<Amount>14800000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>17100000000</Amount>
+			<Currency>USD</Currency>
 		</Profits>
 		<Assets>
-			<Amount>427500000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>412500000000</Amount>
+			<Currency>USD</Currency>
 		</Assets>
 		<Market_Value>
-			<Amount>252800000000</Amount>
-			<Currency>usDollar</Currency>
+			<Amount>171.9</Amount>
+			<Currency>USD</Currency>
 		</Market_Value>
-		<Global_rank>9</Global_rank>
-		<Latitude>37.09024</Latitude>
-		<Longitude>-95.712891</Longitude>
-	</company>
-
+		<Sector>Consumer Discretionary</Sector>
+		<Global_rank>10</Global_rank>
+		<Year_founded>1937</Year_founded>
+		<Current_employee_est>366283</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes11</ID>
+		<Name>AT&amp;T</Name>
+		<Industries>
+			<Industry>Telecommunications services</Industry>
+		</Industries>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>163800000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>13000000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>403800000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>249.3</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Telecommunication Services</Sector>
+		<Global_rank>11</Global_rank>
+	</Company>
+	<Company>
+		<ID>Forbes12</ID>
+		<Name>Citigroup</Name>
+		<Industries>
+			<Industry>Major Banks</Industry>
+		</Industries>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>84000000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>14700000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>1795100000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>164.3</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Financials</Sector>
+		<Global_rank>12</Global_rank>
+		<Year_founded>1983</Year_founded>
+		<Current_employee_est>230000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes13</ID>
+		<Name>Exxon Mobil</Name>
+		<Industries/>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>197500000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>7800000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>330300000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>343.2</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Energy</Sector>
+		<Global_rank>13</Global_rank>
+		<Year_founded>1999</Year_founded>
+		<Current_employee_est>64000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes14</ID>
+		<Name>General Electric</Name>
+		<Industries>
+			<Industry>Conglomerates</Industry>
+		</Industries>
+		<Country>United States</Country>
+		<Sales>
+			<Amount>119700000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>10000000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>365200000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>261.2</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Industrials</Sector>
+		<Global_rank>14</Global_rank>
+		<Year_founded>1892</Year_founded>
+		<Current_employee_est>168000</Current_employee_est>
+	</Company>
+	<Company>
+		<ID>Forbes15</ID>
+		<Name>Samsung Electronics</Name>
+		<Industries>
+			<Industry>Semiconductors</Industry>
+		</Industries>
+		<Country>South Korea</Country>
+		<Sales>
+			<Amount>174000000000</Amount>
+			<Currency>USD</Currency>
+		</Sales>
+		<Profits>
+			<Amount>19300000000</Amount>
+			<Currency>USD</Currency>
+		</Profits>
+		<Assets>
+			<Amount>217100000000</Amount>
+			<Currency>USD</Currency>
+		</Assets>
+		<Market_Value>
+			<Amount>254.3</Amount>
+			<Currency>USD</Currency>
+		</Market_Value>
+		<Sector>Information Technology</Sector>
+		<Global_rank>15</Global_rank>
+		<Year_founded>1938</Year_founded>
+		<Current_employee_est>8857</Current_employee_est>
+	</Company>
 
 </companies>
 
