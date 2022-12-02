@@ -64,7 +64,7 @@ public class IR_using_machine_learning {
 		String options[] = new String[] { "-S" };
 		String modelType = "SimpleLogistic"; // use a logistic regression
 		WekaMatchingRule<Company, Attribute> matchingRule = new WekaMatchingRule<>(0.85, modelType, options);
-		matchingRule.activateDebugReport("data/output/debugResultsMatchingRule.csv", 1000, gsTraining);
+		matchingRule.activateDebugReport("data/output/debugResultsMatchingRule.csv", 5000, gsTraining);
 		
 		// add comparators
         matchingRule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.55f));

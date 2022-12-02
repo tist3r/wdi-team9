@@ -6,7 +6,8 @@
 
 \usepackage{titlesec}
 \titleformat{\chapter}[display]   
-{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}   
+{\normalfont\huge\bfseries}{\chaptertitlename\
+	\thechapter}{20pt}{\Huge}   
 \titlespacing*{\chapter}{0pt}{-50pt}{40pt}
 
 
@@ -117,7 +118,6 @@
 \end{titlepage} 
 
 % no lets make some add some table of contents
-\tableofcontents
 \newpage
 
 \listoftables
@@ -176,7 +176,7 @@ We relied on 4 different datasources which are profiled in Table \ref{tab:datase
 		Company      & domain                      & String         & Kaggle, dbpedia                            \\
 		Company & Year founded                & Integer        & Kaggle, dbpedia                            \\
 		Company      & Industry                    & String/List    & Kaggle, Forbes, dbpedia                    \\
-		Company      & Size\_range                 & Category       & Kaggle (can also be   derived for dbpedia) \\
+		Company      & Size\_range                 & Category       & Kaggle \\
 		Company      & locality                    & String         & Kaggle, dbpedia                            \\
 		Company      & Country                     & String         & Kaggle, Forbes, dw,   dbpedia              \\
 		Company      & Linkedin url                & String         & Kaggle                                     \\
@@ -209,8 +209,8 @@ The consolidated schema was created by hand. The following transformations were 
 
 
 
-\chapter{Phase II - Identity Resolution}
-\label{cha:identity-resolution}
+%\chapter{Phase II - Identity Resolution}
+%\label{cha:identity-resolution}
 
 \section{Gold Standard}
 \label{sec:gold-standard-IR}
@@ -232,13 +232,12 @@ The data was then split into train and test set using a python script, with a te
 
 %TODO Note on balance of gold standard, positives and negatives
 
-After running several identity resolutions the correspondences were analyzed. False positive matches were then added to the gold standard as further corner cases. Moreover, the group size distribution was analyzed. Large groups indicated false postitive matches or duplicates. From several of these groups the true and some false matches were collected and added to the gold standard as as corner-cases, trying to keep the number of non-matches below 70\%. Therfore, in some cases true matches from the correspondences were added to the goldstadard and duplicates were removed.
+After running several identity resolutions the correspondences were analyzed. False positive matches were then added to the gold standard as further corner cases. Moreover, the group size distribution was analyzed. Large groups indicated false postitive matches or duplicates. From several of these groups the true and some false matches were collected and added to the gold standard as as corner-cases, trying to keep the number of non-matches below 70\%. Afterwards, the goldstandard was reviewed for duplicates which were then removed.
 
 \section{Matching Rules}
 \label{sec:matching-rules}
 
 \subsection{General Setup}
-%TODO more clearly dist. pre and post processing
 The company name was the sole variable we could rely on during the identity resolution across all datasets. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented 27 different matching rules%
 \footnote{Please refer to the class Comparators.MATCHING\_RULES.java for an overview of the concrete combination of comparators, weights, pre- and postprocessing.}%
 , but limit the evaluation to the best and worst performing based on their F1-scores.
@@ -270,16 +269,20 @@ An IR was conducted for each dataset against the \textit{kaggle} dataset, becaus
 
 \subsection{Major Challenge - Named Entity Matching}
 
+When only having the company name as common attribute between the sources you face several challenges.
+
 A challenge in our project has been the matching of company names due to their "noisyness". We found ourselves facing similar challenges as the Dutch Central Bank \footnote{https://medium.com/dnb-data-science-hub/company-name-matching-6a6330710334}. %TODO make proper bibliographic reference
 As with named entities in general every data source has a different level of detail, different data quality, and use of abbreviations among others. Regarding this, our matching rules had to cater to the following challenges:
 \begin{enumerate}
-	\item \textbf{Company Name:} In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell).
-	\item \textbf{Data Quality:} We had to cope with general data quality issues which are represented for example by typos.
-	\item \textbf{Frequent tokens:} There are several tokens that have a higher frequency in company names. These include for example legal entity descriptors (limited, incorporated, ...), industy descriptors (bank, motors, pharmaceuticals, ...) and stop words (the, and, of ...). These may let names seem more similar than they actually are (General Motors vs. Hyundai Motors). We analyzed frequent tokens across our datasets and provided the matching rules with the option to remove frequent tokens.
-	\item \textbf{Token order:} Company names of different companies might be composed of similar tokens in a different order. Token-based similarity metrics alone would classify such names as similar altough they are not (Commercial National Financial vs. National Financial Group). This means that token order matters.
+	\item \textbf{Company Name:} In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell). To address the first we implemented a Longest Common Subsequence (LCS) Comparator (C4). We used this over a Longest Common Substring to capture the described cases. For the latter we implented C5 which is a token based comparator. However, it uses a more favorable normalization that caters to the "Shell" example. Instead of normalizing with the distinct set of tokens (aka Jaccard) it calculates the overlap for each name over the number of tokens from it and then takes the average of both.
+	\item \textbf{Data Quality:} We had to cope with general data quality issues which are represented for example by typos. Levenstheing similarity (C3) caters to this.
+	\item \textbf{Frequent tokens:} There are several tokens that have a higher frequency in company names. These include for example legal entity descriptors (limited, incorporated, ...), industy descriptors (bank, motors, pharmaceuticals, ...) and stop words (the, and, of ...). These may let names seem more similar than they actually are (General Motors vs. Hyundai Motors). We analyzed frequent tokens across our datasets and provided the matching rules with the option to remove frequent tokens. However, with this option you also introduce the problem that "General Electric" and "General Motors" now have a similarity of 1. So this option has to be considered with caution and in combination with other metrics.
+	\item \textbf{Token order:} Company names of different companies might be composed of similar tokens in a different order. Token-based similarity metrics alone would classify such names as similar altough they are not (Commercial National Financial vs. National Financial Group). This means that token order matters. The LCS Comparator and Levensthein also take this into account.
 \end{enumerate}
 
-We adressed these challenges by combining comparators with different strengths in matching rules which we systematically evaluated at different final mathching thresholds. We also implemented some new similarity metrics to cater to our needs (Comparator 4 and 5).
+In sum, we adressed these outlined challenges by combining comparators with different strengths in matching rules which we systematically evaluated at different final matching thresholds. We also implemented some new similarity metrics to cater to our needs (Comparator 4 and 5).
+
+
 
 \subsection{Evaluation}
 
@@ -330,12 +333,12 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options: \begin{enumerate}
 	\item First letter of the company name.
 	\item Qgrams. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient.
-	\item N starting characters of each company name token.
+	\item N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
 \end{enumerate}
 
-Especially the last key generator was born out of the challenge to tackle the previously unfiltered kaggle file. Although we were able to reduce the dataset size significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" although we increased the JVM Heap Space to 10 GB.
-The standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice in terms of efficiency, however we also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that in certain blocks more than 100 blocked elements were present. The first 3 letters of each token generated fewer blocked pairs while still bringing potential pairs together. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
+While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, the standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice in terms of efficiency while missing few matches during blocking. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that in certain blocks more than 100 blocked elements were present. The first 3 letters of each token generated fewer blocked pairs while still bringing potential pairs together. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
 
+%TODO: reevaluate group size dist
 The group size distribution shows several groups with many participants, which is not ideal for data fusion. An example from \textit{forbes} is Forbes1081 (First Financial Holding). Containing two FTs, this company matched with many companies that had a first in their name, due to the simple matching rule.
 
 \begin{table}[]
@@ -354,7 +357,13 @@ The group size distribution shows several groups with many participants, which i
 
 \section{Analysis of Errors}
 \label{sec:errors}
-%TODO include challenges here
+29\_10\_87\_dbpedia\_kaggle\_f
+
+"dbpedia_251","Kaggle_85019","0.8393644031634047","Amrutanjan Healthcare","amrutanjan health care limited"
+
+
+
+
 \textbf{dbpedia - kaggle\_f (MR21|0.85). } One error already presents one problem we had to face. "Ams AG" and "ams technologies ag" had a similarity of 0.90. "Technologies" and "ag" are considered as FTs, giving them a lower weight in this MR. However, in this case it would have been the distinctive difference. "Community Health Systems" and "community council health systems" (0.853) barely made it into the correspondence set, however the high token overlap explains why. "Telecommunication Company of Iran","telecommunication company of iran - tci" (0.82) was missed because "telecommunication, company, of" are considered FT and two comparators thus did not work well. The LCS comparator however boosted the similarity again. "Gulf Bank of Kuwait" and "gulfbank-kuwait" were missed because two tokens could not be split.
 
 \textbf{dw - kaggle\_f (MR27|0.85). } One more problem we faced was with subsidiaries or divisions of companies. Those usually have the same tokens in their names. For example, "Wells Fargo", "wells fargo insurance services" (0.96) was a match although they refer to different entities. The high similarity is due to the fact that "insurance, services" are considered FT. Another good example is "Thermo Fisher Scientific", "thermo fisher scientific singapore" (0.91). On the other hand, "Devon Energy","devon bank"(0.85) again suffer from FT removal.
@@ -363,12 +372,12 @@ The group size distribution shows several groups with many participants, which i
 
 
 
-\chapter{Phase III - Data Fusion}
-\label{cha:data-fusion}
+%\chapter{Phase III - Data Fusion}
+%\label{cha:data-fusion}
 
 
 
-\chapter{Summary}
+%\chapter{Summary}
 
 %TODO Style Table
 \begin{table}[h]

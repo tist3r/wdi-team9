@@ -347,6 +347,9 @@ public abstract class AbstractExperiment {
         //make sure everything is run in the correct order
         this.orderAndValidateAllThreshs();
 
+        this.rule.activateDebugReport("data/output/debugResultsMatchingRule.csv", 5000, this.gsTrain);
+
+
         if(this.loadedDatasets && addedBlocker && addedMatchingRule){
             logger.info("Starting identity resolution for " + this.toString());
             Processable<Correspondence<Company, Attribute>> correspondences = this.runIdentityResolution();

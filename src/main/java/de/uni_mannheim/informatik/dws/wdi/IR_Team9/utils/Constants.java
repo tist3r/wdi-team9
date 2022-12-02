@@ -107,6 +107,11 @@ public class Constants {
     }
 
 
+    public static String getExperimentMRdebugPath(String eID){
+        return String.format("%sMRdebug.csv", getExperimentRootPath(eID));
+    }
+
+
     /**
      * Returns the path for the correspondence file with names included.
      */
