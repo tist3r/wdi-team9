@@ -180,7 +180,7 @@ public class Company extends AbstractRecord<Attribute>{
     }
 
     public void setCurrEmpEst(Double double1) {
-        this.currEmpEst = (double) double1;
+        this.currEmpEst = double1;
     }
 
     public Integer getTotalEmpEst() {

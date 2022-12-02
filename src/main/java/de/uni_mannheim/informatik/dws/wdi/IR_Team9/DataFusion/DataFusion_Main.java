@@ -9,7 +9,12 @@ import java.util.Locale;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.CountryEvaluationRule;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.NameEvaluationRule;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.CountryFuser;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.EmployeesFuser;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.IndustryFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.NameFuser;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.SalesAmountFuser;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.SalesCurrencyFuser;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.YearFoundedFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
@@ -95,6 +100,13 @@ public class DataFusion_Main {
 		// add attribute fusers
 		strategy.addAttributeFuser(Company.NAME, new NameFuser(), new NameEvaluationRule());
 		strategy.addAttributeFuser(Company.COUNTRY, new CountryFuser(), new CountryEvaluationRule());
+		strategy.addAttributeFuser(Company.INDUSTRY, new IndustryFuser(), new NameEvaluationRule());
+		strategy.addAttributeFuser(Company.SALES_AMOUNT, new SalesAmountFuser(), new NameEvaluationRule());
+		strategy.addAttributeFuser(Company.SALES_CURRENCY, new SalesCurrencyFuser(), new NameEvaluationRule());
+		strategy.addAttributeFuser(Company.CURRENT_EMPLOYEES, new EmployeesFuser(), new NameEvaluationRule());
+		strategy.addAttributeFuser(Company.YEAR_FOUNDED, new YearFoundedFuser(), new NameEvaluationRule());
+
+		
 		
 		// create the fusion engine
 		DataFusionEngine<Company, Attribute> engine = new DataFusionEngine<>(strategy);
