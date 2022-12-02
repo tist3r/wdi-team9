@@ -45,9 +45,9 @@ public class DataFusion_Main {
 		
 		
 		ds1.setScore(1.0);
-		ds2.setScore(2.0);
-		ds3.setScore(3.0);
-		ds4.setScore(4.0);
+		ds2.setScore(1.0);
+		ds3.setScore(2.0); //forbes has the highest credibility for sales value and thus gets the highest score
+		ds4.setScore(1.0);
 
 		
 		java.time.format.DateTimeFormatter formatter = new DateTimeFormatterBuilder()

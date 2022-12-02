@@ -37,7 +37,7 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> imp
         try{
             company.setYearFounded(Integer.parseInt(getValueFromChildElement(node, "Year_founded")));
         } catch (NumberFormatException e){
-            company.setYearFounded(null);
+            company.setYearFounded(0);
         }
         
         company.setSizeRange(getValueFromChildElement(node, "Size_range"));
@@ -46,7 +46,7 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> imp
         company.setLinkedinUrl(getValueFromChildElement(node, "Linkedin_url"));
 
         try{
-            company.setCurrEmpEst(Integer.parseInt(getValueFromChildElement(node, "Current_employee_est")));
+            company.setCurrEmpEst((double) Integer.parseInt(getValueFromChildElement(node, "Current_employee_est")));
         } catch (NumberFormatException e){
             company.setCurrEmpEst(null);
         }
