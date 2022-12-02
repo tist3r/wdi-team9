@@ -34,17 +34,13 @@ public class DataFusion_Main {
 	public static void main(String[] args) throws Exception {
 		
 		FusibleDataSet<Company, Attribute> ds1 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/dataworld_ts.xm1"), Constants.RECORD_PATH, ds1);
-		ds1.printDataSetDensityReport();
+		new CompanyXMLReader().loadFromXML (new File("data/input/dataworld_ts.xml"), Constants.RECORD_PATH, ds1);
 		FusibleDataSet<Company, Attribute> ds2 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/dbpedia.xm1"), Constants.RECORD_PATH, ds2);
-		ds2.printDataSetDensityReport();
+		new CompanyXMLReader().loadFromXML (new File("data/input/dbpedia.xml"), Constants.RECORD_PATH, ds2);
 		FusibleDataSet<Company, Attribute> ds3 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/Forbes_results.xm1"), Constants.RECORD_PATH, ds3);
-		ds3.printDataSetDensityReport();
+		new CompanyXMLReader().loadFromXML (new File("data/input/Forbes_results.xml"), Constants.RECORD_PATH, ds3);
 		FusibleDataSet<Company, Attribute> ds4 = new FusibleHashedDataSet<>();
-		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xm1"), Constants.RECORD_PATH, ds3);
-		ds3.printDataSetDensityReport();
+		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xml"), Constants.RECORD_PATH, ds4);
 		
 		
 		ds1.setScore(1.0);
