@@ -9,6 +9,7 @@ import java.util.Locale;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.CountryEvaluationRule;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.NameEvaluationRule;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.CountryFuser;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.IndustryFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.NameFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLFormatter;
@@ -95,6 +96,10 @@ public class DataFusion_Main {
 		// add attribute fusers
 		strategy.addAttributeFuser(Company.NAME, new NameFuser(), new NameEvaluationRule());
 		strategy.addAttributeFuser(Company.COUNTRY, new CountryFuser(), new CountryEvaluationRule());
+		strategy.addAttributeFuser(Company.INDUSTRY, new IndustryFuser(), new NameEvaluationRule());
+
+		
+		
 		
 		// create the fusion engine
 		DataFusionEngine<Company, Attribute> engine = new DataFusionEngine<>(strategy);
