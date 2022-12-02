@@ -318,6 +318,7 @@ public class Company extends AbstractRecord<Attribute>{
     public static final Attribute NAME = new Attribute("Name");
 	public static final Attribute URL = new Attribute("URL");
 	public static final Attribute COUNTRY = new Attribute("COUNTRY");
+	public static final Attribute INDUSTRY = new Attribute("INDUSTRY");
 
     @Override
 	public boolean hasValue(Attribute attribute) {
