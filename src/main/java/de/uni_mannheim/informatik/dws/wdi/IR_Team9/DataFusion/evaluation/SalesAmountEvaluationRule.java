@@ -10,11 +10,14 @@ import de.uni_mannheim.informatik.dws.winter.similarity.string.TokenizingJaccard
 
 public class SalesAmountEvaluationRule extends EvaluationRule <Company, Attribute> {
 	
-	SimilarityMeasure<String> sim = new TokenizingJaccardSimilarity();
-	
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
-		return sim.calculate(String.valueOf(record1.getAssetAmount()), String.valueOf(record2.getAssetAmount())) == 1.0;
+
+		double lowerBound = record1.getSalesAmount()*0.95;
+		double upperBound = record1.getSalesAmount()*1.05;
+
+
+		return lowerBound <= record2.getSalesAmount() && record2.getSalesAmount() < upperBound;
 	}
 
 	@Override
