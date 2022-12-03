@@ -7,6 +7,7 @@ import de.uni_mannheim.informatik.dws.winter.model.io.XMLFormatter;
 
 public class CompanyXMLFormatter extends XMLFormatter<Company>{
 
+	
 	@Override
 	public Element createRootElement(Document doc) {
 		return doc.createElement("companies");
@@ -24,8 +25,13 @@ public class CompanyXMLFormatter extends XMLFormatter<Company>{
 		company.appendChild(createTextElementWithProvenance("country",
 				record.getCountry(),
 				record.getMergedAttributeProvenance(Company.COUNTRY), doc));
-
-
+		company.appendChild(createTextElement("industry",
+				record.getIndustries(),
+				record.getMergedAttributeProvenance(Company.INDUSTRY), doc));
+		company.appendChild(createTextElementWithProvenance("sales_amount",
+				record.getSalesAmount(),
+				record.getMergedAttributeProvenance(Company.SALES_AMOUNT), doc));
+		
 		return company;
 	}
 	
@@ -34,6 +40,18 @@ public class CompanyXMLFormatter extends XMLFormatter<Company>{
 		Element elem = createTextElement(name, value, doc);
 		elem.setAttribute("provenance", provenance);
 		return elem;
+	}
+	
+	protected Element createTextElement(Company comp, Document doc) {
+		Element company = doc.createElement("Industries");
+		company.setAttribute("provenance",
+				comp.getMergedAttributeProvenance(Company.INDUSTRY));
+
+		for (String a : comp.getIndustries()) {
+			company.appendChild(createTextElement("Industry", a, doc));
+		}
+
+		return company;
 	}
 
 }
