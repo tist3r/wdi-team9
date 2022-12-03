@@ -293,25 +293,34 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 
 \begin{table}[]
 	\small
-	\begin{tabular}{lrcrrrrc}
-		DS Comb + Thresh                 & \multicolumn{1}{c}{MR} & B\textsuperscript{$\star$}          & \multicolumn{1}{c}{P} & \multicolumn{1}{c}{R} & \multicolumn{1}{c}{F1} & \multicolumn{1}{c}{\#Corr} & Time           \\\hline
-		dbpedia+kaggle\_f(0,9)           & 21                     & S          & 1,00                  & 0,83                  & 0,91                   & 3830                       & 14:53          \\
-		dbpedia+kaggle\_f(0,875)         & 27                     & S          & 0,94                  & 0,91                  & 0,93                   & 6208                       & 16:56          \\
-		dbpedia+kaggle\_f(0,85)          & 21                     & S          & 0,97                  & 0,93                  & 0,95                   & 5677                       & 14:53          \\
-		\textit{dbpedia+kaggle\_f(0,85)} & \textit{2}             & \textit{S} & \textit{1,00}         & \textit{0,46}         & \textit{0,63}          & \textit{2549}              & \textit{05:10} \\
-		dbpedia+kaggle\_f(0,85)          & 21                     & SNB(20)    & 1,00                  & 0,21                  & 0,35                   & 839                        & 00:48          \\
-		dbpedia+kaggle\_f(0,85)          & 21                     & SNB(100)   & 1,00                  & 0,50                  & 0,67                   & 2292                       & 03:57          \\
-		dbpedia+kaggle\_f(0,85)          & 21                     & S (3g)     & 0,98                  & 0,91                  & 0,95                   & 4966                       & 18:40          \\\hdashline
-		dw+kaggle\_f(0,9)                & 5                      & S          & 0,83                  & 0,77                  & 0,80                   & 5193                       & 03:20          \\
-		dw+kaggle\_f(0,875)              & 5                      & S          & 0,81                  & 0,81                  & 0,81                   & 5711                       & 03:20          \\
-		dw+kaggle\_f(0,85)      & 27           & S & 0,81        & 0,90         & 0,85          & 4553             & 04:32 \\
-		\textit{dw+kaggle\_f(0,85) }              & \textit{15}                   & \textit{S}         & \textit{1,00 }                 & \textit{0,13 }                 & \textit{0,23   }                & \textit{1575}                       & \textit{04:27}          \\\hdashline
-		forbes+kaggle\_f(0,9)            & 5                      & S          & 0,95                  & 0,91                  & 0,93                   & 5569                       & 04:08          \\
-		forbes+kaggle\_f(0,875)          & 21                     & S          & 0,94                  & 0,91                  & 0,92                   & 3289                       & 06:46          \\
-		forbes+kaggle\_f(0,85)  & 26          & S & 0,91         & 0,91         & 0,91          & 6119              & 07:39 \\
-		\textit{forbes+kaggle\_f(0,85)  }         & \textit{15}                     & \textit{S}          & \textit{0,86}                  &\textit{0,09}                 &\textit{0,16}                   & \textit{1651}                       & \textit{04:16}       
+	\begin{tabular}{llcllllll}
+		\textbf{DS Comb   + Thresh} & \multicolumn{1}{c}{\textbf{MR}} & \textbf{B\textsuperscript{$\star$}} & \multicolumn{1}{c}{\textbf{P}} & \multicolumn{1}{c}{\textbf{R}} & \multicolumn{1}{c}{\textbf{F1}} & \multicolumn{1}{c}{\textbf{\#Corr}} & \multicolumn{1}{c}{\textbf{Time}} & \multicolumn{1}{c}{\textbf{RR\textsuperscript{$\bullet$}}} \\\hline
+		dbpedia+kaggle\_f(0,9)      & 27                              & S          & 0,93                           & 0,92                           & 0,93                            & 5643                                & 16:56                             & 0,9937                          \\
+		\rowcolor[HTML]{FFFFCC} 
+		dbpedia+kaggle\_f(0,875)    & 29                              & S          & 0,98                           & 0,91                           & 0,94                            & 3966                                & 17:57                             & 0,9937                          \\
+		dbpedia+kaggle\_f(0,85)     & 21                              & S          & 0,93                           & 0,96                           & 0,95                            & 5677                                & 14:53                             & 0,9937                          \\
+		\rowcolor[HTML]{FCCCC8} 
+		dbpedia+kaggle\_f(0,85)     & \multicolumn{4}{l}{\cellcolor[HTML]{FCCCC8}2}                                                                  & 0,74                            & 2549                                & 05:10                             & 0,9937                          \\
+		\rowcolor[HTML]{DDEBF7} 
+		dbpedia+kaggle\_f(0,875)    & 21                              & SNB(20)    & 1,00                           & 0,17                           & 0,30                            & 755                                 & 00:48                             & 0,9997                          \\
+		\rowcolor[HTML]{DDEBF7} 
+		dbpedia+kaggle\_f(0,875)    & 21                              & SNB(100)   & 0,98                           & 0,45                           & 0,61                            & 2019                                & 03:57                             & 0,9984                          \\
+		\rowcolor[HTML]{DDEBF7} 
+		dbpedia+kaggle\_f(0,875)    & 21                              & S (4g)     & 0,98                           & 0,89                           & 0,93                            & 4437                                & 18:40                             & 0,9915                          \\
+		\rowcolor[HTML]{FFFFCC} 
+		dw+kaggle\_f(0,9)           & 29                              & S          & 0,94                           & 0,73                           & 0,83                            & 2086                                & 05:54                             & 0,9941                          \\
+		dw+kaggle\_f(0,875)         & 29                              & S          & 0,92                           & 0,80                           & 0,86                            & 2493                                & 05:54                             & 0,9941                          \\
+		dw+kaggle\_f(0,85)          & 26                              & S          & 0,91                           & 0,88                           & 0,89                            & 4197                                & 05:22                             & 0,9941                          \\
+		\rowcolor[HTML]{FCCCC8} 
+		dw+kaggle\_f(0,85)          & 15                              & S          & 1,00                           & 0,36                           & 0,52                            & 1575                                & 04:27                             & 0,9941                          \\
+		\rowcolor[HTML]{FFFFCC} 
+		forbes+kaggle\_f(0,9)       & 26                              & S          & 0,94                           & 0,83                           & 0,88                            & 2712                                & 07:58                             & 0,9936                          \\
+		forbes+kaggle\_f(0,875)     & 21                              & S          & 0,91                           & 0,84                           & 0,87                            & 3289                                & 05:16                             & 0,9936                          \\
+		forbes+kaggle\_f(0,85)      & 24                              & S          & 0,94                           & 0,86                           & 0,90                            & 3254                                & 06:30                             & 0,9936                          \\
+		\rowcolor[HTML]{FCCCC8} 
+		forbes+kaggle\_f(0,85)      & 7                               & S          & 1,00                           & 0,01                           & 0,03                            & 1549                                & 12:24                             & 0,9936                         
 	\end{tabular}
-\caption[Matching Rule Performance Overview (Excerpt)]{Matching Rule Performance Overview (Excerpt) \medspace\small Italic rows refer to the worst MR. \textsuperscript{$\star$}S (Standard Blocker) - 3 first letters of each token, S(3g) - 3grams, SNB(n) (Sorted Neighborhood Blocker).}
+\caption[Matching Rule and Blocker Performance Overview (Excerpt)]{Matching Rule and Blocker Performance Overview (Excerpt) \medspace\small Yellow: Correspondences used for data fusion. Red: Worst MR at Threshold 0.85. Blue: Blocker comparison. \textsuperscript{$\star$}S (Standard Blocker) - 3 first letters of each token, S(4g) - 4grams, SNB(n) (Sorted Neighborhood Blocker). \textsuperscript{$\bullet$}Reduction Ratio.}
 \label{tab:mr-performance}
 
 \end{table}
@@ -322,11 +331,7 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 \subsection{Blockers}
 \label{sec:blockers}
 
-We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options: \begin{enumerate}
-	\item First letter of the company name.
-	\item Qgrams. \cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient.
-	\item N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
-\end{enumerate}
+We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options. (1) First letter of the company name, (2) Qgrams(\cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient), (3) N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
 
 While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, the standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice in terms of efficiency while missing few matches during blocking. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and catched pairs. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that several blocks contained more than 100 blocked elements were present. The first 3 letters of each token generated fewer blocked pairs while still bringing potential pairs together. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
 

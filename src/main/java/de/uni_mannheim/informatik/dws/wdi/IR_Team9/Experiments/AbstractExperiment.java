@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.MATCHING_RULES;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Sandbox.EvaluateAgainstNewGs;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Sandbox.GroupSizeDist;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyCSVCorrespondenceFormatter;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.CompanyXMLReader;
@@ -277,7 +278,7 @@ public abstract class AbstractExperiment {
             this.noCorrespondencesTop1 = correspondencesTop1.size();
     
             companyCorrWriter.writeCSV(new File(Constants.getExperimentCompanyCorrPathTop1(ds1Name, ds2Name, experimentID)), correspondencesTop1);
-            basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)), correspondencesTop1);
+            basicCorrWriter.writeCSV(new File(Constants.getExperimentBasicCorrPathTop1(ds1Name, ds2Name, experimentID)), correspondencesTop1);
 
     
             this.evaluateMatching(correspondencesTop1, "Top1", experimentID);
@@ -343,12 +344,25 @@ public abstract class AbstractExperiment {
     }
 
 
+    public void evaluateBlocking(){
+
+    }
+
     public Processable<Correspondence<Company, Attribute>> runExperiment() throws Exception{
+        return this.runExperiment(false);
+    }
+
+    public Processable<Correspondence<Company, Attribute>> runExperiment(boolean evaluateBlocking) throws Exception{
+        if(evaluateBlocking){
+            logger.info("Evaluating Blocker");
+            Processable<Correspondence<Company, Attribute>> blockedPairs = engine.runBlocking(this.ds1, this.ds2, null, this.blocker);
+            this.perfTest = evaluator.evaluateMatching(blockedPairs, this.gsTest);
+            System.out.println(this.perfTest.getRecall());
+            logger.info("Finished Blocker Evaluation");
+        }
+        
         //make sure everything is run in the correct order
         this.orderAndValidateAllThreshs();
-
-        this.rule.activateDebugReport("data/output/debugResultsMatchingRule.csv", 5000, this.gsTrain);
-
 
         if(this.loadedDatasets && addedBlocker && addedMatchingRule){
             logger.info("Starting identity resolution for " + this.toString());
@@ -452,7 +466,7 @@ public abstract class AbstractExperiment {
             logger.info("Writing group size dist");
             CorrespondenceSet<Company, Attribute> cSet = new CorrespondenceSet<Company, Attribute>();
 
-            cSet.loadCorrespondences(new File(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
+            cSet.loadCorrespondences(new File(Constants.getExperimentCompanyCorrPath(ds1Name, ds2Name, experimentID)),this.ds1, this.ds2);
 
             logger.info("Writing group size dist to " + Constants.getGroupSizeDistPath(experimentID, flag));
             cSet.writeGroupSizeDistribution(new File(Constants.getGroupSizeDistPath(experimentID, flag)));
@@ -466,7 +480,9 @@ public abstract class AbstractExperiment {
 
     public static void reevaluateMatching(String ds1Name, String ds2Name, String eID, int blockerID, int mrID, String thresh) throws Exception{
         Experiment e = new Experiment(ds1Name, ds2Name,blockerID,mrID,thresh);
-        Processable<Correspondence<Company, Attribute>> corr = EvaluateAgainstNewGs.loadCorrespondences(Paths.get(Constants.getExperimentBasicCorrPath(ds1Name, ds2Name, eID)));
+        //GroupSizeDist.correctCorrespondences(ds1Name, ds2Name, eID);
+
+        Processable<Correspondence<Company, Attribute>> corr = EvaluateAgainstNewGs.loadCorrespondences(Paths.get(Constants.getExperimentCompanyCorrPath(ds1Name, ds2Name, eID)));
         e.evaluateMatching(corr, "All", eID);
         ExperimentWriter.appendToExperimentCSV(e, "data/output/experiments/reevaluated_log.csv");
         e.cacheDatasets();

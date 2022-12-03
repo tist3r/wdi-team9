@@ -1,6 +1,7 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.Sandbox;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,7 +62,7 @@ public class EvaluateAgainstNewGs {
             int blockerID = Integer.parseInt(m.group(2));
             String thresh = m.group(3);
 
-            if(thresh.matches("[2-3]{1}")|| mrID == 3 || mrID == 4){
+            if(thresh.matches("[2-3]{1}")|| mrID == 3 || mrID == 4 || thresh.equals("5")){
                 return;
             }
 
@@ -78,6 +79,7 @@ public class EvaluateAgainstNewGs {
      * @throws Exception
      */
     public static Processable<Correspondence<Company, Attribute>> loadCorrespondences(Path p) throws Exception{
+        //fix correspondence files
         Processable<Correspondence<Company, Attribute>> c = new ProcessableCollection<>();
 
         Company c1, c2;
@@ -85,11 +87,17 @@ public class EvaluateAgainstNewGs {
         String id1, id2;
         double sim;
         Correspondence<Company,Attribute> corr;
-        try(CSVReader reader = new CSVReader(Files.newBufferedReader(p))){
+        try(CSVReader reader = new CSVReader(Files.newBufferedReader(p, StandardCharsets.ISO_8859_1))){
             while((line = reader.readNext())!=null){
                 id1 = line[0];
                 id2 = line[1];
-                sim = Double.parseDouble(line[2]);
+
+                try{
+                    sim = Double.parseDouble(line[2]);
+                }catch(NumberFormatException e){
+                    sim = Double.parseDouble(line[2].replace(",", "."));
+                }
+                
 
                 c1 = new Company(id1, "corr");
                 c2 = new Company(id2, "corr");
@@ -121,8 +129,12 @@ public class EvaluateAgainstNewGs {
         // AbstractExperiment.reevaluateMatching("forbes", "kaggle_f", "15_10_87_forbes_kaggle_f");
         //parseExperiment(Paths.get("data/output/experiments/15_10_87_forbes_kaggle_f"));
 
-        reevaluateCorrespondences("dbpedia", "kaggle_f");
-        reevaluateCorrespondences("dw", "kaggle_f");
+        //reevaluateCorrespondences("dbpedia", "kaggle_f");
+        //reevaluateCorrespondences("dw", "kaggle_f");
+        //reevaluateCorrespondences("forbes", "kaggle_f");
+
+
+        parseExperimentAndReevaluate(Paths.get("data/output/experiments/27_10_85_dbpedia_kaggle_f"));
 
 
        

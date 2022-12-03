@@ -40,14 +40,14 @@ public class LogEvaluator {
     }
 
     public static void reformatCSV() throws IOException{
-        String filename = "data/output/experiments/experiment_log_new.csv";
-        String filename_out = "data/output/experiments/experiment_log_new_reformatted.csv";
+        String filename = "data/output/experiments/27_10_85_dbpedia_kaggle_f/dbpedia_kaggle_f_corr_w_names.csv";
+        String filename_out = "data/output/experiments/27_10_85_dbpedia_kaggle_f/dbpedia_kaggle_f_corr_w_names_new.csv";
         Set<String[]> entries = new HashSet<>();
         String[] firstLine;
 
         String[] line;
 
-        try(CSVReader r = new CSVReader(Files.newBufferedReader(Paths.get(filename), StandardCharsets.UTF_8),';')){
+        try(CSVReader r = new CSVReader(Files.newBufferedReader(Paths.get(filename), StandardCharsets.ISO_8859_1),';')){
             firstLine = r.readNext();
 
             while((line = r.readNext())!=null){
@@ -64,8 +64,8 @@ public class LogEvaluator {
 
 
     public static void main(String[] args) throws Exception {
-        removeDuplicates();
-        //reformatCSV();
+        //removeDuplicates();
+        reformatCSV();
     }
     
 }

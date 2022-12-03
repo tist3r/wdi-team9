@@ -618,7 +618,12 @@ public class MATCHING_RULES {
     }
 
     public static MatchingRule<Company, Attribute> getMR29(double thresh){
+       
+
         LinearCombinationMatchingRule<Company, Attribute> rule = new LinearCombinationMatchingRule<>(thresh);
+
+        //rule.activateDebugReport("data/logs/debugResultsMatchingRule29.csv", 5000);
+
         try{
             rule.addComparator(new CompanyNameComparatorJaccardNgram(
                 3,
