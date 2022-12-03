@@ -6,18 +6,19 @@ import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.similarity.SimilarityMeasure;
+import de.uni_mannheim.informatik.dws.winter.similarity.string.LevenshteinSimilarity;
 import de.uni_mannheim.informatik.dws.winter.similarity.string.TokenizingJaccardSimilarity;
 
 
 public class CountryEvaluationRule extends EvaluationRule <Company, Attribute> {
 
-	SimilarityMeasure<String> sim = new TokenizingJaccardSimilarity();
+	SimilarityMeasure<String> sim = new LevenshteinSimilarity();
 
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
 		// the title is correct if all tokens are there, but the order does not
 		// matter
-		return sim.calculate(record1.getCountry(), record2.getCountry()) == 1.0;
+		return sim.calculate(record1.getCountry(), record2.getCountry()) >= 0.95;
 	}
 
 	/* (non-Javadoc)

@@ -237,7 +237,7 @@ The company name was the sole variable we could rely on during the identity reso
  Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). Optionally, frequent tokens (FTs) could be removed. Moreover, different optional post-processing capabilities were implemented. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function%
 \footnote{To review the "boosting" functions please refer to Comparators.AbstractT9Comparator.java [double boost(double)]}%
  above a threshold of 0.8 and penalized below. The idea behind this is that if a similarity measure reaches a certain threshold a match becomes more likely although the score might be below the final matching threshold. To increase the probability for this match to be included the similarity should be increased. Conversly, if the similarity is below a certain threshold a match becomes more unlikely and the similarity score should be further penalized to have a higher impact on the final score. For example consider C5 for "Royal Dutch Shell" and "Shell" with a similarity of 0.67. One might say that this consitutes a high enough similarity for this comparator to be considered a match. Thus, one could set a boosting threshold of e.g. 0.6 meaning that $(sim - 0.6)^3/2*boostFactor$\footnote{This example considers the X3 boost function. Others include root-like or exponential functions.} would be added on top of the similarity. The boosting functions are designed to have a small impact close to the threshold and a bigger impact further away. 
-An IR was conducted for each dataset against the \textit{kaggle} dataset, because it has the largest amount of entities and is thus likely to yield a sufficient amount of correspondences as required.
+An IR was conducted for each dataset against the \textit{kaggle\_f} dataset, because it has the largest amount of entities and is thus likely to yield a sufficient amount of correspondences as required.
 
 
 \begin{table}[t]
@@ -245,11 +245,11 @@ An IR was conducted for each dataset against the \textit{kaggle} dataset, becaus
 	\begin{tabular}{lllcc}
 		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   \\
 		ID & Similarity   measure       & Parameters           & \multicolumn{1}{l}{PWL\textsuperscript{1}} & \multicolumn{1}{l}{Rm FT\textsuperscript{2}} \\\hline
-		1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)              \\
-		2  & Jaccard on tokens          &                      & *                       & (\checked)                       \\
-		3  & Levensthein                &                      & \checked & (\checked)                       \\
-		4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       \\
-		5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -                      
+		C1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)              \\
+		C2  & Jaccard on tokens          &                      & *                       & (\checked)                       \\
+		C3  & Levensthein                &                      & \checked & (\checked)                       \\
+		C4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       \\
+		C5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -                      
 	\end{tabular}
 
 \caption[Comparator Overview]%
@@ -259,6 +259,7 @@ An IR was conducted for each dataset against the \textit{kaggle} dataset, becaus
 \end{table}
 
 \subsubsection{Major Challenge - Named Entity Matching}
+\label{sec:challenges}
 
 The matching of company names has been a challenge in our project due to their "noisyness". We found ourselves facing similar challenges as the Dutch Central Bank \footnote{https://medium.com/dnb-data-science-hub/company-name-matching-6a6330710334}. %TODO make proper bibliographic reference
 As with named entities in general every data source has a different level of detail, different data quality, and use of abbreviations among others. Regarding this, our matching rules had to cater to the following challenges:
@@ -277,15 +278,18 @@ In sum, we adressed these outlined challenges by combining comparators with diff
 
 \subsubsection{Evaluation of Matching Rules}
 
-We evaluated local matching strategies at the thresholds 0.7, 0.8, 0.85, 0.875, and 0.9. While the precision of the matching rules usually increased with higher thresholds, the recall usually decreased%
+We evaluated the thresholds 0.7, 0.8, 0.85, 0.875, and 0.9 for local matching strategies, becuase our analysis indicated that \textit{dbpedia} and \textit{kaggle\_f} included duplicated. While the precision of the matching rules usually increased with higher thresholds, the recall usually decreased%
 \footnote{While the sample from table \ref{tab:mr-performance} does not reflect this trend, it was clearly visible in the over 400 experiments we conducted.}.%
-This is intuitive since the easy matches have high similarity scores, while more ambigous matches although having a highish similarity, fall behind the easy matches and are thus excluded at higher thresholds. The trade-off then depends on the use-case at hand. Considering F1-Scores, the matching threshold of 0.85 usually outperformed the other thresholds.
+This is intuitive since the easy matches have high similarity scores, while more ambigous matches although having a highish similarity, fall behind the easy matches and are thus excluded at higher thresholds. An exception were the learned matching rules, that changed their model at each threshold. The trade-off then depends on the use-case at hand. Considering F1-Scores, the matching threshold of 0.85 usually outperformed the other thresholds. However, considering the following step of data fusion, we favored higher precision over recall, which in turn was not always the MR with the highest F1-Score.
 
-In general the F1-Scores of the \textit{dw - kaggle\_f} IRs fell behind the other IRs. At the threshold of 0.9 the simple MR5 outperformed other more complex matching rules across all datasets. This is in line with the above argumentation. Table \ref{tab:mr-performance} outlines the results for the top matching rules at 3 thresholds, as well as the worst matching rule at the 0.85 threshold.
+In general the F1-Scores of the \textit{dw - kaggle\_f} IRs fell behind the other IRs and \textit{dbpedia -kaglle\_f} yielded the best results. Simple MRs (i.e. MRs that might only consider Jaccard N-Grams or Levensthein similarity) were not able to outperform more complex matching rules that made use of a combination of the different similarity measures outlined in \ref{sec:challenges}. For example MR2 (dbpedia+kaggle\_f(0,85)) which consideres Jaccard 3-grams without removing FT achieves a high precision of 1 but lacks behind the other MR in terms of recall and at a threshold of 0.85 is the worst MR for the particular dataset combination. 
 
-MR21(LC), MR26 (pruned-tree), MR27 (LC) all combine 4 similarity measures with different strenghts and pre/post-processing options. They rely on a combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o FT, as well as a LCS (C4) and RogueN on Tokens (C5). The latter two are also penalized or boosted based on a threshold.
+The top performing matching rules MR21 (LC), 26(pruned tree), 27(LC), 29(LC) all combine all but C2 in different ways.\footnote{LC: Linear Combination}%
+They make use of different weights and pre-and post-processing options.
 
-MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequent tokens. As described earlier, this is the most successfull matching rule at a threshold of 0.9. MR15 (the worst at the threshold 0.85) is a combination of MR5 with additionally considering Jaccard-on-Tokens(C2) with FT included. While the intuition was to capture the excluded frequent tokens fromt the other metrics with this similarity metric the problem is that the Jaccard-on-Tokens penalizes missing/non-overlapping tokens too strongly considering the few tokens in company names. This also led to the implementation of C5 which is a little bit more relaxed in this regard.
+For example, MR26  is a pruned tree algorithm that removes FT for C1 and C3. All Comparators have a post-processing threshold between 0.3 and 0.4 where they are reduced to zero and make use of different boosting schemes. C4 and C5 have lower boosting thresholds because their similarity score might be lower, even if encountering a true positive. In table \ref{tab:mr-performance} can be seen that MR31 which is MR26 without post-processing performs worse, which speaks for the implemented post-processing options.
+
+The other top performing MRs tested different post-processing options and different comparator weights. A possible improvement in this area could be a more systematic evaluation of the different post-processing options that were implemented to validate their effectiveness. Also learning these parameter settings might be an option.
 
 
 
@@ -294,53 +298,39 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 	\small
 	\begin{tabular}{llcllllll}
 		\textbf{DS Comb   + Thresh} & \multicolumn{1}{c}{\textbf{MR}} & \textbf{B\textsuperscript{$\star$}} & \multicolumn{1}{c}{\textbf{P}} & \multicolumn{1}{c}{\textbf{R}} & \multicolumn{1}{c}{\textbf{F1}} & \multicolumn{1}{c}{\textbf{\#Corr}} & \multicolumn{1}{c}{\textbf{Time}} & \multicolumn{1}{c}{\textbf{RR\textsuperscript{$\bullet$}}} \\\hline
-		dbpedia+kaggle\_f(0,9)      & 27                              & S          & 0,93                           & 0,92                           & 0,93                            & 5643                                & 16:56                             & 0,9937                          \\
+		dbpedia+kaggle\_f(0,9)   & 27 & S        & 0,93 & 0,92 & 0,93 & 5643 & 16:56 & 0,9937 \\
 		\rowcolor[HTML]{FFFFCC} 
-		dbpedia+kaggle\_f(0,875)    & 29                              & S          & 0,98                           & 0,91                           & 0,94                            & 3966                                & 17:57                             & 0,9937                          \\
-		dbpedia+kaggle\_f(0,85)     & 21                              & S          & 0,93                           & 0,96                           & 0,95                            & 5677                                & 14:53                             & 0,9937                          \\
+		dbpedia+kaggle\_f(0,875) & 29 & S        & 0,98 & 0,91 & 0,94 & 3966 & 17:57 & 0,9937 \\
+		dbpedia+kaggle\_f(0,85)  & 21 & S        & 0,93 & 0,96 & 0,95 & 5677 & 14:53 & 0,9937 \\
 		\rowcolor[HTML]{FCCCC8} 
-		dbpedia+kaggle\_f(0,85)     & 2                               & S          & 1,00                           & 0,59                           & 0,74                            & 2549                                & 05:10                             & 0,9937                          \\
-		
+		dbpedia+kaggle\_f(0,85)  & 2  & S        & 1,00 & 0,59 & 0,74 & 2549 & 05:10 & 0,9937 \\
 		\rowcolor[HTML]{DDEBF7} 
-		dbpedia+kaggle\_f(0,875)    & 21                              & SNB(20)    & 1,00                           & 0,17                           & 0,30                            & 755                                 & 00:48                             & 0,9997                          \\
+		dbpedia+kaggle\_f(0,875) & 21 & SNB(20)  & 1,00 & 0,17 & 0,30 & 755  & 00:48 & 0,9997 \\
 		\rowcolor[HTML]{DDEBF7} 
-		dbpedia+kaggle\_f(0,875)    & 21                              & SNB(100)   & 0,98                           & 0,45                           & 0,61                            & 2019                                & 03:57                             & 0,9984                          \\
+		dbpedia+kaggle\_f(0,875) & 21 & SNB(100) & 0,98 & 0,45 & 0,61 & 2019 & 03:57 & 0,9984 \\
 		\rowcolor[HTML]{DDEBF7} 
-		dbpedia+kaggle\_f(0,875)    & 21                              & S (4g)     & 0,98                           & 0,89                           & 0,93                            & 4437                                & 18:40                             & 0,9915                          \\
+		dbpedia+kaggle\_f(0,875) & 21 & S (4g)   & 0,98 & 0,89 & 0,93 & 4437 & 18:40 & 0,9915 \\\hline\hline
 		\rowcolor[HTML]{FFFFCC} 
-		dw+kaggle\_f(0,9)           & 29                              & S          & 0,94                           & 0,73                           & 0,83                            & 2086                                & 05:54                             & 0,9941                          \\
-		dw+kaggle\_f(0,875)         & 29                              & S          & 0,92                           & 0,80                           & 0,86                            & 2493                                & 05:54                             & 0,9941                          \\
-		dw+kaggle\_f(0,85)          & 26                              & S          & 0,91                           & 0,88                           & 0,89                            & 4197                                & 05:22                             & 0,9941                          \\
+		dw+kaggle\_f(0,9)        & 29 & S        & 0,94 & 0,73 & 0,83 & 2086 & 05:54 & 0,9941 \\
+		dw+kaggle\_f(0,875)      & 29 & S        & 0,92 & 0,80 & 0,86 & 2493 & 05:54 & 0,9941 \\
+		dw+kaggle\_f(0,85)       & 26 & S        & 0,91 & 0,88 & 0,89 & 4197 & 05:22 & 0,9941 \\
 		\rowcolor[HTML]{FCCCC8} 
-		dw+kaggle\_f(0,85)          & 15                              & S          & 1,00                           & 0,36                           & 0,52                            & 1575                                & 04:27                             & 0,9941                          \\
+		dw+kaggle\_f(0,85)       & 15 & S        & 1,00 & 0,36 & 0,52 & 1575 & 04:27 & 0,9941 \\\hline\hline
 		\rowcolor[HTML]{FFFFCC} 
-		forbes+kaggle\_f(0,9)       & 26                              & S          & 0,94                           & 0,83                           & 0,88                            & 2712                                & 07:58                             & 0,9936                          \\
-		forbes+kaggle\_f(0,875)     & 21                              & S          & 0,91                           & 0,84                           & 0,87                            & 3289                                & 05:16                             & 0,9936                          \\
-		forbes+kaggle\_f(0,85)      & 24                              & S          & 0,94                           & 0,86                           & 0,90                            & 3254                                & 06:30                             & 0,9936                          \\
+		forbes+kaggle\_f(0,9)    & 26 & S        & 0,94 & 0,83 & 0,88 & 2712 & 07:58 & 0,9936 \\
+		\rowcolor[HTML]{E7E6E6} 
+		forbes+kaggle\_f(0,9)    & 31 \textsuperscript{$\divideontimes$} & S        & 0,93 & 0,73 & 0,82 & 3163 & 07:18 & 0,9936 \\
+		forbes+kaggle\_f(0,875)  & 21 & S        & 0,91 & 0,84 & 0,87 & 3289 & 05:16 & 0,9936 \\
+		forbes+kaggle\_f(0,85)   & 24 & S        & 0,94 & 0,86 & 0,90 & 3254 & 06:30 & 0,9936 \\
 		\rowcolor[HTML]{FCCCC8} 
-		forbes+kaggle\_f(0,85)      & 7                               & S          & 1,00                           & 0,01                           & 0,03                            & 1549                                & 12:24                             & 0,9936                         
+		forbes+kaggle\_f(0,85)   & 7  & S        & 1,00 & 0,01 & 0,03 & 1549 & 12:24 & 0,9936                       
 	\end{tabular}
-\caption[Matching Rule and Blocker Performance Overview (Excerpt)]{Matching Rule and Blocker Performance Overview (Excerpt) \medspace\small Yellow: Correspondences used for data fusion. Red: Worst MR at Threshold 0.85. Blue: Blocker comparison. \textsuperscript{$\star$}S (Standard Blocker) - 3 first letters of each token, S(4g) - 4grams, SNB(n) (Sorted Neighborhood Blocker). \textsuperscript{$\bullet$}Reduction Ratio.}
+\caption[Matching Rule and Blocker Performance Overview (Excerpt)]{Matching Rule and Blocker Performance Overview (Excerpt) \medspace\small Yellow: Correspondences used for data fusion. Red: Worst MR at Threshold 0.85. Blue: Blocker comparison. \textsuperscript{$\star$}S (Standard Blocker) - 3 first letters of each token, S(4g) - 4grams, SNB(n) (Sorted Neighborhood Blocker). \textsuperscript{$\bullet$}Reduction Ratio. \textsuperscript{$\divideontimes$}Same as MR26 without post-processing.}
 \label{tab:mr-performance}
 
 \end{table}
+When analyzing the group size distribution of the correspondence sets which are put forward to data fusion, several large groups can be identified (Table \ref{tab:group-size-dist}). While this is no ideal for data fusion, other group size distributions performed even worse, so that we have to use this imperfect correspondence set in the absence of the possibility for global matching.
 
-%TODO parir completeness
-
-%SNB 20 - 31%
-%SNB 100 - 50%
-%4grams 97%
-
-
-\subsection{Blockers}
-\label{sec:blockers}
-
-We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options. (1) First letter of the company name, (2) Qgrams(\cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient), (3) N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
-
-While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, we were able to circumvent this problem by using a standard blocker in combination with the the first 3 letter of each name token as keys, that provided a Pair Completeness of 100\%. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and pair completeness. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that several blocks contained more than 100 blocked elements were present. SNB(20) had a pari completeness of 31\% SNB(100) 50\%, and S(4g) 97\%. The first 3 letters of each token generated fewer blocked pairs while still achieving a pair completeness of 100\%. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
-
-%TODO bring this to evaluation of MR
-The group size distribution shows several groups with a large size, which is not ideal for data fusion. An example from \textit{forbes} is Forbes1081 (First Financial Holding). Containing two FTs, this company matched with many companies that had a first in their name, due to the simple matching rule.
 
 \begin{table}[]
 	\centering
@@ -352,31 +342,62 @@ The group size distribution shows several groups with a large size, which is not
 		26\_10\_90\_forbes\_kaggle\_f               & 787                            & 508                              & 81                                & 9                                  & 1                                  & 0                                & 1                               \\\hline
 		\multicolumn{1}{c}{}                        & \multicolumn{1}{c}{61\%}       & \multicolumn{1}{c}{35\%}         & \multicolumn{1}{c}{4\%}           & \multicolumn{1}{c}{0\%}            & \multicolumn{1}{c}{0\%}            & \multicolumn{1}{c}{0\%}          & \multicolumn{1}{c}{}           
 	\end{tabular}
-\caption[Group Size Distribution of Correspondences used for Data Fusion]{Group Size Distribution of Correspondences used for Data Fusion. \small\textsuperscript{$\star$}Pair Completeness after Blocking}
-\label{tab:group-size-dist}
+	\caption[Group Size Distribution of Correspondences used for Data Fusion]{Group Size Distribution of Correspondences used for Data Fusion. \small\textsuperscript{$\star$}Pair Completeness after Blocking}
+	\label{tab:group-size-dist}
 \end{table}
+
+
+\subsection{Blockers}
+\label{sec:blockers}
+%TODO parir completeness
+%SNB 20 - 31%
+%SNB 100 - 50%
+%4grams 97%
+We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options. (1) First letter of the company name, (2) Qgrams(\cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient), (3) N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
+
+While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, we were able to circumvent this problem by using a standard blocker in combination with the the first 3 letter of each name token as keys, that provided a Pair Completeness of 100\%. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and pair completeness. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that several blocks contained more than 100 blocked elements were present. SNB(20) had a pari completeness of 31\% SNB(100) 50\%, and S(4g) 97\%. The first 3 letters of each token generated fewer blocked pairs while still achieving a pair completeness of 100\%. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
 
 
 \subsection{Analysis of Errors}
 \label{sec:errors}
-29\_10\_87\_dbpedia\_kaggle\_f
+An example of a match with large group size for \textit{dbpedia\_kaggle\_f} is "Shift Inc." that matched with 19 companies named "shift" (similarity of 0.89). However, none of these actually represent a match, when taking urls and founding year into account. We did not incorporate these into the matching rules because they often have missing values.
+A false positive match for example is "Volkswagen Group" and "volkswagen group uk ltd" (0,90). While they represent the same group, the latter represents the uk branch and thus a different entity. This is a problem that we had with other groups as well. Due to the high token overlap oftentimes they are considered a match.
+A missed pair includes "Amrutanjan Healthcare" and "amrutanjan health care limited" (0.84). Because "health" and "care" are separate tokens in the latter one, the token-based comparator had difficulties to get to a high enough similarity.
 
-%"dbpedia_251","Kaggle_85019","0.8393644031634047","Amrutanjan Healthcare","amrutanjan health care limited"
-
-
-
-
-\textbf{dbpedia - kaggle\_f (MR21|0.85). } One error already presents one problem we had to face. "Ams AG" and "ams technologies ag" had a similarity of 0.90. "Technologies" and "ag" are considered as FTs, giving them a lower weight in this MR. However, in this case it would have been the distinctive difference. "Community Health Systems" and "community council health systems" (0.853) barely made it into the correspondence set, however the high token overlap explains why. "Telecommunication Company of Iran","telecommunication company of iran - tci" (0.82) was missed because "telecommunication, company, of" are considered FT and two comparators thus did not work well. The LCS comparator however boosted the similarity again. "Gulf Bank of Kuwait" and "gulfbank-kuwait" were missed because two tokens could not be split.
-
-\textbf{dw - kaggle\_f (MR27|0.85). } One more problem we faced was with subsidiaries or divisions of companies. Those usually have the same tokens in their names. For example, "Wells Fargo", "wells fargo insurance services" (0.96) was a match although they refer to different entities. The high similarity is due to the fact that "insurance, services" are considered FT. Another good example is "Thermo Fisher Scientific", "thermo fisher scientific singapore" (0.91). On the other hand, "Devon Energy","devon bank"(0.85) again suffer from FT removal.
-
-\textbf{Summary. }While the removal of FT oftentimes was useful (e.g. "Telus Corporation","telus") it could be seen that it raised new problems by creating non-matching correspondences (e.g "Ams AG", "ams technologies ag"). We tried to remediate this by including more comparators that still considered FTs but were less sensible to them. LCS is able to "skip" them, and RogueToken does not penalize the company name with missing FT as much as JaccardToken. In general it could be seen that we were able to achieve reasonable results with this. The "subsidiary" problem could be partly addressed by having a country table and identifying tokens that refer to countries and giving them a stronger weight.
+\textbf{Summary. }While the removal of FT oftentimes was useful (e.g. "Telus Corporation","telus") it could be seen that it raised new problems by creating non-matching correspondences (e.g "Ams AG", "ams technologies ag"). We tried to remediate this by including more comparators that still considered FTs but were less sensible to them. LCS is able to "skip" them, and RogueToken does not penalize the company name with missing FT as much as JaccardToken. In general it could be seen that we were able to achieve reasonable results with this. The "subsidiary" problem could be partly addressed by having a country table and identifying tokens that refer to countries and giving them a stronger weight. For larger corporations including the url into the comparison might have helped, however because this attribute was also often missing other pairs would have been missed. A possible remediation would have been the removal of duplicates beforehand, to allow for global matching.
 
 
 
 \section{Phase III - Data Fusion}
 \label{cha:data-fusion}
 
+For data fusion we used all of our datasets. Especially \textit{dbpedia} and \textit{kaggle\_f} had a good overlap, but also the other dataset provide some overlap. We focused on the follwing attributes: name, country, industries, sales amount, sales currency, current employees, and year founded.
+
+We added the latest revision date of the datasets as provenance date, and increased the score of the \textit{forbes} dataset compared to the others, because we consider it a high fidelity source. This will be used with the conflict resolution function "Favour Source" for sales amount and sales currency.
+
+Unfortunately, due to an error we were not able to evaluate the density of the datasets.\footnote{java.lang.NullPointerException: Cannot invoke "de.uni\_mannheim.informatik.dws.winter.model.DataSet.get()" because the return value of "de.uni\_mannheim.informatik.dws.winter.model.FusibleHashedDataSet.getSchema()" is null}%
+The attribute consistency is outlined in table \ref{tab:conflict-resolution}, along with several thresholds and consistency measures. The table also outlines the conflict resolution functions we used. For example, Union was used for the industry list attribute. This is appropriate, because industry labels are rather vague and without a supporting taxonomy of other lookup table a more concrete overlap comparison for example is difficult. We decided to favor the forbes dataset for the sales amount, because we consider it a credible source. We used the same conflict resolution fucntion for the according currency symbol to keep the data consistent. For the company name we decided to take the longest string, as it might contain additional information such as the company type (i.e. ltd, AG, GmbH, ...).
+
+\begin{table}[]
+	\small
+	\centering
+	\begin{tabular}{llcc}
+		\textbf{Attribute} & \textbf{Consistency}     & \multicolumn{1}{l}{\textbf{Threshold}} & \multicolumn{1}{l}{\textbf{Conflict Resolution Function}} \\\hline
+		YEAR\_FOUNDED      & 0,98                  & +/- 5\%                                & Median                                                    \\
+		INDUSTRY           & 0,36                  & \textgreater 1 common label            & Union                                                     \\
+		COUNTRY            & 0,82                  & Levensthein \textgreater{}0.95         & Shortest String                                           \\
+		CURRENT\_EMPLOYEES & 0,42                  & +/- 5\%                                & Average                                                   \\
+		NAME               & 1,00                  & LCS \textgreater{}0.75                 & Longest String                                            \\
+		SALES\_AMOUNT      & \multicolumn{1}{r}{-} & +/- 5\%                                & Favour Source (forbes)                                    \\
+		SALES\_CURRENCY    & \multicolumn{1}{r}{-} & JaccardToken = 1                       & Favour Source (forbes)                                   
+	\end{tabular}
+
+\caption[Data Fusion Evaluation and Conflict Resolution Overview]{Data Fusion Evaluation and Conflict Resolution Overview}
+
+\label{tab:conflict-resolution}
+\end{table}
+
+A gold standard with 15 samples was created based on entities from the forbes dataset. To this end the attributes used during fusion were manually reviewed against external sources (e.g. Statista, Wikipedia, and Bloomberg).
 
 
 \section{Summary}

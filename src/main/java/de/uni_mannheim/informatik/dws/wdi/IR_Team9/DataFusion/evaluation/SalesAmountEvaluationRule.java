@@ -13,11 +13,16 @@ public class SalesAmountEvaluationRule extends EvaluationRule <Company, Attribut
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
 
-		double lowerBound = record1.getSalesAmount()*0.95;
-		double upperBound = record1.getSalesAmount()*1.05;
+		if(record1.getSalesAmount() != null && record2.getSalesAmount() != null){
+			double lowerBound = record1.getSalesAmount()*0.95;
+			double upperBound = record1.getSalesAmount()*1.05;
 
 
-		return lowerBound <= record2.getSalesAmount() && record2.getSalesAmount() < upperBound;
+			return lowerBound <= record2.getSalesAmount() && record2.getSalesAmount() < upperBound;
+
+		}
+
+		return false;
 	}
 
 	@Override

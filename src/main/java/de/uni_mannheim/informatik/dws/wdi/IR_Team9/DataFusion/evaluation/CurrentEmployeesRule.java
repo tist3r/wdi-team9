@@ -14,11 +14,16 @@ public class CurrentEmployeesRule extends EvaluationRule <Company, Attribute> {
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
 		// the title is correct if all tokens are there, but the order does not
 		// matter
-		double lowerBound = record1.getCurrEmpEst()*0.95;
-		double upperBound = record1.getCurrEmpEst()*1.05;
 
+		if(record1.getCurrEmpEst() != null && record2.getCurrEmpEst() != null){
+			double lowerBound = record1.getCurrEmpEst()*0.95;
+			double upperBound = record1.getCurrEmpEst()*1.05;
+	
+			
+			return lowerBound <= record2.getCurrEmpEst() && record2.getCurrEmpEst() < upperBound;
+		}
 
-		return lowerBound <= record2.getCurrEmpEst() && record2.getCurrEmpEst() < upperBound;
+		return false;
 	}
 
 	/* (non-Javadoc)

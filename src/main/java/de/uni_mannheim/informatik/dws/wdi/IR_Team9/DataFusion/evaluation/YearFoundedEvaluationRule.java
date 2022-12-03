@@ -12,11 +12,17 @@ public class YearFoundedEvaluationRule extends EvaluationRule <Company, Attribut
 
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
-		double lowerBound = record1.getYearFounded()*0.95;
-		double upperBound = record1.getYearFounded()*1.05;
+		
+		if(record1.getYearFounded() != null && record2.getYearFounded() != null){
+			double lowerBound = record1.getYearFounded()*0.95;
+			double upperBound = record1.getYearFounded()*1.05;
+	
+	
+			return lowerBound <= record2.getYearFounded() && record2.getYearFounded() < upperBound;
+		}
 
+		return false;
 
-		return lowerBound <= record2.getYearFounded() && record2.getYearFounded() < upperBound;
 	}
 
 

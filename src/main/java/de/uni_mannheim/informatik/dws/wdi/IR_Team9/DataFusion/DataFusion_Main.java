@@ -52,7 +52,7 @@ public class DataFusion_Main {
 		FusibleDataSet<Company, Attribute> ds4 = new FusibleHashedDataSet<>();
 		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xml"), Constants.RECORD_PATH, ds4);
 
-		ds1.printDataSetDensityReport();
+		//ds1.printDataSetDensityReport();
 		
 		
 		ds1.setScore(1.0);
@@ -81,13 +81,11 @@ public class DataFusion_Main {
 		// load correspondences
 		logger.info("*\tLoading correspondences\t*");
 		CorrespondenceSet<Company, Attribute> correspondences = new CorrespondenceSet<>();
-		correspondences.loadCorrespondences(new File("data/correspondences/24_10_85_dw_kaggle_f_x/dw_kaggle_f_corr.csv"),ds1, ds4);
+		correspondences.loadCorrespondences(new File("data/correspondences/29_10_9_dw_kaggle_f/dw_kaggle_f_corr.csv"),ds1, ds4);
 
-		 correspondences.loadCorrespondences(new File("data/correspondences/29_10_87_dbpedia_kaggle_f_x/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
+		 correspondences.loadCorrespondences(new File("data/correspondences/29_10_87_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
 
-		 correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
-
-		 correspondences.loadCorrespondences(new File("data/correspondences/8_10_85_forbes_kaggle_f_x/forbes_kaggle_f_corr.csv"),ds3, ds4);
+		 correspondences.loadCorrespondences(new File("data/correspondences/26_10_9_forbes_kaggle_f/forbes_kaggle_f_corr.csv"),ds3, ds4);
 
 		
 		// write group size distribution
