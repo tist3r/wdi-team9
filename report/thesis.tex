@@ -241,16 +241,15 @@ An IR was conducted for each dataset against the \textit{kaggle} dataset, becaus
 
 
 \begin{table}[t]
-	
-	
-	\begin{tabular}{lllccc}
-		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   & \\
-		ID & Similarity   measure       & Parameters           & \multicolumn{1}{l}{PWL\textsuperscript{1}} & \multicolumn{1}{l}{Rm FT\textsuperscript{2}} & Focus\\
-		1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)                     & Overlap\\
-		2  & Jaccard on tokens          &                      & *                       & (\checked)                       &Overlap\\
-		3  & Levensthein                &                      & \checked & (\checked)                       &Typos / Edit-distance\\
-		4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       & Order\\
-		5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -  & Overlap                      
+	\small
+	\begin{tabular}{lllcc}
+		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   \\
+		ID & Similarity   measure       & Parameters           & \multicolumn{1}{l}{PWL\textsuperscript{1}} & \multicolumn{1}{l}{Rm FT\textsuperscript{2}} \\\hline
+		1  & Jaccard on ngrams          & n: ngram   length    & \checked & (\checked)              \\
+		2  & Jaccard on tokens          &                      & *                       & (\checked)                       \\
+		3  & Levensthein                &                      & \checked & (\checked)                       \\
+		4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       \\
+		5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -                      
 	\end{tabular}
 
 \caption[Comparator Overview]%
@@ -300,7 +299,8 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 		dbpedia+kaggle\_f(0,875)    & 29                              & S          & 0,98                           & 0,91                           & 0,94                            & 3966                                & 17:57                             & 0,9937                          \\
 		dbpedia+kaggle\_f(0,85)     & 21                              & S          & 0,93                           & 0,96                           & 0,95                            & 5677                                & 14:53                             & 0,9937                          \\
 		\rowcolor[HTML]{FCCCC8} 
-		dbpedia+kaggle\_f(0,85)     & \multicolumn{4}{l}{\cellcolor[HTML]{FCCCC8}2}                                                                  & 0,74                            & 2549                                & 05:10                             & 0,9937                          \\
+		dbpedia+kaggle\_f(0,85)     & 2                               & S          & 1,00                           & 0,59                           & 0,74                            & 2549                                & 05:10                             & 0,9937                          \\
+		
 		\rowcolor[HTML]{DDEBF7} 
 		dbpedia+kaggle\_f(0,875)    & 21                              & SNB(20)    & 1,00                           & 0,17                           & 0,30                            & 755                                 & 00:48                             & 0,9997                          \\
 		\rowcolor[HTML]{DDEBF7} 
@@ -327,28 +327,32 @@ MR5 is a simple combination of Jaccard 3-grams(C1) and Levensthein(C3) w/o frequ
 
 %TODO parir completeness
 
+%SNB 20 - 31%
+%SNB 100 - 50%
+%4grams 97%
+
 
 \subsection{Blockers}
 \label{sec:blockers}
 
 We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options. (1) First letter of the company name, (2) Qgrams(\cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient), (3) N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
 
-While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, the standard blocker in combination with the the first 3 letter of each name token as keys proved to be a good choice in terms of efficiency while missing few matches during blocking. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and catched pairs. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that several blocks contained more than 100 blocked elements were present. The first 3 letters of each token generated fewer blocked pairs while still bringing potential pairs together. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
+While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, we were able to circumvent this problem by using a standard blocker in combination with the the first 3 letter of each name token as keys, that provided a Pair Completeness of 100\%. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and pair completeness. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that several blocks contained more than 100 blocked elements were present. SNB(20) had a pari completeness of 31\% SNB(100) 50\%, and S(4g) 97\%. The first 3 letters of each token generated fewer blocked pairs while still achieving a pair completeness of 100\%. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
 
-%TODO add reduction ratio
-%TODO: reevaluate group size dist
-The group size distribution shows several groups with many participants, which is not ideal for data fusion. An example from \textit{forbes} is Forbes1081 (First Financial Holding). Containing two FTs, this company matched with many companies that had a first in their name, due to the simple matching rule.
+%TODO bring this to evaluation of MR
+The group size distribution shows several groups with a large size, which is not ideal for data fusion. An example from \textit{forbes} is Forbes1081 (First Financial Holding). Containing two FTs, this company matched with many companies that had a first in their name, due to the simple matching rule.
 
 \begin{table}[]
 	\centering
-	\begin{tabular}{lllllllll}
-		& \multicolumn{1}{c}{2}    & \multicolumn{1}{c}{3}   & \multicolumn{1}{c}{4}   & \multicolumn{1}{c}{5}   & \multicolumn{1}{c}{6-10}   & \multicolumn{1}{c}{11-20} & \multicolumn{1}{c}{21-30} & \multicolumn{1}{c}{30+}   \\\hline
-		21\_10\_85\_dbpedia\_kaggle\_f & \multicolumn{1}{r}{1323} & \multicolumn{1}{r}{547} & \multicolumn{1}{r}{241} & \multicolumn{1}{r}{135} & \multicolumn{1}{r}{186}    & \multicolumn{1}{r}{26}    & \multicolumn{1}{r}{2}     & \multicolumn{1}{r}{0}     \\
-		27\_10\_85\_dw\_kaggle\_f      & \multicolumn{1}{r}{625}  & \multicolumn{1}{r}{331} & \multicolumn{1}{r}{194} & \multicolumn{1}{r}{115} & \multicolumn{1}{r}{190}    & \multicolumn{1}{r}{60}    & \multicolumn{1}{r}{6}     & \multicolumn{1}{r}{2}     \\
-		5\_10\_90\_forbes\_kaggle\_f   & \multicolumn{1}{r}{678}  & \multicolumn{1}{r}{324} & \multicolumn{1}{r}{178} & \multicolumn{1}{r}{96}  & \multicolumn{1}{r}{178}    & \multicolumn{1}{r}{77}    & \multicolumn{1}{r}{17}    & \multicolumn{1}{r}{15}    \\\hline
-		(Cumulative \%)& \multicolumn{4}{c}{86,3\%}                                                                             & \multicolumn{1}{c}{10,0\%} & \multicolumn{1}{c}{2,9\%} & \multicolumn{1}{c}{0,5\%} & \multicolumn{1}{c}{0,3\%} \\                    
+	\small
+	\begin{tabular}{lrrrrrrr}
+		\textbf{\{MR\}\_\{B\}\_\{Thresh\}\_\{ds1\}\_\{ds2\}} & \multicolumn{1}{c}{\textbf{2}} & \multicolumn{1}{c}{\textbf{3-5}} & \multicolumn{1}{c}{\textbf{6-10}} & \multicolumn{1}{c}{\textbf{11-20}} & \multicolumn{1}{c}{\textbf{21-30}} & \multicolumn{1}{c}{\textbf{30+}} & \multicolumn{1}{c}{\textbf{PC\textsuperscript{$\star$}}} \\\hline
+		29\_10\_87\_dbpedia\_kaggle\_f              & 1376                           & 710                              & 75                                & 10                                 & 2                                  & 0                                & 1                               \\
+		29\_10\_9\_dw\_kaggle\_f                    & 729                            & 426                              & 43                                & 3                                  & 0                                  & 0                                & 1                               \\
+		26\_10\_90\_forbes\_kaggle\_f               & 787                            & 508                              & 81                                & 9                                  & 1                                  & 0                                & 1                               \\\hline
+		\multicolumn{1}{c}{}                        & \multicolumn{1}{c}{61\%}       & \multicolumn{1}{c}{35\%}         & \multicolumn{1}{c}{4\%}           & \multicolumn{1}{c}{0\%}            & \multicolumn{1}{c}{0\%}            & \multicolumn{1}{c}{0\%}          & \multicolumn{1}{c}{}           
 	\end{tabular}
-\caption[Group Size Distribution]{Group Size Distribution}
+\caption[Group Size Distribution of Correspondences used for Data Fusion]{Group Size Distribution of Correspondences used for Data Fusion. \small\textsuperscript{$\star$}Pair Completeness after Blocking}
 \label{tab:group-size-dist}
 \end{table}
 

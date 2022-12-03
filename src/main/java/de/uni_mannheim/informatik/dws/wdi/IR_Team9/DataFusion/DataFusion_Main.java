@@ -51,6 +51,8 @@ public class DataFusion_Main {
 		new CompanyXMLReader().loadFromXML (new File("data/input/Forbes_results.xml"), Constants.RECORD_PATH, ds3);
 		FusibleDataSet<Company, Attribute> ds4 = new FusibleHashedDataSet<>();
 		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xml"), Constants.RECORD_PATH, ds4);
+
+		ds1.printDataSetDensityReport();
 		
 		
 		ds1.setScore(1.0);
