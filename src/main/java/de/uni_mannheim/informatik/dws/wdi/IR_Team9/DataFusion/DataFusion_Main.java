@@ -7,7 +7,12 @@ import java.time.temporal.ChronoField;
 import java.util.Locale;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.CountryEvaluationRule;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.CurrentEmployeesRule;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.IndustryEvaluationRule;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.NameEvaluationRule;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.SalesAmountEvaluationRule;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.SalesCurrencyRule;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation.YearFoundedEvaluationRule;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.CountryFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.EmployeesFuser;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers.IndustryFuser;
@@ -104,11 +109,11 @@ public class DataFusion_Main {
 		// add attribute fusers
 		strategy.addAttributeFuser(Company.NAME, new NameFuser(), new NameEvaluationRule());
 		strategy.addAttributeFuser(Company.COUNTRY, new CountryFuser(), new CountryEvaluationRule());
-		strategy.addAttributeFuser(Company.INDUSTRY, new IndustryFuser(), new NameEvaluationRule());
-		strategy.addAttributeFuser(Company.SALES_AMOUNT, new SalesAmountFuser(), new NameEvaluationRule());
-		strategy.addAttributeFuser(Company.SALES_CURRENCY, new SalesCurrencyFuser(), new NameEvaluationRule());
-		strategy.addAttributeFuser(Company.CURRENT_EMPLOYEES, new EmployeesFuser(), new NameEvaluationRule());
-		strategy.addAttributeFuser(Company.YEAR_FOUNDED, new YearFoundedFuser(), new NameEvaluationRule());
+		strategy.addAttributeFuser(Company.INDUSTRY, new IndustryFuser(), new IndustryEvaluationRule());
+		strategy.addAttributeFuser(Company.SALES_AMOUNT, new SalesAmountFuser(), new SalesAmountEvaluationRule());
+		strategy.addAttributeFuser(Company.SALES_CURRENCY, new SalesCurrencyFuser(), new SalesCurrencyRule());
+		strategy.addAttributeFuser(Company.CURRENT_EMPLOYEES, new EmployeesFuser(), new CurrentEmployeesRule());
+		strategy.addAttributeFuser(Company.YEAR_FOUNDED, new YearFoundedFuser(), new YearFoundedEvaluationRule());
 
 		
 		
