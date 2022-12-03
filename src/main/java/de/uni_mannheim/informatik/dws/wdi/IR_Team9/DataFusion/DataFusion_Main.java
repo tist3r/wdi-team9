@@ -49,8 +49,12 @@ public class DataFusion_Main {
 		
 		
 		ds1.setScore(1.0);
+		ds1.setDate(LocalDateTime.of(2019, 1, 1, 12, 0, 0));
 		ds2.setScore(1.0);
+		ds2.setDate(LocalDateTime.of(2022, 10, 1, 12, 0, 0));
 		ds3.setScore(2.0); //forbes has the highest credibility for sales value and thus gets the highest score
+		ds3.setDate(LocalDateTime.of(2018, 1, 1, 12, 0, 0));
+
 		ds4.setScore(1.0);
 
 		
@@ -61,24 +65,24 @@ public class DataFusion_Main {
 		         .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
 		         .toFormatter(Locale.ENGLISH);
 		
-		ds1.setDate(LocalDateTime.parse("2022-01-01", formatter));
-		ds2.setDate(LocalDateTime.parse("2020-01-01", formatter));
+		ds1.setDate(LocalDateTime.parse("2019-01-01", formatter));
+		ds2.setDate(LocalDateTime.parse("2022-01-01", formatter));
 		ds3.setDate(LocalDateTime.parse("2018-01-01", formatter));
-		ds4.setDate(LocalDateTime.parse("2016-01-01", formatter));
+		ds4.setDate(LocalDateTime.parse("2019-01-01", formatter));
 
 		
 		// load correspondences
 		logger.info("*\tLoading correspondences\t*");
 		CorrespondenceSet<Company, Attribute> correspondences = new CorrespondenceSet<>();
-		correspondences.loadCorrespondences(new File("data/correspondences/21_10_85_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
+		correspondences.loadCorrespondences(new File("data/correspondences/29_10_87_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/dbpedia_dw_corr.csv"),ds2, ds1);
+		// correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/dbpedia_dw_corr.csv"),ds2, ds1);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
+		// correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/dw_kaggle_f_corr.csv"),ds1, ds4);
+		// correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_dw_kaggle_f/dw_kaggle_f_corr.csv"),ds1, ds4);
 
-		correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/forbes_kaggle_f_corr.csv"),ds3, ds4);
+		// correspondences.loadCorrespondences(new File("data/correspondences/5_10_9_forbes_kaggle_f/forbes_kaggle_f_corr.csv"),ds3, ds4);
 		
 		// write group size distribution
 		correspondences.printGroupSizeDistribution();

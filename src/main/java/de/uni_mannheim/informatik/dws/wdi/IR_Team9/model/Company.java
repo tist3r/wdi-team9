@@ -336,6 +336,16 @@ public class Company extends AbstractRecord<Attribute>{
 			return this.getUrl() != null && !this.getUrl().isEmpty();
 		else if(attribute==COUNTRY)
 			return this.getCountry() != null && !this.getCountry().isEmpty();
+        else if(attribute==INDUSTRY)
+			return this.getIndustries() != null && !this.getIndustries().isEmpty();
+        else if(attribute==SALES_AMOUNT)
+			return this.getSalesAmount() != null && !(this.getSalesAmount() <= 0);
+        else if(attribute==SALES_CURRENCY)
+			return this.getSalesCurrency() != null && !this.getSalesCurrency().isEmpty();
+        else if(attribute==CURRENT_EMPLOYEES)
+			return this.getCurrEmpEst() != null && !(this.getCurrEmpEst() <= 0);
+        else if(attribute==YEAR_FOUNDED)
+			return this.getYearFounded() != null && !(this.getYearFounded() <= 0);
 		else
 			return false;
 	}
