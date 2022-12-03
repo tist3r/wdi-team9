@@ -15,10 +15,10 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 import de.uni_mannheim.informatik.dws.winter.processing.Processable;
 
 
-public class SalesCurrencyFuser extends AttributeValueFuser<Integer, Company, Attribute> {
+public class SalesCurrencyFuser extends AttributeValueFuser<String, Company, Attribute> {
 
 	public SalesCurrencyFuser() {
-		super(new FavourSources<Integer, Company, Attribute>());
+		super(new FavourSources<String, Company, Attribute>());
 	}
 
 	@Override
@@ -27,14 +27,14 @@ public class SalesCurrencyFuser extends AttributeValueFuser<Integer, Company, At
 	}
 
 	@Override
-	public Integer getValue(Company record, Correspondence<Attribute, Matchable> correspondence) {
-		return record.getSalesAmount();
+	public String getValue(Company record, Correspondence<Attribute, Matchable> correspondence) {
+		return record.getSalesCurrency();
 	}
 
 	@Override
 	public void fuse(RecordGroup<Company, Attribute> group, Company fusedRecord, Processable<Correspondence<Attribute, Matchable>> schemaCorrespondences, Attribute schemaElement) {
-		FusedValue<Integer, Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
-		fusedRecord.setSalesAmount(fused.getValue());
+		FusedValue<String, Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
+		fusedRecord.setSalesCurrency(fused.getValue());
 		fusedRecord.setAttributeProvenance(Company.SALES_CURRENCY, fused.getOriginalIds());
 	}
 

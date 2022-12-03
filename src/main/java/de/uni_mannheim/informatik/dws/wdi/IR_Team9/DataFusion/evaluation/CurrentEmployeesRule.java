@@ -10,14 +10,15 @@ import de.uni_mannheim.informatik.dws.winter.similarity.string.TokenizingJaccard
 
 
 public class CurrentEmployeesRule extends EvaluationRule <Company, Attribute> {
-
-	SimilarityMeasure<String> sim = new TokenizingJaccardSimilarity();
-
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
 		// the title is correct if all tokens are there, but the order does not
 		// matter
-		return sim.calculate(String.valueOf(record1.getCurrEmpEst()),String.valueOf(record2.getCurrEmpEst())) == 1.0;
+		double lowerBound = record1.getCurrEmpEst()*0.95;
+		double upperBound = record1.getCurrEmpEst()*1.05;
+
+
+		return lowerBound <= record2.getCurrEmpEst() && record2.getCurrEmpEst() < upperBound;
 	}
 
 	/* (non-Javadoc)
