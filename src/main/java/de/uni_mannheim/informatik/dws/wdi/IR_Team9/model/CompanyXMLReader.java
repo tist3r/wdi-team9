@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
+import de.uni_mannheim.informatik.dws.winter.model.DataSet;
 import de.uni_mannheim.informatik.dws.winter.model.FusibleFactory;
 import de.uni_mannheim.informatik.dws.winter.model.RecordGroup;
 import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
@@ -120,4 +121,18 @@ public class CompanyXMLReader extends XMLMatchableReader<Company, Attribute> imp
         
         return new Company(mergedId, "fused");
 	}
+
+    @Override
+    protected void initialiseDataset(DataSet<Company, Attribute> dataset) {
+        
+        super.initialiseDataset(dataset);
+
+        dataset.addAttribute(Company.NAME);
+        dataset.addAttribute(Company.CURRENT_EMPLOYEES);
+        dataset.addAttribute(Company.SALES_AMOUNT);
+        dataset.addAttribute(Company.SALES_CURRENCY);
+        dataset.addAttribute(Company.COUNTRY);
+        dataset.addAttribute(Company.YEAR_FOUNDED);
+        dataset.addAttribute(Company.INDUSTRY);
+    }
 }

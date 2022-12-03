@@ -381,15 +381,15 @@ The attribute consistency is outlined in table \ref{tab:conflict-resolution}, al
 \begin{table}[]
 	\small
 	\centering
-	\begin{tabular}{llcc}
-		\textbf{Attribute} & \textbf{Consistency}     & \multicolumn{1}{l}{\textbf{Threshold}} & \multicolumn{1}{l}{\textbf{Conflict Resolution Function}} \\\hline
-		YEAR\_FOUNDED      & 0,98                  & +/- 5\%                                & Median                                                    \\
-		INDUSTRY           & 0,36                  & \textgreater 1 common label            & Union                                                     \\
-		COUNTRY            & 0,82                  & Levensthein \textgreater{}0.95         & Shortest String                                           \\
-		CURRENT\_EMPLOYEES & 0,42                  & +/- 5\%                                & Average                                                   \\
-		NAME               & 1,00                  & LCS \textgreater{}0.75                 & Longest String                                            \\
-		SALES\_AMOUNT      & \multicolumn{1}{r}{-} & +/- 5\%                                & Favour Source (forbes)                                    \\
-		SALES\_CURRENCY    & \multicolumn{1}{r}{-} & JaccardToken = 1                       & Favour Source (forbes)                                   
+	\begin{tabular}{llccl}
+		\textbf{Attribute} & \textbf{Consistency}  & \multicolumn{1}{l}{\textbf{Threshold}} & \multicolumn{1}{l}{\textbf{Conflict Resolution Function}} & \textbf{Accuracy} \\
+		YEAR\_FOUNDED      & 0,98                  & +/- 5\%                                & Median                                                    & 0,47              \\
+		INDUSTRY           & 0,36                  & \textgreater 1 common label            & Union                                                     & 0,67              \\
+		COUNTRY            & 0,82                  & Levensthein \textgreater{}0.95         & Shortest String                                           & 0,13              \\
+		CURRENT\_EMPLOYEES & 0,42                  & +/- 5\%                                & Average                                                   & 0                 \\
+		NAME               & 1,00                  & LCS \textgreater{}0.75                 & Longest String                                            & 0,73              \\
+		SALES\_AMOUNT      & \multicolumn{1}{r}{-} & +/- 5\%                                & Favour Source (forbes)                                    & 0                 \\
+		SALES\_CURRENCY    & \multicolumn{1}{r}{-} & JaccardToken = 1                       & Favour Source (forbes)                                    & 0                
 	\end{tabular}
 
 \caption[Data Fusion Evaluation and Conflict Resolution Overview]{Data Fusion Evaluation and Conflict Resolution Overview}
@@ -399,38 +399,10 @@ The attribute consistency is outlined in table \ref{tab:conflict-resolution}, al
 
 A gold standard with 15 samples was created based on entities from the forbes dataset. To this end the attributes used during fusion were manually reviewed against external sources (e.g. Statista, Wikipedia, and Bloomberg).
 
+Table \ref{tab:conflict-resolution} also outlines the Accuracy we achieved with our data fusion. Unfortunatly we have to see, that the resilts are rather poor. While name and industry perform somewhat ok, the other attributes fail to meet a reasonable accuracy.
+
 
 \section{Summary}
-
-%TODO Style Table
-\begin{table}[h]
-
-\begin{center}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\scriptsize}l|>{\scriptsize}c>{\scriptsize}c>{\scriptsize}c|>{\scriptsize}c>{\scriptsize}c>{\scriptsize}c>{\scriptsize}c} 
-& \multicolumn{3}{>{\scriptsize}c|}{Baselines} & \multicolumn{4}{>{\scriptsize}c}{Decision Tree} \\\hline
-Ontology & M(edian) & G(ood) & E(vil) & results & $\Delta$-M & $\Delta$-G & $\Delta$-E \\\hline\hline
-\#301 & 0.825 & 0.877 & 0.877 & 0.855 & +0.030 & -0.022 & -0.022 \\\hline
-\#302 & 0.709 & 0.753 & 0.753 & 0.753 & +0.044 & +0.000 & +0.000 \\\hline
-\#303 & 0.804 & 0.860 & 0.891 & 0.816 & +0.012 & -0.044 & -0.075 \\\hline
-\#304 & 0.940 & 0.961 & 0.961 & 0.967 & +0.027 & +0.006 & +0.006 \\\hline
-\bfseries Average & \bfseries 0.820 & \bfseries 0.863 & \bfseries 0.871 & \bfseries 0.848 & \bfseries +0.028 & \bfseries -0.015 & \bfseries -0.023 
-
-\end{tabular*}
-\caption[Good vs. Evil]{Comparison between the Good and the Evil}
-\label{tab:confonly}
-\end{center}
-\end{table}
-
-
-
-If you cite something, do it in the following way. 
-\begin{itemize}
-	\item Conference Proceedings: This problem is typically addressed by approaches for selecting the optimal matcher based on the nature of the matching task and the known characteristics of the different matching systems. Such an approach is described in \cite{mochol08matcher}.
-	\item Journal Article: S-Match, described in \cite{giunchiglia2008semanticmatching}, employs sound and complete reasoning procedures. Nevertheless, the underlying semantic is restricted to propositional logic due to the fact that ontologies are interpreted as tree-like structures.
-	\item Book: According to Euzenat and Shvaiko \cite{euzenat07matcherbook}, we define a correspondence as follows.
-\end{itemize}
-These are some randomly chosen examples from other works. Take a look at the end of this thesis so see how the bibliography is included.
-
 
 
 \bibliographystyle{plain}
