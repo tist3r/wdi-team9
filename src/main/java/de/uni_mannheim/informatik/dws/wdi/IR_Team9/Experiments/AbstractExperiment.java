@@ -356,11 +356,12 @@ public abstract class AbstractExperiment {
         if(evaluateBlocking){
             logger.info("Evaluating Blocker");
             Processable<Correspondence<Company, Attribute>> blockedPairs = engine.runBlocking(this.ds1, this.ds2, null, this.blocker);
+            blockedPairs = blockedPairs.distinct();
             this.perfTest = evaluator.evaluateMatching(blockedPairs, this.gsTest);
             System.out.println(this.perfTest.getRecall());
             logger.info("Finished Blocker Evaluation");
         }
-        
+
         //make sure everything is run in the correct order
         this.orderAndValidateAllThreshs();
 
