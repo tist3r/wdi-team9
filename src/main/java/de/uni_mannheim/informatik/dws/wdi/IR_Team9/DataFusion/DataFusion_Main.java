@@ -74,7 +74,7 @@ public class DataFusion_Main {
 		// load correspondences
 		logger.info("*\tLoading correspondences\t*");
 		CorrespondenceSet<Company, Attribute> correspondences = new CorrespondenceSet<>();
-		correspondences.loadCorrespondences(new File("data/correspondences/29_10_87_dbpedia_kaggle_f/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
+		correspondences.loadCorrespondences(new File("data/correspondences/29_10_87_dbpedia_kaggle_f_x/dbpedia_kaggle_f_corr.csv"),ds2, ds4);
 
 		// correspondences.loadCorrespondences(new File("data/correspondences/27_11_85_dbpedia_dw/dbpedia_dw_corr.csv"),ds2, ds1);
 
@@ -99,7 +99,7 @@ public class DataFusion_Main {
 		// define the fusion strategy
 		DataFusionStrategy<Company, Attribute> strategy = new DataFusionStrategy<>(new CompanyXMLReader());
 		// write debug results to file
-		strategy.activateDebugReport("data/output/debugResultsDatafusion.csv", -1, gs);
+		strategy.activateDebugReport("data/output/fusion/debugResultsDatafusion.csv", -1, gs);
 		
 		// add attribute fusers
 		strategy.addAttributeFuser(Company.NAME, new NameFuser(), new NameEvaluationRule());
@@ -119,14 +119,14 @@ public class DataFusion_Main {
 		engine.printClusterConsistencyReport(correspondences, null);
 
 		// print record groups sorted by consistency
-		engine.writeRecordGroupsByConsistency(new File("data/output/recordGroupConsistencies.csv"), correspondences,
+		engine.writeRecordGroupsByConsistency(new File("data/output/fusion/recordGroupConsistencies.csv"), correspondences,
 				null);
 
 		// run the fusion
 		logger.info("*\tRunning data fusion\t*");
 		FusibleDataSet<Company, Attribute> fusedDataSet = engine.run(correspondences, null);
 		// write the result
-		new CompanyXMLFormatter().writeXML(new File("data/output/fused.xml"), fusedDataSet);
+		new CompanyXMLFormatter().writeXML(new File("data/output/fusion/fused.xml"), fusedDataSet);
 
 		// evaluate
 		DataFusionEvaluator<Company, Attribute> evaluator = new DataFusionEvaluator<>(strategy,

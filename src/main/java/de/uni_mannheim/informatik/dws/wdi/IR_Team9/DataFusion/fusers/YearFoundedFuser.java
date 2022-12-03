@@ -25,8 +25,16 @@ public class YearFoundedFuser extends
 		// get the fused value
 		FusedValue<Double,Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
 
-		// set the value for the fused record
-		fusedRecord.setYearFounded(fused.getValue());
+		// System.out.println("Trying to evaluate year founded");
+		// for(Company c : group.getRecords()){
+		// 	System.out.println(c.getYearFounded() != null ? c.getYearFounded() : "null");
+		// }
+
+		if(fused.getValue() != null){
+			// set the value for the fused record
+			fusedRecord.setYearFounded(fused.getValue());
+		}
+
 
 		// add provenance info
 		fusedRecord.setAttributeProvenance(Company.YEAR_FOUNDED, fused.getOriginalIds());
