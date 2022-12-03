@@ -1,5 +1,7 @@
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.evaluation;
 
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.LongestCommonSubsequenceSimilarity;
+import de.uni_mannheim.informatik.dws.wdi.IR_Team9.Comparators.LongestCommonSubsequenceSimilarity.NormalizationFlag;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.datafusion.EvaluationRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
@@ -10,13 +12,11 @@ import de.uni_mannheim.informatik.dws.winter.similarity.string.TokenizingJaccard
 
 public class NameEvaluationRule extends EvaluationRule <Company, Attribute> {
 
-	SimilarityMeasure<String> sim = new TokenizingJaccardSimilarity();
+	SimilarityMeasure<String> sim = new LongestCommonSubsequenceSimilarity(NormalizationFlag.MIN);
 
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
-		// the title is correct if all tokens are there, but the order does not
-		// matter
-		return sim.calculate(record1.getName(), record2.getName()) == 1.0;
+		return sim.calculate(record1.getName(), record2.getName()) >= 0.75;
 	}
 
 	/* (non-Javadoc)
