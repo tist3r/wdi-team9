@@ -45,15 +45,15 @@ public class DataFusion_Main {
 		FusibleDataSet<Company, Attribute> ds3 = new FusibleHashedDataSet<>();
 		new CompanyXMLReader().loadFromXML (new File("data/input/Forbes_results.xml"), Constants.RECORD_PATH, ds3);
 		FusibleDataSet<Company, Attribute> ds4 = new FusibleHashedDataSet<>();
-//		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xml"), Constants.RECORD_PATH, ds4);
+		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xml"), Constants.RECORD_PATH, ds4);
 		
 		
 		ds1.setScore(1.0);
-		ds1.setDate(LocalDateTime.of(2019, 1, 1, 12, 0, 0));
+		//ds1.setDate(LocalDateTime.of(2019, 1, 1, 12, 0, 0));
 		ds2.setScore(1.0);
-		ds2.setDate(LocalDateTime.of(2022, 10, 1, 12, 0, 0));
+		//ds2.setDate(LocalDateTime.of(2022, 10, 1, 12, 0, 0));
 		ds3.setScore(2.0); //forbes has the highest credibility for sales value and thus gets the highest score
-		ds3.setDate(LocalDateTime.of(2018, 1, 1, 12, 0, 0));
+		//ds3.setDate(LocalDateTime.of(2018, 1, 1, 12, 0, 0));
 
 		ds4.setScore(1.0);
 

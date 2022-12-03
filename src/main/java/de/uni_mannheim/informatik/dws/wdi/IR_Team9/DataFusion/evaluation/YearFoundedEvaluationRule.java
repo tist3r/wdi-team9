@@ -10,11 +10,13 @@ import de.uni_mannheim.informatik.dws.winter.similarity.string.TokenizingJaccard
 
 public class YearFoundedEvaluationRule extends EvaluationRule <Company, Attribute> {
 
-	SimilarityMeasure<String> sim = new TokenizingJaccardSimilarity();
-
 	@Override
 	public boolean isEqual(Company record1, Company record2, Attribute schemaElement) {
-		return sim.calculate(String.valueOf(record1.getYearFounded()), String.valueOf(record2.getYearFounded())) == 1.0;
+		double lowerBound = record1.getYearFounded()*0.95;
+		double upperBound = record1.getYearFounded()*1.05;
+
+
+		return lowerBound <= record2.getYearFounded() && record2.getYearFounded() < upperBound;
 	}
 
 

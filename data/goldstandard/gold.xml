@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<companies>
+<Companies>
 	<Company>
 		<ID>Forbes1</ID>
 		<Name>ICBC</Name>
@@ -418,5 +418,5 @@
 		<Current_employee_est>8857</Current_employee_est>
 	</Company>
 
-</companies>
+</Companies>
 
