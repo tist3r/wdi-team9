@@ -10,24 +10,22 @@ public class CompanyXMLFormatter extends XMLFormatter<Company>{
 	
 	@Override
 	public Element createRootElement(Document doc) {
-		return doc.createElement("companies");
+		return doc.createElement("Companies");
 	}
 
 	@Override
 	public Element createElementFromRecord(Company record, Document doc) {
-		Element company = doc.createElement("company");
+		Element company = doc.createElement("Company");
 
-		company.appendChild(createTextElement("id", record.getIdentifier(), doc));
+		company.appendChild(createTextElement("Id", record.getIdentifier(), doc));
 
-		company.appendChild(createTextElementWithProvenance("name",
+		company.appendChild(createTextElementWithProvenance("Name",
 				record.getName(),
 				record.getMergedAttributeProvenance(Company.NAME), doc));
-		company.appendChild(createTextElementWithProvenance("country",
+		company.appendChild(createTextElementWithProvenance("Country",
 				record.getCountry(),
 				record.getMergedAttributeProvenance(Company.COUNTRY), doc));
-		company.appendChild(createTextElement("industry",
-				record.getIndustries(),
-				record.getMergedAttributeProvenance(Company.INDUSTRY), doc));
+		company.appendChild(createIndustryElement(record, doc));
 		company.appendChild(createTextElementWithProvenance("sales_amount",
 				record.getSalesAmount(),
 				record.getMergedAttributeProvenance(Company.SALES_AMOUNT), doc));
@@ -42,16 +40,16 @@ public class CompanyXMLFormatter extends XMLFormatter<Company>{
 		return elem;
 	}
 	
-	protected Element createTextElement(Company comp, Document doc) {
-		Element company = doc.createElement("Industries");
-		company.setAttribute("provenance",
-				comp.getMergedAttributeProvenance(Company.INDUSTRY));
+	protected Element createIndustryElement(Company record, Document doc) {
+		Element industryRoot = doc.createElement("Industries");
+		industryRoot.setAttribute("provenance",
+				record.getMergedAttributeProvenance(Company.INDUSTRY));
 
-		for (String a : comp.getIndustries()) {
-			company.appendChild(createTextElement("Industry", a, doc));
+		for (String i : record.getIndustries()) {
+			industryRoot.appendChild(createTextElement("Industry", i, doc));
 		}
 
-		return company;
+		return industryRoot;
 	}
 
 }
