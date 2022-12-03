@@ -22,18 +22,18 @@ public class IndustryFuser extends AttributeValueFuser<List<String>, Company, At
 	@Override
 	public void fuse(RecordGroup<Company, Attribute> group, Company fusedRecord, Processable<Correspondence<Attribute, Matchable>> schemaCorrespondences, Attribute schemaElement) {
 
-	// get the fused value
-	FusedValue<List<String>, Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
+		// get the fused value
+		FusedValue<List<String>, Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
 
-	// set the value for the fused record
-	fusedRecord.setIndustries(fused.getValue());
-	fusedRecord
-			.setAttributeProvenance(Company.INDUSTRY, fused.getOriginalIds());
+		// set the value for the fused record
+		fusedRecord.setIndustries(fused.getValue());
+		fusedRecord
+				.setAttributeProvenance(Company.INDUSTRY, fused.getOriginalIds());
 	}
 
 	@Override
 	public boolean hasValue(Company record, Correspondence<Attribute, Matchable> correspondence) {
-	return record.hasValue(Company.INDUSTRY);
+		return record.hasValue(Company.INDUSTRY);
 	}
 
 	@Override

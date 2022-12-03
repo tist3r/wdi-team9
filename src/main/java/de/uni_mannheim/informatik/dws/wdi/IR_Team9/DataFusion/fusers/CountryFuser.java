@@ -20,24 +20,25 @@ AttributeValueFuser<String, Company, Attribute> {
 		@Override
 		public void fuse(RecordGroup<Company, Attribute> group, Company fusedRecord, Processable<Correspondence<Attribute, Matchable>> schemaCorrespondences, Attribute schemaElement) {
 
-		// get the fused value
-		FusedValue<String, Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
+			// get the fused value
+			FusedValue<String, Company, Attribute> fused = getFusedValue(group, schemaCorrespondences, schemaElement);
 
-		// set the value for the fused record
-		fusedRecord.setCountry(fused.getValue());
+			// set the value for the fused record
+			fusedRecord.setCountry(fused.getValue());
+			fusedRecord.setAttributeProvenance(Company.COUNTRY,fused.getOriginalIds());
 
 		}
 
 		@Override
 		public boolean hasValue(Company record, Correspondence<Attribute, Matchable> correspondence) {
-		return record.hasValue(Company.COUNTRY);
+				return record.hasValue(Company.COUNTRY);
 		}
 
 		@Override
 		public String getValue(Company record, Correspondence<Attribute, Matchable> correspondence) {
-		return record.getCountry();
+			return record.getCountry();
 
-}
+		}
 	
 }
 

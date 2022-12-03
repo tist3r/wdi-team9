@@ -26,6 +26,7 @@ AttributeValueFuser<String, Company, Attribute> {
 
 		// set the value for the fused record
 		fusedRecord.setName(fused.getValue());
+		fusedRecord.setAttributeProvenance(Company.NAME,fused.getOriginalIds());
 
 	}
 
