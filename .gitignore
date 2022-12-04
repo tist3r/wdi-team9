@@ -1,5 +1,5 @@
 data/input/*
-!data/input/
+!data/input/kaggle_sample.xml
 data/goldstandard/archive_and_analysis
 data/output/reducedKaggleSet/*
 data/output/combinedFiles/*
