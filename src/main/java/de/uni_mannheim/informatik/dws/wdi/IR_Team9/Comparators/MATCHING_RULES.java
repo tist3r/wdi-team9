@@ -15,7 +15,7 @@ import de.uni_mannheim.informatik.dws.winter.model.defaultmodel.Attribute;
 public class MATCHING_RULES {
     public static int NUM_MATCHING_RULES = 29;
 
-    public static final List<Integer> WEKA_RULE_IDS = Arrays.asList(7,8,10,11,12,13,16,20,22,24,25,26);
+    public static final List<Integer> WEKA_RULE_IDS = Arrays.asList(7,8,10,11,12,13,16,20,22,24,25,26,31);
 
     /**
      * 
@@ -68,6 +68,7 @@ public class MATCHING_RULES {
                 case 28: return getMR28(thresh);
                 case 29: return getMR29(thresh);
                 case 30: return getMR30(thresh);
+                case 31: return getMR31(thresh, ds1, ds2, gsTrain);
 
                 default: throw new IndexOutOfBoundsException(String.format("Matching rule with id %d does not exist, max is %d", id, NUM_MATCHING_RULES));
         }
@@ -688,6 +689,31 @@ public class MATCHING_RULES {
             e.printStackTrace();
             System.exit(0);
         }
+
+        return rule;
+    }
+
+    public static MatchingRule<Company, Attribute> getMR31(double thresh, HashedDataSet<Company, Attribute> ds1, HashedDataSet<Company, Attribute> ds2, MatchingGoldStandard gsTrain){
+        /*Rule 25 as reduced error pruned tree */
+
+        // create a matching rule & provide classifier, options
+        String tree = "J48"; // new instance of tree
+        String options[] = new String[1];
+        options[0] = "-R";
+        //options[1] = "-C 0.35";
+        WekaMatchingRule<Company, Attribute> rule = new WekaMatchingRule<>(thresh, tree, options);
+
+        // add comparators
+        rule.addComparator(new CompanyNameComparatorJaccardNgram(3, true, 0.f, false, 0.7f, 4.0f, AbstractT9Comparator.BOOST_FUNCTIONS.X3)); //three a bit more robust to typos than 4
+        rule.addComparator(new CompanyNameComparatorLevenshtein(true, 0.f, false, 0.7f, 4.0f, AbstractT9Comparator.BOOST_FUNCTIONS.X3)); //typos
+        rule.addComparator(new LCSComparator(LongestCommonSubsequenceSimilarity.NormalizationFlag.AVG, 0.0f, false, 0.5f, AbstractT9Comparator.BOOST_FUNCTIONS.X3, 3)); //Order
+        rule.addComparator(new RogueTokenComparator(0.0f, false, 0.5f, AbstractT9Comparator.BOOST_FUNCTIONS.X3, 3)); //remediating the removal of frequent tokens
+
+        // train the matching rule's model
+		RuleLearner<Company, Attribute> learner = new RuleLearner<>();
+		learner.learnMatchingRule(ds1, ds2, null, rule, gsTrain);
+
+		//logger.info(String.format("Matching rule is:\n%s", rule.getModelDescription()));
 
         return rule;
     }

@@ -3,7 +3,6 @@ package de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers;
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.datafusion.AttributeValueFuser;
 import de.uni_mannheim.informatik.dws.winter.datafusion.conflictresolution.string.LongestString;
-import de.uni_mannheim.informatik.dws.winter.datafusion.conflictresolution.string.ShortestString;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
 import de.uni_mannheim.informatik.dws.winter.model.FusedValue;
 import de.uni_mannheim.informatik.dws.winter.model.Matchable;

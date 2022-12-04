@@ -3,6 +3,7 @@
 % the printed version in the accordant format
 \documentclass[11pt,titlepage,oneside,openany]{article}
 \usepackage{times}
+\usepackage[square]{natbib}
 
 %\usepackage{titlesec}
 %\titleformat{\chapter}[display]   
@@ -100,27 +101,28 @@
 \begin{titlepage}
 	\vspace*{2cm}
   \begin{center}
-   {\Large The Extremes of Good and Evil\\}
+   {\Large Web-Data Integration Project\\}
    \vspace{2cm} 
-   {Master Thesis\\}
+   {Project Report Team 9\\}
    \vspace{2cm}
    {presented by\\
-    Earl Hickey \\
-    Matriculation Number 9083894\\
+    Thomas Schmidt (1598767) \\
+    Inigo Acha\\
+    Imanoal Gonzales Vallejo\\
    }
    \vspace{1cm} 
    {submitted to the\\
     Data and Web Science Group\\
-    Prof.\ Dr.\ Right Name Here\\
+    Prof.\ Dr.\ Christian Bizer\\
     University of Mannheim\\} \vspace{2cm}
-   {August 2014}
+   {December 2022}
   \end{center}
 \end{titlepage} 
 
 % no lets make some add some table of contents
 \newpage
 
-\listoftables
+%\listoftables
 
 % evntuelly you might add something like this
 % \listtheorems{definition}
@@ -149,17 +151,17 @@
 		kaggle (kaggle\_f)    & \href{https://www.kaggle.com/kaleab1/companies}{link to dataset}                        & csv                  & \makecell[ct]{7.1M\\(491.830\textsuperscript{3})}                & 11               & ID, name, domain, year founded (MV), industry, size range, locality   (MV), country (MV), linkedin url, current employee estimate, total   employee estimate \\
 		forbes    &\href{https://www.kaggle.com/ash316/forbes-top-2000-companies}{link to dataset}          & csv                 & 2.000                & 9                & Company, Country, Sales, Profits, Assets,   Market Value, Sector, Industry                                                                                                  \\
 		dataworld (dw)& \href{https://www.data.world/youngx62/worlds-largest-companies-by-revenue}{link to dataset} & csv                  & 1.924                & 10               & Global Rank, Company, Sales, Profits, Assets, Market Value, Country,   Continent, Latitude, Longitude                                                                       \\
-		dbpedia   & Query provided in Appendix                                      & json   &  3.986                &         11         & Name, industry\_label, domain,   founding\_year, ceos, no\_emp (MV), country (MV), location (MV),   revenue (MV), income (MV), assets (MV)    \\
+		dbpedia   & Query provided in project outline                                     & json   &  3.986                &         11         & Name, industry\_label, domain,   founding\_year, ceos, no\_emp (MV), country (MV), location (MV),   revenue (MV), income (MV), assets (MV)    \\
 	\end{tabularx}
 	\caption[Dataset Overview]%
-	{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", * For hyperlinks pls refer,\textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes, \textsuperscript{3} Number of filtered companies from the original dataset might be smaller than this number, because the final XML was extracted from the previous XML by mathching the filtered names (company with the same name might exist also in excluded category).}
+	{Dataset Overview. \small\medspace\medspace All dataset only refer to the class "Company", * For hyperlinks pls refer,\textsuperscript{1}\# of Entities, \textsuperscript{2}\# of Attributes, \textsuperscript{3} Number of filtered companies from the original dataset might be smaller than this number, because the final XML was extracted from the previous XML by matching the filtered names (company with the same name might exist also in excluded category).}
 	\label{tab:dataset-overview}
 	
 \end{table}
 
 
-The goal of the project is to aggregate company information from several sources. To this end we used the suggestions from the project into slides as a foundation for our use case. We also included an additional source and amended the dbpedia query to extract further relevant information. Thus, the relevent entity will be a company.
-We relied on 4 different datasources which are profiled in Table \ref{tab:dataset-overview}. In order to being able to process the kaggle dataset, we had to filter it down. To this end, we used the "size range" attribute and only kept the categories "10001+", "5001 - 10000", "1001 - 5000", "501 - 1000", "201 - 500", "51 - 200". This is a valid approach since the forbes dataset contains data about the 2000 largest companies in the world, and the dataworld (dw) dataset is also called "largest companies", containing only companies of a certain size.
+The goal of the project was to aggregate company information from several sources. To this end we used the suggestions from the project intro slides as a foundation for our use case. We also included an additional source and amended the \textit{dbpedia} query to extract further relevant information. Thus, the relevent entity will be a company.
+We relied on four different data sources which are profiled in Table \ref{tab:dataset-overview}. In order to being able to process the \textit{kaggle} dataset, we had to filter it down. To this end, we used the "size range" attribute and only kept the categories "10001+", "5001 - 10000", "1001 - 5000", "501 - 1000", "201 - 500", "51 - 200". This is a valid approach since the \textit{forbes} dataset contains data about the 2000 largest companies in the world, and the \textit{dataworld (dw)} dataset is also called "largest companies", containing only companies of a larger size.
 
 
 
@@ -187,10 +189,10 @@ We relied on 4 different datasources which are profiled in Table \ref{tab:datase
 		Company      & Assets                      & Integer        & Forbes, dw, dbpedia                        \\
 		Company      & Market Value                & Integer        & Forbes, dw, dbpedia                        \\
 		Company      & sector                      & String         & Forbes                                     \\
-		Company      & Global Rank                 & Integer        & Dw                                         \\
+		Company      & Global Rank                 & Integer        & dw                                         \\
 		Company      & Latitude                    & Decimal        & dw                                         \\
-		Company      & Longitude                   & Decimal        & Dw                                         \\
-		Company      & ceos                        & list           & Dbpedia                                   
+		Company      & Longitude                   & Decimal        & dw                                         \\
+		Company      & ceos                        & list           & dbpedia                                   
 	\end{tabularx}
 \caption{Attribute Mapping}
 \end{table}
@@ -199,13 +201,14 @@ We relied on 4 different datasources which are profiled in Table \ref{tab:datase
 
 \subsection{Consolidated Schema \& Transformations}
 
-The consolidated schema was created by hand. Because we only considered one entity we were able to just add additional top level fields for each attribute. We created lists for the attribute industry and CEOs. The following transformations were applied to the input datasets:\begin{enumerate}
+The consolidated schema was created by hand. Because we only considered one entity we were able to just add additional top level fields for each attribute. We created lists for the attribute {\tt industry} and {\tt CEOs}. The following transformations were applied to the input datasets:\begin{enumerate}
 	\item Monetary values were normalized to the same base (1s).
-	\item For forbes, and dw USD was added as the currency. For dbpedia the currency was parsed from the datatype annotation. Since the \textit{dbpedia} dataset came with currency information we intended to use this information via a mapping table to convert all monetary values to USD. However, it turned out that there was a huge amount of currencies involved and it was not clear from which date the exchange rate should be retrieved. Therefore the currency was kept as an additional attribute.
-	\item A unique ID was generated for each record that was mapped to the target schema.
-	\item Missing values in dw were partly encoded as \#N/A which confused the parse\_number function. An if clause was implemented that checked for "\#" and in these cases did not put a value, and otherwise the original value.
-	\item For dbpedia the pipe concatenated fields ceos and industry were tokenized and only distinct values transfered to the respective list node.
+	\item For \textit{forbes} and \textit{dw} USD was added as the {\tt currency}. For \textit{dbpedia} the {\tt currency} was parsed from the datatype annotation. Since the \textit{dbpedia} dataset came with currency information we intended to use this information via a mapping table to convert all monetary values to USD. However, it turned out that there was a huge amount of currencies involved and it was not clear from which date the exchange rate should be retrieved. Therefore, the {\tt currency} was kept as an additional attribute.
+	\item A unique {\tt ID} was generated for each record that was mapped to the target schema.
+	\item Missing values in \textit{dw} were partly encoded as \#N/A which confused the parse\_number function. An if-clause was implemented that checked for "\#" and in these cases did not put a value, and otherwise the original value.
+	\item For \textit{dbpedia} the pipe concatenated fields {\tt ceos} and {\tt industry} were tokenized and only distinct values transferred to the respective list node.
 \end{enumerate} 
+
 
 
 
@@ -215,32 +218,22 @@ The consolidated schema was created by hand. Because we only considered one enti
 \subsection{Gold Standard}
 \label{sec:gold-standard-IR}
 
-In order to create the gold standard we ran initial identity resolutions with two cheap and a more complex matching rule. With a threshold of 0.2 we used three different matching rules. (1) Jaccard-3-Grams on company names (with frequent tokens removed) (MR1), (2) Levensthein Similarity on company names (with frequent tokens removed) (MR2), (3) A combination of 1, 2, Longest Common Subsequence (LCS), and a token-based similarity, Rogue (MR27).
+In order to create the gold standard we ran initial identity resolutions with two cheap and a more complex matching rule (MR). With a threshold of 0.2 we used three different MRs. (1) Jaccard-3-Grams on company names (with frequent tokens (FT) removed) (MR1), (2) Levensthein Similarity on company names (with FT removed) (MR2), (3) A combination of 1, 2, Longest Common Subsequence (LCS), and a token-based similarity, Rogue (MR27).
 
 %TODO source for string matching https://ebookcentral.proquest.com/lib/unimannheim-ebooks/reader.action?docID=945451
-The results were combined in one file, and an average similarity of the three matching rules was calculated. Afterwards, the correspondences were in turn sorted by each of the four similarities. Matches with a similarity $>$ 0.9 were labeled as sure-matches, non-matches with such a similarity as corner cases. In the range of 0.9 $> sim >$ 0.7 Correspondences were labeld as corner case matches or non-matches. The correspondences with lowest similarity score were also reviewed. Non-matches were labeled as sure non-matches and the few matches that still were present in this area were labeled as corner-cases. By repeating this procedure for each of the four similarity scores we had a broad coverage of different correspondences. To achieve the distribution according to the rule of thumb outlined in the lecture, which states to include 20\% matching record matching pairs, 30\% corner-case matches and non-matches (fuzzy), and 50\% non-matching record pairs a random sample out of the labled correspondences was drawn.
-%TODO was their a problem to achieve this distribution?
-The data was then split into train and test set using a python script, with a test size of 0.25 and stratified on the gold standard category (sure match, corner case, sure non-match).
+The results were combined in one file, and an average similarity of the three MRs was calculated. Afterwards, the correspondences were in turn sorted by each of the four similarities. Matches with a similarity $>$ 0.9 were labeled as sure-matches, non-matches with such a similarity as corner cases. In the range of 0.9 $> sim >$ 0.7 Correspondences were labeled as corner case matches or non-matches. The correspondences with lowest similarity score were also reviewed. Non-matches were labeled as sure non-matches and the few matches that still were present in this area were labeled as corner-cases. By repeating this procedure for each of the four similarity scores we had a broad coverage of different correspondences. To achieve the distribution according to the rule of thumb outlined in the lecture, which states to include 20\% matching record matching pairs, 30\% corner-case matches and non-matches (fuzzy), and 50\% non-matching record pairs a random sample out of the labeled correspondences was drawn.The data was then split into train and test set using a python script, with a test size of 0.25 and stratified on the gold standard category (sure match, corner case, sure non-match).
 
-%TODO Note on balance of gold standard, positives and negatives
-
-After running several identity resolutions the correspondences were analyzed. False positive matches were then added to the gold standard as further corner cases. Moreover, the group size distribution was analyzed. Large groups indicated false postitive matches or duplicates. From several of these groups the true and some false matches were collected and added to the gold standard as as corner-cases, trying to keep the number of non-matches below 70\%. Afterwards, the goldstandard was reviewed for duplicates which were then removed.
+After running several identity resolutions the correspondences were analyzed. False positive matches were then added to the gold standard as further corner cases. Moreover, the group size distribution was analyzed. Large groups indicated false positive matches or duplicates. From several of these groups the true and some false matches were collected and added to the gold standard as corner-cases, trying to keep the number of non-matches below 70\%. Afterwards, the gold standard was reviewed for duplicates which were then removed.
 
 \subsection{Matching Rules}
 \label{sec:matching-rules}
 
 \subsubsection{General Setup}
-The company name was the sole variable we could rely on during the identity resolution across all datasets. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different matching rules. We implemented 27 different matching rules%
+The {\tt company name} was the sole variable we could rely on during the identity resolution across all datasets. Other possible attributes such as {\tt Domain} or {\tt Year founded} oftentimes had a good amount of missing values. Therefore, we implemented several string-based comparators which are outlined in table \ref{table:comparators} and subsequently combined them to form different MRs. We implemented 31 different MRs%
 \footnote{Please refer to the class Comparators.MATCHING\_RULES.java for an overview of the concrete combination of comparators, weights, pre- and postprocessing.}%
-, but limit the evaluation to the best and worst performing based on their F1-scores.
+, but limit the evaluation to the best and worst performing based on their F1-scores. Nearly all \textit{MR x Final Matching Thresh}-Combinations were tested.
 
- Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token based similarity metrics). Optionally, frequent tokens (FTs) could be removed. Moreover, different optional post-processing capabilities were implemented. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity based on a certain threshold. For example, a similarity might be boosted up using a particular function%
-\footnote{To review the "boosting" functions please refer to Comparators.AbstractT9Comparator.java [double boost(double)]}%
- above a threshold of 0.8 and penalized below. The idea behind this is that if a similarity measure reaches a certain threshold a match becomes more likely although the score might be below the final matching threshold. To increase the probability for this match to be included the similarity should be increased. Conversly, if the similarity is below a certain threshold a match becomes more unlikely and the similarity score should be further penalized to have a higher impact on the final score. For example consider C5 for "Royal Dutch Shell" and "Shell" with a similarity of 0.67. One might say that this consitutes a high enough similarity for this comparator to be considered a match. Thus, one could set a boosting threshold of e.g. 0.6 meaning that $(sim - 0.6)^3/2*boostFactor$\footnote{This example considers the X3 boost function. Others include root-like or exponential functions.} would be added on top of the similarity. The boosting functions are designed to have a small impact close to the threshold and a bigger impact further away. 
-An IR was conducted for each dataset against the \textit{kaggle\_f} dataset, because it has the largest amount of entities and is thus likely to yield a sufficient amount of correspondences as required.
-
-
-\begin{table}[t]
+\begin{table}[!tbh]
 	\small
 	\begin{tabular}{lllcc}
 		& \multicolumn{2}{l}{}                              & \multicolumn{2}{l}{Preprocessing}                   \\
@@ -249,49 +242,56 @@ An IR was conducted for each dataset against the \textit{kaggle\_f} dataset, bec
 		C2  & Jaccard on tokens          &                      & *                       & (\checked)                       \\
 		C3  & Levensthein                &                      & \checked & (\checked)                       \\
 		C4  & Longest Common Subsequence & Normalization   Flag & \checked & (\checked)                       \\
-		C5  & RogueN on Tokens \cite{lin_rouge_2004} & & \checked & -                      
+		C5  & RogueN on Tokens \citep{lin_rouge_2004} & & \checked & -                      
 	\end{tabular}
-
-\caption[Comparator Overview]%
-{Comparator Overview \small\medspace\medspace \textsuperscript{1}Lowercasing and removal of punctuation and whitespaces -  latter not removed for token-based similarity metrics, \textsuperscript{2}Removal of frequent tokens, * Preprocessing done by pre-implemented similarity measure, \checked \space used in comparator, (\checked) optional}
-\label{table:comparators}
-
+	
+	\caption[Comparator Overview]%
+	{Comparator Overview \small\medspace\medspace \textsuperscript{1}Lowercasing and removal of punctuation and whitespaces -  latter not removed for token-based similarity metrics, \textsuperscript{2}Removal of frequent tokens, * Preprocessing done by pre-implemented similarity measure, \checked \space used in comparator, (\checked) optional}
+	\label{table:comparators}
+	
 \end{table}
+
+ Every comparator had options to include certain pre- and post-processing steps. Preprocessing steps generally included lowercasing, removal of punctuation, and removal of whitespaces (the latter was omitted for token-based similarity metrics). Optionally, FTs could be removed. Moreover, different optional post-processing capabilities were implemented. These included a threshold after which the similarity was set to zero, and an option to boost or penalize the similarity in relation to a certain threshold. For example, a similarity might be boosted up using a particular function%
+\footnote{To review the "boosting" functions please refer to Comparators.AbstractT9Comparator.java [double boost(double)]} %
+ above a threshold of 0.8 and penalized below. The idea behind this is that if a similarity measure reaches a certain threshold a match becomes more likely although the score might be below the final matching threshold. To increase the probability for this match to be included in the correspondences, the similarity should be increased. Conversely, if the similarity is below a certain threshold a match becomes more unlikely and the similarity score should be further penalized to have a higher impact on the final score. For example consider C5 for "Royal Dutch Shell" and "Shell" with a similarity of 0.67. One might say that this consitutes a high enough similarity for this comparator to be considered a match. Thus, one could set a boosting threshold of e.g. 0.6 meaning that $(sim - 0.6)^3/2*boostFactor$\footnote{This example considers the X3 boost function. Others include root-like or exponential functions.} would be added on top of the similarity. The boosting functions are designed to have a small impact close to the threshold and a bigger impact further away. 
+An IR was conducted for each dataset against the \textit{kaggle\_f} dataset, because it has the largest amount of entities and was thus likely to yield a sufficient amount of correspondences as required.
+
+
+
 
 \subsubsection{Major Challenge - Named Entity Matching}
 \label{sec:challenges}
 
-The matching of company names has been a challenge in our project due to their "noisyness". We found ourselves facing similar challenges as the Dutch Central Bank \footnote{https://medium.com/dnb-data-science-hub/company-name-matching-6a6330710334}. %TODO make proper bibliographic reference
-As with named entities in general every data source has a different level of detail, different data quality, and use of abbreviations among others. Regarding this, our matching rules had to cater to the following challenges:
-\paragraph{Company name: }In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell). To address the first we implemented a Longest Common Subsequence (LCS) Comparator (C4). We used this over a Longest Common Substring to capture the described cases. For the latter we implented C5 which is a token based comparator. However, it uses a more favorable normalization that caters to the "Shell" example. Instead of normalizing with the distinct set of tokens (aka Jaccard) it calculates the overlap for each name over the number of tokens from it and then takes the average of both.
+The matching of company names has been a challenge in our project due to their "noisyness". We found ourselves facing similar challenges as the Dutch Central Bank \citep{nijhuis_company_2022}. As with named entities in general every data source has a different level of detail, different data quality, and use of abbreviations among others. Regarding this, our MRs had to cater to the following challenges:
 
-\paragraph{Data Quality:} We had to cope with general data quality issues which are represented for example by typos. Levenstheing similarity (C3) caters to this.
+\textbf{Company name: }In part the name of the legal entity was used, in other cases the name of the group, and in other cases some abbreviation (e.g., Anheuser-Busch InBev Germany Holding GmbH vs. Anheuser-Busch InBev vs. AB InBev) or tokens of the name were omitted (e.g., Royal Dutch Shell vs. Shell). To address the first we implemented a LCS Comparator (C4). We used this over a Longest Common Substring to capture the described cases. For the latter we implented C5 which is a token-based comparator. However, it uses a more favorable normalization that caters to the "Shell" example. Instead of normalizing with the distinct set of tokens (aka Jaccard) it calculates the overlap for each name over the number of its tokens and then takes the average of both.
 
-\paragraph{Frequent tokens:} There are several tokens that have a higher frequency in company names. These include for example legal entity descriptors (limited, incorporated, ...), industy descriptors (bank, motors, pharmaceuticals, ...) and stop words (the, and, of ...). These may let names seem more similar than they actually are (General Motors vs. Hyundai Motors). We analyzed frequent tokens across our datasets and provided the matching rules with the option to remove frequent tokens. However, with this option you also introduce the problem that "General Electric" and "General Motors" now have a similarity of 1. So this option has to be considered with caution and in combination with other metrics.
+\textbf{Data Quality:} We had to cope with general data quality issues which are represented for example by typos. Levenstheing similarity (C3) caters to this.
 
-\paragraph{Token order:} Company names of different companies might be composed of similar tokens in a different order. Token-based similarity metrics alone would classify such names as similar altough they are not (Commercial National Financial vs. National Financial Group). This means that token order matters. The LCS Comparator and Levensthein also take this into account.
+\textbf{Frequent tokens:} There are several tokens that have a higher frequency in company names. These include for example legal entity descriptors (limited, incorporated, ...), industy descriptors (bank, motors, pharmaceuticals, ...) and stop words (the, and, of ...). These may let names seem more similar than they actually are (General Motors vs. Hyundai Motors). We analyzed FTs across our datasets and provided the MRs with the option to remove FTs. However, this option also introduces the problem that "General Electric" and "General Motors" now have a similarity of 1. Thus, this option has to be considered with caution and in combination with other metrics.
+
+\textbf{Token order:} Company names of different companies might be composed of similar tokens in a different order. Token-based similarity metrics alone would classify such names as similar altough they are not (Commercial National Financial vs. National Financial Group). This means that token order matters. The LCS Comparator and Levensthein also take this into account.
 
 %TODO spacing required
-In sum, we adressed these outlined challenges by combining comparators with different strengths in matching rules which we systematically evaluated at different final matching thresholds. We also implemented some new similarity metrics to cater to our needs (Comparator 4 and 5).
+In sum, we adressed these outlined challenges by combining comparators with different strengths in MRs which we systematically evaluated at different final matching thresholds. We also implemented some new similarity metrics to cater to our needs (Comparator 4 and 5).
 
 
 
 \subsubsection{Evaluation of Matching Rules}
 
-We evaluated the thresholds 0.7, 0.8, 0.85, 0.875, and 0.9 for local matching strategies, becuase our analysis indicated that \textit{dbpedia} and \textit{kaggle\_f} included duplicated. While the precision of the matching rules usually increased with higher thresholds, the recall usually decreased%
-\footnote{While the sample from table \ref{tab:mr-performance} does not reflect this trend, it was clearly visible in the over 400 experiments we conducted.}.%
-This is intuitive since the easy matches have high similarity scores, while more ambigous matches although having a highish similarity, fall behind the easy matches and are thus excluded at higher thresholds. An exception were the learned matching rules, that changed their model at each threshold. The trade-off then depends on the use-case at hand. Considering F1-Scores, the matching threshold of 0.85 usually outperformed the other thresholds. However, considering the following step of data fusion, we favored higher precision over recall, which in turn was not always the MR with the highest F1-Score.
+We evaluated the thresholds 0.7, 0.8, 0.85, 0.875, and 0.9 for local matching strategies, because our analysis indicated that \textit{dbpedia} and \textit{kaggle\_f} included duplicates. While the precision of the MRs usually increased with higher thresholds, the recall usually decreased. While the sample from table \ref{tab:mr-performance} does not reflect this trend because at each threshold a different MR is considered, it was clearly visible in the over 400 experiments we conducted.
+This is intuitive since the easy matches have high similarity scores, while more ambiguous matches although having a highish similarity, fall behind the easy matches and are thus excluded at higher thresholds. An exception were the learned MRs, that changed their model at each threshold (e.g. MR7, MR26). The trade-off then depends on the use-case at hand. Considering F1-Scores, the matching threshold of 0.85 usually outperformed the other thresholds. However, considering the following step of data fusion, we favored higher precision over recall which. This usually led to an improved group size distribution but in turn was not always the MR with the highest F1-Score.
 
-In general the F1-Scores of the \textit{dw - kaggle\_f} IRs fell behind the other IRs and \textit{dbpedia -kaglle\_f} yielded the best results. Simple MRs (i.e. MRs that might only consider Jaccard N-Grams or Levensthein similarity) were not able to outperform more complex matching rules that made use of a combination of the different similarity measures outlined in \ref{sec:challenges}. For example MR2 (dbpedia+kaggle\_f(0,85)) which consideres Jaccard 3-grams without removing FT achieves a high precision of 1 but lacks behind the other MR in terms of recall and at a threshold of 0.85 is the worst MR for the particular dataset combination. 
+In general the F1-Scores of the \textit{dw - kaggle\_f} IRs fell behind the other IRs and \textit{dbpedia -kaggle\_f} yielded the best results. Simple MRs (i.e. MRs that might only consider Jaccard N-Grams or Levensthein similarity) were not able to outperform more complex MRs that made use of a combination of the different similarity measures outlined in \ref{sec:challenges}. For example, MR2 (dbpedia+kaggle\_f(0,85)) which consideres Jaccard 3-grams without removing FT achieves a high precision of 1 but lacks behind the other MR in terms of recall. At a threshold of 0.85 it is the worst MR for the particular dataset combination. 
 
-The top performing matching rules MR21 (LC), 26(pruned tree), 27(LC), 29(LC) all combine all but C2 in different ways.\footnote{LC: Linear Combination}%
+The top performing MRs MR21 (LC), 26 (pruned tree), 27 (LC), 29 (LC) all combine all but C2 in different ways.\footnote{LC: Linear Combination} %
 They make use of different weights and pre-and post-processing options.
 
-For example, MR26  is a pruned tree algorithm that removes FT for C1 and C3. All Comparators have a post-processing threshold between 0.3 and 0.4 where they are reduced to zero and make use of different boosting schemes. C4 and C5 have lower boosting thresholds because their similarity score might be lower, even if encountering a true positive. In table \ref{tab:mr-performance} can be seen that MR31 which is MR26 without post-processing performs worse, which speaks for the implemented post-processing options.
+For example, MR26  is a pruned tree algorithm that removes FT for C1 and C3. All comparators have a post-processing threshold between 0.3 and 0.4 where they are reduced to zero and make use of different boosting schemes. C4 and C5 have lower boosting thresholds compared to C1 and C3 because their similarity score might be lower, even if they encounter a true positive. Table \ref{tab:mr-performance} shows that MR31 which is MR26 without post-processing performs worse, which speaks for the implemented post-processing options.
 
-The other top performing MRs tested different post-processing options and different comparator weights. A possible improvement in this area could be a more systematic evaluation of the different post-processing options that were implemented to validate their effectiveness. Also learning these parameter settings might be an option.
+The other top performing MRs tested different post-processing options and different comparator weights. A possible improvement in this area could be a more systematic evaluation of the different post-processing options that were implemented to validate their effectiveness. Also learning the parameter settings might be an option.
 
-
+%TODO: evaluate 92,5 % thresh
 
 
 \begin{table}[]
@@ -353,30 +353,29 @@ When analyzing the group size distribution of the correspondence sets which are 
 %SNB 20 - 31%
 %SNB 100 - 50%
 %4grams 97%
-We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options. (1) First letter of the company name, (2) Qgrams(\cite{gravano_approximate_nodate} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient), (3) N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
+We intended to use three different types of blockers (no blocker, symmetric, sorted neighborhood) and different blocking key generators. The following key generators were implemented, all with certain preprocessing options. (1) First letter of the company name, (2) Qgrams(\citep{gravano_approximate_2001} suggest this blocking technique to ensure a low degree of missed pairs while staying computationally efficient), (3) N starting characters of each company name token (in practice we mainly used 3 because 3 letter names are possible e.g. STX Group).
 
-While we reduced the dataset size of the kaggle file significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, we were able to circumvent this problem by using a standard blocker in combination with the the first 3 letter of each name token as keys, that provided a Pair Completeness of 100\%. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and pair completeness. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but apparently missed pairs. This could be due to the fact that several blocks contained more than 100 blocked elements were present. SNB(20) had a pari completeness of 31\% SNB(100) 50\%, and S(4g) 97\%. The first 3 letters of each token generated fewer blocked pairs while still achieving a pair completeness of 100\%. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
+
+While we reduced the dataset size of \textit{kaggle} significantly by filtering, we were still not able to evaluate a "No Blocker" and "3-gram blocker" against an IR that included \textit{kaggle\_f}although we increased the JVM Heap Space to 10 GB. However, we were able to circumvent this problem by using a standard blocker in combination with the first 3 letter of each name token as keys, that provided a pair completeness of 100\%. We also evaluated 4-grams. Table \ref{tab:mr-performance} includes different blockers for \textit{dbpedia + kaggle\_f} with MR21 as reference, the other dataset combinations obviously behaved similarly in terms of runtime and pair completeness. Using the Sorted Neighborhood Blocker (SNB) in combination with a 3-gram key generator yieled very bad results in terms of recall. This was the case for a window size of 20 as well as larger ones, e.g. 100. The SNB was able to reach the highest reduction ratios and thus the best runtimes, but performed bad in terms of pair completeness. SNB(20) had a pair completeness of 31\%, SNB(100) 50\%, which is significantly worse than S(4g) with 97\%. This could be due to the fact that several blocks contained more than 100 blocked elements. The first 3 letters of each token generated fewer blocked pairs while still achieving a pair completeness of 100\%. The 4-grams achieved the lowest reduction ratio (still $>$99\%) and hence had the longest runtime.
 
 
 \subsection{Analysis of Errors}
 \label{sec:errors}
-An example of a match with large group size for \textit{dbpedia\_kaggle\_f} is "Shift Inc." that matched with 19 companies named "shift" (similarity of 0.89). However, none of these actually represent a match, when taking urls and founding year into account. We did not incorporate these into the matching rules because they often have missing values.
+An example of a match with large group size for \textit{dbpedia\_kaggle\_f} is "Shift Inc." that matched with 19 companies named "shift" (similarity of 0.89). However, none of these actually represent a match, when taking {\tt domain} and {\tt Year founded} into account. We did not incorporate these into many MR because they often have missing values. For example, MR28 which is actually a specialization of a top performing rule and considers a Jaccrad/URL-root combination if present and otherwise falls back to simple Jaccard, was not able to outperform the other MRs.
 A false positive match for example is "Volkswagen Group" and "volkswagen group uk ltd" (0,90). While they represent the same group, the latter represents the uk branch and thus a different entity. This is a problem that we had with other groups as well. Due to the high token overlap oftentimes they are considered a match.
 A missed pair includes "Amrutanjan Healthcare" and "amrutanjan health care limited" (0.84). Because "health" and "care" are separate tokens in the latter one, the token-based comparator had difficulties to get to a high enough similarity.
 
-\textbf{Summary. }While the removal of FT oftentimes was useful (e.g. "Telus Corporation","telus") it could be seen that it raised new problems by creating non-matching correspondences (e.g "Ams AG", "ams technologies ag"). We tried to remediate this by including more comparators that still considered FTs but were less sensible to them. LCS is able to "skip" them, and RogueToken does not penalize the company name with missing FT as much as JaccardToken. In general it could be seen that we were able to achieve reasonable results with this. The "subsidiary" problem could be partly addressed by having a country table and identifying tokens that refer to countries and giving them a stronger weight. For larger corporations including the url into the comparison might have helped, however because this attribute was also often missing other pairs would have been missed. A possible remediation would have been the removal of duplicates beforehand, to allow for global matching.
-
-
+\textbf{Summary. }While the removal of FT oftentimes was useful (e.g. "Telus Corporation","telus") it could be seen that it raised new problems by creating non-matching correspondences (e.g "Ams AG", "ams technologies ag"). We tried to remediate this by including more comparators that still considered FTs but were less sensible to them. LCS is able to "skip" them, and RogueToken does not penalize the company name with missing FT as much as JaccardToken. In general it could be seen that we were able to achieve reasonable results with this. The "subsidiary" problem could be partly addressed by having a country table and identifying tokens that refer to countries and giving them a stronger weight. A possible improvement in general would have been the removal of duplicates beforehand, to allow for global matching.
 
 \section{Phase III - Data Fusion}
 \label{cha:data-fusion}
 
-For data fusion we used all of our datasets. Especially \textit{dbpedia} and \textit{kaggle\_f} had a good overlap, but also the other dataset provide some overlap. We focused on the follwing attributes: name, country, industries, sales amount, sales currency, current employees, and year founded.
+For data fusion we used all of our datasets. Especially \textit{dbpedia} and \textit{kaggle\_f} had a good overlap, but also the other dataset provide some overlap. We focused on the follwing attributes: {\tt name}, {\tt country}, {\tt industries}, {\tt sales amount}, \mbox{{\tt sales currency}}, {\tt current employees}, and {\tt year founded}.
 
-We added the latest revision date of the datasets as provenance date, and increased the score of the \textit{forbes} dataset compared to the others, because we consider it a high fidelity source. This will be used with the conflict resolution function "Favour Source" for sales amount and sales currency.
+We added the latest revision date of the datasets as provenance date, and increased the score of the \textit{forbes} dataset compared to the others, because we consider it a high fidelity source. This will be used with the conflict resolution function "Favour Source" for {\tt sales amount} and {\tt sales currency}.
 
 Unfortunately, due to an error we were not able to evaluate the density of the datasets.\footnote{java.lang.NullPointerException: Cannot invoke "de.uni\_mannheim.informatik.dws.winter.model.DataSet.get()" because the return value of "de.uni\_mannheim.informatik.dws.winter.model.FusibleHashedDataSet.getSchema()" is null}%
-The attribute consistency is outlined in table \ref{tab:conflict-resolution}, along with several thresholds and consistency measures. The table also outlines the conflict resolution functions we used. For example, Union was used for the industry list attribute. This is appropriate, because industry labels are rather vague and without a supporting taxonomy of other lookup table a more concrete overlap comparison for example is difficult. We decided to favor the forbes dataset for the sales amount, because we consider it a credible source. We used the same conflict resolution fucntion for the according currency symbol to keep the data consistent. For the company name we decided to take the longest string, as it might contain additional information such as the company type (i.e. ltd, AG, GmbH, ...).
+The attribute consistency is outlined in Table \ref{tab:conflict-resolution}, along with several thresholds and consistency measures. The table also outlines the conflict resolution functions we used. For example, Union was used for the {\tt industry} list attribute. This is appropriate, because industry labels are rather vague and without a supporting taxonomy of other lookup table a more concrete overlap comparison for example is difficult. We decided to favor the \textit{forbes} dataset for the {\tt sales amount}, because we consider it a credible source. We used the same conflict resolution function for the according currency symbol to keep the data consistent. For the {\tt company name} longest string was applied, as it might contain additional information such as the company type (i.e. ltd, AG, GmbH, ...).
 
 \begin{table}[]
 	\small
@@ -397,39 +396,21 @@ The attribute consistency is outlined in table \ref{tab:conflict-resolution}, al
 \label{tab:conflict-resolution}
 \end{table}
 
-A gold standard with 15 samples was created based on entities from the forbes dataset. To this end the attributes used during fusion were manually reviewed against external sources (e.g. Statista, Wikipedia, and Bloomberg).
+A gold standard with 15 samples was created based on entities from the \textit{forbes} dataset. To this end the attributes used during fusion were manually reviewed against external sources (e.g. Statista, Wikipedia, and Bloomberg).
 
-Table \ref{tab:conflict-resolution} also outlines the Accuracy we achieved with our data fusion. Unfortunatly we have to see, that the resilts are rather poor. While name and industry perform somewhat ok, the other attributes fail to meet a reasonable accuracy.
+Table \ref{tab:conflict-resolution} also outlines the Accuracy we achieved with our data fusion. Unfortunatly we have to see, that the results are rather poor. While {\tt name} and {\tt industry} perform somewhat ok, the other attributes fail to meet a reasonable accuracy.
 
 
 \section{Summary}
-Compared to the largest dataset we actually reduced the number of entities. Since we were not able to get the Density report, we cannot make any statement about how the density increased after the data fusion. The accuracy as outlined in Table \ref{tab:conflict-resolution} is not satisfactory.
+Compared to the largest dataset we actually reduced the number of entities. Since we were not able to get the density report, we cannot make any statement about how the density increased after the data fusion. The accuracy as outlined in Table \ref{tab:conflict-resolution} is not satisfactory.
 
-\bibliographystyle{plain}
+\newpage
+\bibliographystyle{plainnat}
 \bibliography{thesis-ref}
 
 
 \appendix
 
 
-\newpage
-
-
-\pagestyle{empty}
-
-
-\section*{Ehrenw\"ortliche Erkl\"arung}
-Ich versichere, dass ich die beiliegende Master-/Bachelorarbeit ohne Hilfe Dritter
-und ohne Benutzung anderer als der angegebenen Quellen und Hilfsmittel
-angefertigt und die den benutzten Quellen w\"ortlich oder inhaltlich
-entnommenen Stellen als solche kenntlich gemacht habe. Diese Arbeit
-hat in gleicher oder \"ahnlicher Form noch keiner Pr\"ufungsbeh\"orde
-vorgelegen. Ich bin mir bewusst, dass eine falsche Er- kl\"arung rechtliche Folgen haben
-wird.
-\\
-\\
-
-\noindent
-Mannheim, den 31.08.2014 \hspace{4cm} Unterschrift
 
 \end{document}

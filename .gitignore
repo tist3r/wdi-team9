@@ -1,11 +1,13 @@
 data/input/*
-!data/input/
+!data/input/kaggle_sample.xml
 data/goldstandard/archive_and_analysis
 data/output/reducedKaggleSet/*
 data/output/combinedFiles/*
 data/output/gs/*
 data/output/namedgs/*
 data/output/experiments/*
+!data/output/experiments/experiment_log_new.csv
+!data/output/experiments/reevaluated_log.csv
 data/output/sortedCorrespondences/*
 data/output/aggregatedKaggle/*
 !data/output/experiments/experiment_log.csv
