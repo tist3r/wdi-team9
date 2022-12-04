@@ -52,7 +52,15 @@ public class DataFusion_Main {
 		FusibleDataSet<Company, Attribute> ds4 = new FusibleHashedDataSet<>();
 		new CompanyXMLReader().loadFromXML (new File("data/input/kaggle_filtered.xml"), Constants.RECORD_PATH, ds4);
 
-		ds1.getDensity();
+		ds1.printDataSetDensityReport();
+		ds2.printDataSetDensityReport();
+		ds3.printDataSetDensityReport();
+		ds4.printDataSetDensityReport();
+		
+		logger.info("*\tFused density\t*");
+		FusibleDataSet<Company, Attribute> ds5 = new FusibleHashedDataSet<>();
+		new CompanyXMLReader().loadFromXML (new File("data/output/fusion/fused.xml"), Constants.RECORD_PATH, ds5);
+		ds5.printDataSetDensityReport();
 		
 		
 		ds1.setScore(1.0);
