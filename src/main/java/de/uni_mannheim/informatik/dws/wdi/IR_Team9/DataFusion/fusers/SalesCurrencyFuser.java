@@ -1,8 +1,6 @@
 
 package de.uni_mannheim.informatik.dws.wdi.IR_Team9.DataFusion.fusers;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 import de.uni_mannheim.informatik.dws.wdi.IR_Team9.model.Company;
 import de.uni_mannheim.informatik.dws.winter.datafusion.AttributeValueFuser;
